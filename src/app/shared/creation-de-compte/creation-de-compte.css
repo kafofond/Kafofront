@@ -1,0 +1,295 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Modifications pour supprimer le scroll vertical sur la page */
+html, body {
+    height: 100%; /* S'assurer que le body occupe 100% de la hauteur du viewport */
+    overflow: hidden; /* Supprimer la barre de défilement du viewport */
+    font-family: 'Inter', sans-serif;
+    background-color: #E2E8F0; /* --background-light */
+    color: #0b4f63; /* --primary-dark */
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-page {
+    width: 100%;
+    padding: 20px;
+    /* Permet à la page de défiler localement si le contenu est plus grand que le viewport */
+    height: 100vh;
+    overflow-y: auto; 
+}
+
+.login-container {
+    display: flex;
+    max-width: 1188px;
+    width: 100%;
+    height: 200px;
+    margin: 0 auto;
+    background-color: #e2e8f0; /* --background-light */
+    border-radius: 15px;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    /* Assurer que le conteneur principal est centré verticalement dans l'espace disponible */
+    min-height: calc(100vh - 40px); /* 100vh moins le padding du .login-page */
+}
+
+.brand-panel {
+    flex: 0 0 500px;
+    background-color: #0b4f63; /* --primary-dark */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+}
+
+.logo-wrapper {
+    width: 330px;
+    height: 330px;
+    background-color: #ffffff; /* --text-light */
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+    
+.logo-image {
+    width: 208px;
+    height: 123px;
+    object-fit: contain;
+}
+
+.logo-text {
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 48px;
+    margin-top: 0; 
+}
+
+.logo-text-green {
+    color: #6ab04c; /* --logo-green */
+}
+
+.logo-text-orange {
+    color: #f59e0b; /* --logo-orange */
+}
+
+.login-form-panel {
+    flex: 1;
+    padding: 118px 80px 118px 140px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.form-title {
+    font-size: 50px;
+    font-weight: 600;
+    line-height: 77px;
+    color: #0b4f63; /* --text-dark */
+    margin: 0;
+}
+
+.form-subtitle {
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 29px;
+    color: #0b4f63; /* --text-dark */
+    margin-top: 4px;
+    margin-bottom: 132px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 500px;
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 21px;
+}
+
+.input-group:last-of-type {
+    margin-bottom: 0;
+}
+
+.input-group input {
+    width: 100%;
+    height: 80px;
+    border-radius: 40px;
+    border: 2px solid rgba(0, 0, 0, 0.19); /* --border-color */
+    background-color: #ffffff; /* --text-light */
+    padding: 0 60px 0 30px;
+    font-size: 32px;
+    font-family: 'Inter', sans-serif;
+    color: rgba(0, 0, 0, 0.67); /* --text-placeholder */
+}
+    
+.input-group input::placeholder {
+    color: rgba(0, 0, 0, 0.67); /* --text-placeholder */
+    opacity: 1;
+}
+
+.input-icon {
+    position: absolute;
+    top: 50%;
+    right: 30px;
+    transform: translateY(-50%);
+    width: 35px;
+    height: auto;
+}
+
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 24px;
+    margin-bottom: 34px;
+    padding: 0 10px;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.remember-me input[type="checkbox"] {
+    width: 25px;
+    height: 25px;
+    border: 1px solid rgba(0, 0, 0, 0.26);
+    background-color: #ffffff; /* --text-light */
+    appearance: none;
+    -webkit-appearance: none;
+    border-radius: 2px;
+    cursor: pointer;
+}
+    
+.remember-me input[type="checkbox"]:checked {
+    background-color: #0b4f63; /* --primary-dark */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e");
+}
+
+.remember-me label,
+.forgot-password {
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 24px;
+    color: #0b4f63; /* --text-dark */
+    text-decoration: none;
+}
+
+.submit-btn {
+    width: 300px;
+    height: 54px;
+    background-color: #0b4f63; /* --primary-dark */
+    border: none;
+    border-radius: 40px;
+    color: #ffffff; /* --text-light */
+    font-size: 24px;
+    font-weight: 300;
+    line-height: 29px;
+    cursor: pointer;
+    align-self: center;
+    transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+    background-color: #106a81;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Responsive Styles */
+@media (max-width: 1200px) {
+    .login-container {
+        flex-direction: column;
+        min-height: auto; /* Permet au conteneur de s'adapter au contenu sur les petits écrans */
+    }
+    .brand-panel {
+        flex: 0 0 auto;
+        height: 350px;
+        border-radius: 15px 15px 0 0;
+    }
+    .login-form-panel {
+        padding: 60px 40px;
+        align-items: center;
+    }
+    .login-form {
+        align-items: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .login-page {
+        padding: 0;
+    }
+    .login-container {
+        border-radius: 0;
+        min-height: 100vh;
+    }
+    .brand-panel {
+        height: 250px;
+        border-radius: 0;
+    }
+    .logo-wrapper {
+        width: 200px;
+        height: 200px;
+    }
+    .logo-image {
+        width: 120px;
+        height: auto;
+    }
+    .logo-text {
+        font-size: 32px;
+    }
+    .login-form-panel {
+        padding: 40px 20px;
+    }
+    .form-title {
+        font-size: 48px;
+        text-align: center;
+    }
+    .form-subtitle {
+        font-size: 18px;
+        text-align: center;
+        margin-bottom: 60px;
+    }
+    .input-group input {
+        height: 60px;
+        font-size: 20px;
+    }
+    .form-options {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        width: 100%;
+    }
+    .remember-me label,
+    .forgot-password {
+        font-size: 16px;
+    }
+    .submit-btn {
+        width: 100%;
+    }
+}

@@ -1,0 +1,164 @@
+/* Définitions globales des éléments utilisés */
+* {
+    box-sizing: border-box;
+}
+
+button {
+    font-family: 'Inter', sans-serif; /* L'information de la font est supposée être Inter, basée sur les variables précédentes. */
+    cursor: pointer;
+}
+
+/* Styles pour .content-body et ses enfants */
+.content-body {
+    padding: 34px 24px 34px 42px;
+    flex-grow: 1;
+}
+
+.content-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 34px;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.67); /* --text-muted */
+}
+
+.filter-dropdown {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #ffffff; /* --background-white */
+    border: 2px solid rgba(0, 0, 0, 0.12);
+    border-radius: 10px;
+    padding: 11px 7px;
+    font-weight: 700;
+}
+
+.export-button {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 11px 14px;
+    background-color: #e2e8f0; /* --background-light */
+    border: 2px solid rgba(0, 0, 0, 0.12);
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.67); /* --text-muted */
+    cursor: pointer;
+}
+
+.requests-list h2 {
+    font-family: 'Roboto', sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    color: #0b4f63; /* --primary-dark */
+    margin: 0 0 34px 22px;
+}
+
+.table-container {
+    background-color: #ffffff; /* --background-white */
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 15px;
+    padding: 0 24px;
+}
+
+.table-header, .table-row {
+    display: grid;
+    grid-template-columns: 1.2fr 1.2fr 1fr 1fr 1fr 1fr 1.2fr;
+    align-items: center;
+    gap: 16px;
+    padding: 24px 0;
+}
+
+.table-header {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.67); /* --text-muted */
+    padding-top: 24px;
+    padding-bottom: 24px;
+}
+
+.table-row {
+    border-top: 1px solid #e2e8f0;
+    font-size: 15px;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.67); /* --text-muted */
+}
+
+/* Styles pour les colonnes de Montant, Fournisseur et Date */
+.table-row > div:nth-child(3),
+.table-row > div:nth-child(4),
+.table-row > div:nth-child(5) {
+    color: rgba(0, 0, 0, 0.44); /* --text-muted-light */
+    font-size: 13px;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 3px 16px;
+    border-radius: 40px;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.status-en-attente {
+    background-color: #dcffbe; /* --status-success-bg */
+    color: #0c8f11; /* --status-success-text */
+}
+
+.status-valide {
+    background-color: rgba(245, 158, 11, 0.17); /* --status-pending-bg */
+    color: #f59e0b; /* --status-pending-text */
+}
+
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-start;
+}
+
+.action-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 15px;
+    background-color: #e2e8f0; /* --background-light */
+    border: none;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    padding: 0;
+}
+.action-btn img {
+    max-width: 24px;
+    max-height: 24px;
+}
+
+/* Media Queries */
+@media (max-width: 992px) {
+    .content-body {
+        padding: 20px;
+    }
+    .table-container {
+        overflow-x: auto;
+    }
+    .table-header, .table-row {
+        min-width: 900px;
+    }
+}
+
+@media (max-width: 768px) {
+    .content-actions {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+}

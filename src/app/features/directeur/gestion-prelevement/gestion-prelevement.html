@@ -1,0 +1,122 @@
+<section class="content-area">
+
+  <!-- Barre de filtre -->
+  <div class="filter-bar">
+    <div class="filter-group">
+      <label>Statut :</label>
+      <div class="filter-select" (click)="toggleStatusDropdown()">
+        <span>{{ selectedStatus }}</span>
+        <img src="assets/87_539.svg" alt="dropdown arrow">
+      </div>
+      <ul class="dropdown-list" *ngIf="statusDropdownOpen">
+        <li *ngFor="let s of ['Tous', 'Validé', 'En attente', 'Rejeté']"
+            (click)="setStatus(s)"
+            [class.active]="selectedStatus === s">
+          {{ s }}
+        </li>
+      </ul>
+    </div>
+    <button class="export-btn">
+      <img src="assets/87_477.svg" alt="Export Icon">
+      <span>Exporter</span>
+    </button>
+  </div>
+
+  <div class="data-card">
+
+    <!-- Tableau 1 : Decision De Prelevement -->
+    <div class="table-section">
+      <h2 class="table-title">Décisions de Prélèvement</h2>
+      <div class="data-table">
+        <div class="table-header">
+          <div class="col col-1">Code</div>
+          <div class="col col-2">Réf. Attestation SF</div>
+          <div class="col col-3">Montant</div>
+          <div class="col col-4">Compte Destinataire</div>
+          <div class="col col-5">Statut</div>
+          <div class="col col-6">Actions</div>
+        </div>
+
+        <div class="table-row" *ngFor="let dec of filteredDecisions">
+          <div class="col col-1">{{ dec.code }}</div>
+          <div class="col col-2">{{ dec.referenceAttestationSF }}</div>
+          <div class="col col-3">{{ dec.montantAPrelever| currency:'XOF':'symbol':'1.0-0' }}</div>
+          <div class="col col-4">{{ dec.compteDestinataire }}</div>
+          <div class="col col-5">
+            <span class="status-badge"
+                  [ngClass]="{
+                    'status-success': dec.statut === 'Validé',
+                    'status-danger': dec.statut === 'Rejeté',
+                    'status-pending': dec.statut === 'En attente'
+                  }">
+              {{ dec.statut }}
+            </span>
+          </div>
+          
+
+          <div class="col col-6">
+            <!-- Bouton détails -->
+            <button class="action-btn">
+              <img src="assets/87_501.svg" alt="details"/>
+            </button>           
+            <!-- Bouton Valider -->
+            <button class="action-btn" (click)="validerDecision(dec)">
+              <img src="assets/Frame icon approuver.svg" alt="valider"/>
+            </button>           
+            <!-- Bouton Refuser -->
+            <button class="action-btn" (click)="refuserDecision(dec)">
+              <img src="assets/Frame icon refuser.svg" alt="refuser"/>
+            </button>
+           </div>
+
+
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Tableau 2 : Ordre De Paiement -->
+    <div class="table-section">
+      <h2 class="table-title">Ordres de Paiement</h2>
+      <div class="data-table">
+        <div class="table-header">
+          <div class="col col-1">Code</div>
+          <div class="col col-2">Réf. Decision Prélèvement</div>
+          <div class="col col-3">Montant</div>
+          <div class="col col-4">Compte Destinataire</div>
+          <div class="col col-5">Statut</div>
+          <div class="col col-6">Actions</div>
+        </div>
+
+        <div class="table-row" *ngFor="let od of filteredOrdres">
+          <div class="col col-1">{{ od.code }}</div>
+          <div class="col col-2">{{ od.referenceDecionDePrelevement }}</div>
+          <div class="col col-3">{{ od.montantAPrelever | currency:'XOF':'symbol':'1.0-0' }}</div>
+          <div class="col col-4">{{ od.compteDestinataire }}</div>
+          <div class="col col-5">
+            <span class="status-badge"
+                  [ngClass]="{
+                    'status-success': od.statut === 'Validé',
+                    'status-danger': od.statut === 'Rejeté',
+                    'status-pending': od.statut === 'En attente'
+                  }">
+              {{ od.statut }}
+            </span>
+          </div>
+          
+          <div class="col col-6">
+            <button class="action-btn">
+              <img src="assets/87_501.svg" alt="details"/>
+            </button>
+            <button class="action-btn" (click)="validerDecision(od)">
+              <img src="assets/Frame icon approuver.svg" alt="valider"/>
+            </button>
+            <button class="action-btn" (click)="refuserDecision(od)">
+              <img src="assets/Frame icon refuser.svg" alt="refuser"/>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

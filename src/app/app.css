@@ -1,0 +1,25 @@
+/* === LAYOUT PRINCIPAL === */
+.app-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* === CONTENU PRINCIPAL === */
+.main-content {
+  flex: 1;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  /* Optimisation du rendu */
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* === ACCESSIBILITÉ & PRÉFÉRENCES UTILISATEUR === */
+@media (prefers-reduced-motion: reduce) {
+  .main-content {
+    scroll-behavior: auto;
+  }
+}

@@ -1,0 +1,154 @@
+/* Conteneur principal */
+.content-body {
+    padding: 30px 40px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* En-tête de la page (Gestion des demandes, Gestionnaire / ...) */
+.settings-header {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px; /* Espace avant le bouton Sauvegarder */
+}
+
+.page-title {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: #0b4f63; /* --primary-dark */
+}
+
+.breadcrumb {
+    margin: 11px 0 0;
+    font-size: 15px;
+    color: rgba(0, 0, 0, 0.67); /* --text-muted */
+}
+
+/* Bouton Sauvegarder */
+.settings-controls {
+    display: flex;
+    justify-content: flex-end; /* Aligner le bouton à droite */
+    margin-bottom: 40px;
+}
+
+.save-button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    background-color: #f59e0b; /* --primary-accent (Orange) */
+    border: none;
+    border-radius: 10px;
+    color: #ffffff; /* --background-white (Texte blanc) */
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.3), 0 2px 4px -2px rgba(245, 158, 11, 0.3);
+}
+
+.save-button svg {
+    width: 18px;
+    height: 18px;
+    fill: white;
+}
+
+
+/* Sections de paramètres */
+.section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #0b4f63; /* --primary-dark */
+    margin: 0 0 20px 0;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #e2e8f0; /* --background-light (Ligne de séparation subtile) */
+}
+
+.settings-group {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.setting-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff; /* --background-white */
+    padding: 20px 25px;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.setting-name {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #0b4f63; /* --primary-dark */
+}
+
+.setting-description {
+    margin: 5px 0 0;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.67); /* --text-muted */
+}
+
+/* Style du Toggle Switch (Basculer) */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    margin: 0;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc; /* Gris pour désactivé */
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: #f59e0b; /* --primary-accent (Orange pour activé) */
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #f59e0b; /* --primary-accent */
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* Arrondi du slider */
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}

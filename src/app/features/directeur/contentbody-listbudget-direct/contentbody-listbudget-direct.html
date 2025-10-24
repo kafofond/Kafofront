@@ -1,0 +1,290 @@
+<div class="content-toolbar">
+    <button class="create-btn" (click)="openCreateBudgetModal()">
+        <img src="assets/foundation_plus.svg" alt="Créer">
+        <span>Créer budget</span>
+    </button>
+
+    
+    <div class="filter-dropdown-container">
+        <button class="filter-btn" (click)="toggleFilterDropdown($event)">
+            <img src="assets/417_213.svg" alt="Filtrer">
+            <span>Filtrer</span>
+            <span class="active-filter-label" *ngIf="activeFilter !== 'Aucun'">({{ activeFilter }})</span>
+        </button>
+
+        <div class="filter-dropdown" *ngIf="showFilterDropdown" (click)="$event.stopPropagation()">
+            <div class="dropdown-header">Filtrer par période</div>
+                <button class="dropdown-item" (click)="applyFilter('Ce mois')">
+                    Ce mois
+                    <span class="check-icon" *ngIf="activeFilter === 'Ce mois'">✓</span>
+                </button>
+                <button class="dropdown-item" (click)="applyFilter('Ce trimestre')">
+                    Ce trimestre
+                    <span class="check-icon" *ngIf="activeFilter === 'Ce trimestre'">✓</span>
+                </button>
+                <button class="dropdown-item" (click)="applyFilter('L\'année dernière')">
+                    L'année dernière
+                    <span class="check-icon" *ngIf="activeFilter === 'L\'année dernière'">✓</span>
+                </button>
+                <div class="dropdown-divider"></div>
+                <button class="dropdown-item reset" (click)="applyFilter('Aucun')">
+                    Réinitialiser le filtre
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+<div class="budget-table-container">
+    <div class="budget-table">
+        <div class="table-header">
+            <div>Intitulé</div>
+            <div>Description</div>
+            <div>Date de création</div>
+            <div>Statut</div>
+            <div>Montant Alloué</div>
+            <div>Actions</div>
+        </div>
+        <div class="table-body">
+            <div class="table-row" *ngFor="let budget of budgets">
+                <div>{{ budget.intituleBudget }}</div>
+                <div>{{ budget.description }}</div>
+                <div>{{ budget.dateDeCreation }}</div>
+                <div><span class="status-badge active">{{ budget.statut }}</span></div>
+                <div>{{ budget.montantBudget | number }} FCFA</div>
+                <div class="actions-cell">
+                    <a routerLink="/directeur/listbudget-directeur/listlignesbudget-directeur" class="action-link">Voir lignes</a>
+                    <button class="action-icon-btn" (click)="openDetailBudgetModal(budget)">
+                        <img src="assets/417_144.svg" alt="View Details">
+                    </button>
+                    <button class="action-icon-btn edit-btn" (click)="openEditBudgetModal(budget)">
+                        <img src="assets/32_236.svg" alt="Modifier">
+                    </button>
+                </div>
+            </div>
+            </div>
+    </div>
+</div>
+
+
+<div id="createBudgetModal" class="modal-overlay" *ngIf="showCreateModal" (click)="closeCreateBudgetModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2 class="modal-title">Créer un nouveau budget</h2>
+            <button class="close-btn" (click)="closeCreateBudgetModal()">
+                <img src="assets/mdi_cancel-bold.svg" alt="Fermer" class="close-icon">
+            </button>
+        </div>
+
+        <form class="budget-form">
+            <div class="form-section">
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="intitule">Intitulé du budget</label>
+                        <input type="text" id="intitule" name="intituleBudget" placeholder="Ex: Budget Marketing 2026">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group half-width">
+                        <label for="montant">Montant Alloué (FCFA)</label>
+                        <input type="number" id="montant" name="montantBudget" placeholder="Ex: 15 000 000">
+                    </div>
+                    <div class="form-group half-width">
+                        <label for="statut">Statut initial</label>
+                        <input type="text" id="statut" name="statut" value="En attente de validation" readonly>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" rows="3" placeholder="Description courte des objectifs et de l'utilisation du budget..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section date-section">
+                <div class="form-row">
+                    <div class="form-group third-width">
+                        <label for="dateDebut">Date de début</label>
+                        <input type="date" id="dateDebut" name="dateDebut">
+                    </div>
+                    <div class="form-group third-width">
+                        <label for="dateFin">Date de fin</label>
+                        <input type="date" id="dateFin" name="dateFin">
+                    </div>
+                    <div class="form-group third-width">
+                        <label for="dateCreation">Date de création</label>
+                        <input type="text" id="dateCreation" name="dateDeCreation" value="Automatique" readonly>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section toggle-section">
+                <div class="form-group full-width toggle-group">
+                    <label>État du budget (Actif/Inactif)</label>
+                    <div class="toggle-control">
+                        <span>Inactif</span>
+                        <label class="switch">
+                            <input type="checkbox" name="etat" checked>
+                            <span class="slider round"></span>
+                        </label>
+                        <span>Actif</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary cancel-btn" (click)="closeCreateBudgetModal()">Annuler</button>
+                <button type="submit" class="btn btn-primary save-btn">Enregistrer le budget</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- Popup de détails budget -->
+<div class="modal-overlay" *ngIf="selectedBudget" (click)="closeDetailBudgetModal()">
+    <div class="modal-content detail-modal-content" (click)="$event.stopPropagation()">
+        
+        <div class="modal-header detail-header">
+            <h2 class="modal-title">Budget : {{ selectedBudget.codeBudget }}</h2>
+            <button class="close-btn" (click)="closeDetailBudgetModal()">
+                <img src="assets/mdi_cancel-bold.svg" alt="Fermer" class="close-icon">
+            </button>
+        </div>
+
+        <div class="detail-body">
+
+            <div class="detail-section full-width-fields">
+                <div class="detail-group">
+                    <label>Intitulé</label>
+                    <p class="detail-value">{{ selectedBudget.intituleBudget }}</p>
+                </div>
+                <div class="detail-group">
+                    <label>Description</label>
+                    <p class="detail-value description">{{ selectedBudget.description }}</p>
+                </div>
+            </div>
+
+            <div class="detail-section grid-fields">
+                <div class="detail-group">
+                    <label>Montant Alloué</label>
+                    <p class="detail-value">**{{ selectedBudget.montantBudget | number: '1.0-0' }} FCFA**</p>
+                </div>
+                <div class="detail-group">
+                    <label>Statut</label>
+                    <span class="detail-status-badge">{{ selectedBudget.statut }}</span>
+                </div>
+                <div class="detail-group">
+                    <label>Date de création</label>
+                    <p class="detail-value">{{ selectedBudget.dateDeCreation | date: 'dd/MM/yyyy' }}</p>
+                </div>
+                <div class="detail-group">
+                    <label>État (Actif/Inactif)</label>
+                    <p class="detail-value">{{ selectedBudget.etat }}</p>
+                </div>
+                <div class="detail-group">
+                    <label>Période</label>
+                    <p class="detail-value">{{ selectedBudget.dateDeDebut | date: 'dd/MM/yyyy' }} - {{ selectedBudget.dateDeFin | date: 'dd/MM/yyyy' }}</p>
+                </div>
+            </div>
+
+            <div class="detail-section full-width-fields">
+                <div class="detail-group">
+                    <label>Commentaire</label>
+                    <p class="detail-value comment">{{ selectedBudget.commentaire || 'Aucun commentaire.' }}</p>
+                </div>
+            </div>
+            
+        </div>
+
+        <div class="modal-footer detail-footer">
+            <p class="creation-info">Créé le : {{ selectedBudget.dateDeCreation | date: 'dd/MM/yyyy' }}</p>
+            <button class="btn btn-primary" (click)="closeDetailBudgetModal()">Fermer</button>
+        </div>
+    </div>
+</div>
+
+<!-- Popup de modification budget -->
+
+<div id="editBudgetModal" class="modal-overlay" *ngIf="showEditModal" (click)="closeEditBudgetModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2 class="modal-title">Modifier le budget : {{ selectedBudget?.codeBudget || 'N/A' }}</h2> 
+            <button class="close-btn" (click)="closeEditBudgetModal()">
+                <img src="assets/mdi_cancel-bold.svg" alt="Fermer" class="close-icon">
+            </button>
+        </div>
+
+        <form class="budget-form" (ngSubmit)="saveEditedBudget()">
+            <div class="form-section">
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="intituleEdit">Intitulé du budget</label>
+                        <input type="text" id="intituleEdit" name="intituleBudget" 
+                               [ngModel]="editFormData.intituleBudget" (ngModelChange)="editFormData.intituleBudget = $event" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group half-width">
+                        <label for="montantEdit">Montant Alloué (FCFA)</label>
+                        <input type="number" id="montantEdit" name="montantBudget" 
+                               [ngModel]="editFormData.montantBudget" (ngModelChange)="editFormData.montantBudget = $event" required>
+                    </div>
+                    <div class="form-group half-width">
+                        <label for="statutEdit">Statut</label>
+                        <input type="text" id="statutEdit" name="statut" 
+                               [ngModel]="editFormData.statut" (ngModelChange)="editFormData.statut = $event" readonly>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="descriptionEdit">Description</label>
+                        <textarea id="descriptionEdit" name="description" rows="3" 
+                                  [ngModel]="editFormData.description" (ngModelChange)="editFormData.description = $event"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section date-section">
+                <div class="form-row">
+                    <div class="form-group third-width">
+                        <label for="dateDebutEdit">Date de début</label>
+                        <input type="date" id="dateDebutEdit" name="dateDebut" 
+                               [ngModel]="editFormData.dateDebut" (ngModelChange)="editFormData.dateDebut = $event">
+                    </div>
+                    <div class="form-group third-width">
+                        <label for="dateFinEdit">Date de fin</label>
+                        <input type="date" id="dateFinEdit" name="dateFin" 
+                               [ngModel]="editFormData.dateFin" (ngModelChange)="editFormData.dateFin = $event">
+                    </div>
+                    <div class="form-group third-width">
+                        <label for="dateCreationEdit">Date de création</label>
+                        <input type="text" id="dateCreationEdit" name="dateDeCreation" 
+                               [value]="selectedBudget?.dateDeCreation | date: 'dd/MM/yyyy'" readonly>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section toggle-section">
+                <div class="form-group full-width toggle-group">
+                    <label>État du budget (Actif/Inactif)</label>
+                    <div class="toggle-control">
+                        <span>Inactif</span>
+                        <label class="switch">
+                            <input type="checkbox" name="etat" 
+                                   [ngModel]="editFormData.etat" (ngModelChange)="editFormData.etat = $event">
+                            <span class="slider round"></span>
+                        </label>
+                        <span>Actif</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary cancel-btn" (click)="closeEditBudgetModal()">Annuler</button>
+                <button type="submit" class="btn btn-primary save-btn">Enregistrer les modifications</button>
+            </div>
+        </form>
+    </div>
+</div>

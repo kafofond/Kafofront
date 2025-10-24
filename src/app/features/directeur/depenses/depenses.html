@@ -1,0 +1,108 @@
+<section class="content-area">
+  <!-- FILTRE STATUT UNIQUEMENT -->
+  <div class="filter-bar">
+    <div class="filter-group">
+      <label>Statut :</label>
+      <div class="filter-select">
+        <select
+          [(ngModel)]="selectedStatus"
+          (change)="setStatus(selectedStatus)"
+        >
+          <option value="Tous">Tous les statuts</option>
+          <option [value]="Statut.VALIDE">Validé</option>
+          <option [value]="Statut.EN_ATTENTE">En attente</option>
+          <option [value]="Statut.REJETE">Rejeté</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="export-btn">
+      <img src="assets/87_477.svg" alt="Export Icon" />
+      <span>Exporter</span>
+    </button>
+  </div>
+
+  <div class="data-card">
+    <!-- TABLEAU DEMANDES D’ACHAT -->
+    <div class="table-section">
+      <h2 class="table-title">Demandes d'achat</h2>
+      <div class="data-table">
+        <div class="table-header">
+          <div class="col col-1">Code</div>
+          <div class="col col-2">Description</div>
+          <div class="col col-3">Fournisseur</div>
+          <div class="col col-4">Montant Total</div>
+          <div class="col col-5">Statut</div>
+          <div class="col col-6">Actions</div>
+        </div>
+
+        <div
+          class="table-row"
+          *ngFor="let da of filteredDemandes"
+        >
+          <div class="col col-1">{{ da.code }}</div>
+          <div class="col col-2">{{ da.description }}</div>
+          <div class="col col-3">{{ da.fournisseur }}</div>
+          <div class="col col-4">{{ da.montantTotal | number }} FCFA</div>
+          <div class="col col-5">
+            <span
+              class="status-badge"
+              [ngClass]="{
+                'status-success': da.statut === Statut.VALIDE,
+                'status-danger': da.statut === Statut.REJETE
+              }"
+              >{{ da.statut }}</span
+            >
+          </div>
+          <div class="col col-6">
+            <button class="action-btn">
+              <img src="assets/87_501.svg" alt="details" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABLEAU FICHES DE BESOIN -->
+    <div class="table-section">
+      <h2 class="table-title">Fiches de Besoin</h2>
+      <div class="data-table">
+        <div class="table-header">
+          <div class="col col-1">Code</div>
+          <div class="col col-2">Objet</div>
+          <div class="col col-3">Service</div>
+          <div class="col col-4">Date</div>
+          <div class="col col-5">Statut</div>
+          <div class="col col-6">Actions</div>
+        </div>
+
+        <div
+          class="table-row"
+          *ngFor="let fb of filteredFiches"
+        >
+          <div class="col col-1">{{ fb.code }}</div>
+          <div class="col col-2">{{ fb.objet }}</div>
+          <div class="col col-3">{{ fb.serviceBeneficiaire }}</div>
+          <div class="col col-4">
+            {{ fb.date | date : 'dd/MM/yyyy' }}
+          </div>
+          <div class="col col-5">
+            <span
+              class="status-badge"
+              [ngClass]="{
+                'status-success': fb.statut === Statut.VALIDE,
+                'status-danger': fb.statut === Statut.REJETE
+              }"
+              >{{ fb.statut }}</span
+            >
+          </div>
+          <div class="col col-6">
+            <button class="action-btn">
+              <img src="assets/87_501.svg" alt="details" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
