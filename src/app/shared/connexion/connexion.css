@@ -1,0 +1,227 @@
+* {
+    box-sizing: border-box;
+}
+
+/* 1. Modifications pour supprimer le scroll vertical sur la page */
+html, body {
+    height: 100%; /* S'assurer que le body occupe 100% de la hauteur du viewport */
+    overflow: hidden; /* Supprimer la barre de défilement du viewport */
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: #0b4f63;
+}
+
+/* 2. Adapter le conteneur principal */
+.password-reset-container {
+    max-width: 1440px;
+    height: 100vh; /* Utiliser 100% de la hauteur du viewport */
+    /* Utilisez `height: 100%` si vous voulez exclure l'éventuel padding du body dans le calcul de la hauteur. */
+    margin: 0 auto;
+    display: flex;
+    align-items: center; /* Centrer verticalement le contenu */
+    justify-content: center;
+    padding: 40px;
+    gap: 77px;
+    /* Rendre le conteneur défilant si nécessaire, sans faire défiler la page entière */
+    overflow-y: auto; 
+}
+
+/* 3. Ajustement du panneau d'information */
+.info-panel {
+    width: 594px;
+    /* Remplacer la hauteur fixe (848px) par une hauteur flexible */
+    height: auto;
+    max-height: calc(100vh - 80px); /* Hauteur maximale = 100% du viewport - (padding haut + padding bas) */
+    background-color: #0b4f63;
+    border: 1px solid #ffffff;
+    border-radius: 15px;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    padding: 40px; /* Ajouter un padding pour que le contenu ne touche pas les bords */
+}
+
+.logo-wrapper {
+    width: 330px;
+    height: 330px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.logo-graphic {
+    width: 208px;
+    height: 123px;
+    object-fit: contain;
+}
+
+.logo-text {
+    margin: 20px 0 0 0;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 40px;
+    line-height: 1.2;
+}
+
+.logo-text-kafo {
+    color: #85c441; /* Approximated from image */
+}
+
+.logo-text-fond {
+    color: #f59e0b; /* From Figma style textStyle_17 */
+}
+
+.form-panel {
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.form-title {
+    color: #0b4f63;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 64px;
+    line-height: 1.21; /* 77.45px */
+    text-align: left;
+    margin: 0 0 3px 0;
+}
+
+.form-subtitle {
+    color: #0b4f63;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 1.21; /* 29.04px */
+    text-align: left;
+    margin: 0 0 63px 0;
+}
+
+.reset-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.form-group {
+    position: relative;
+    width: 100%;
+    margin-bottom: 28px;
+}
+
+.form-input {
+    width: 100%;
+    height: 80px;
+    background-color: #ffffff;
+    border: 2px solid rgba(0, 0, 0, 0.19);
+    border-radius: 40px;
+    padding: 0 65px 0 30px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 32px;
+    color: #333;
+}
+
+.form-input::placeholder {
+    color: rgba(0, 0, 0, 0.67);
+    opacity: 1;
+}
+
+.form-icon {
+    position: absolute;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.submit-button {
+    width: 300px;
+    height: 54px;
+    background-color: #0b4f63;
+    border-radius: 40px;
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    font-size: 24px;
+    border: none;
+    cursor: pointer;
+    margin-top: 6px; 
+}
+
+/* Media Queries (Ajustement pour la responsivité) */
+
+@media (max-width: 1200px) {
+    .password-reset-container {
+        flex-direction: column;
+        gap: 40px;
+        padding: 40px 20px;
+        /* Sur les petits écrans, il est possible que nous ayons besoin du défilement */
+        overflow-y: auto; 
+    }
+
+    .info-panel {
+        width: 100%;
+        max-width: 594px;
+        height: auto;
+        padding: 60px 20px;
+        /* En mode colonne, la max-height n'est plus nécessaire */
+        max-height: none; 
+    }
+
+    .form-panel {
+        max-width: 500px;
+        align-items: center;
+        text-align: center;
+        /* Ajout d'un padding pour un meilleur espacement sur mobile */
+        padding-bottom: 20px; 
+    }
+    .form-title, .form-subtitle {
+        text-align: center;
+    }
+}
+
+@media (max-width: 576px) {
+    .form-title {
+        font-size: 48px;
+    }
+
+    .form-subtitle {
+        font-size: 20px;
+        margin-bottom: 40px;
+    }
+
+    .form-input {
+        height: 60px;
+        font-size: 20px;
+        padding-left: 20px;
+        padding-right: 50px;
+    }
+    
+    .form-icon {
+        right: 20px;
+    }
+
+    .logo-wrapper {
+        width: 250px;
+        height: 250px;
+    }
+
+    .logo-text {
+        font-size: 32px;
+    }
+    
+    .submit-button {
+        width: 100%;
+        max-width: 300px;
+    }
+}

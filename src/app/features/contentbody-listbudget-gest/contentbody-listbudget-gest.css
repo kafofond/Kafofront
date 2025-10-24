@@ -1,0 +1,159 @@
+/* Styles de base pour un affichage minimal */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', 'Poppins', sans-serif;
+  background-color: #e2e8f0; /* --color-background */
+  color: #000000; /* --color-text-dark */
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+  border: none;
+  background: transparent;
+}
+
+/* ---------------------------------------------------- */
+/* CSS Spécifique à la section 'content-toolbar' et la table */
+/* ---------------------------------------------------- */
+
+.content-toolbar {
+  /* Cette marge est une approximation basée sur le code original pour s'aligner */
+  margin-bottom: 34px;
+  margin-left: 326px; 
+}
+
+.filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 12px 27px;
+  background-color: #f59e0b; /* --color-accent */
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.67); /* --color-text-muted */
+}
+
+.budget-table-container {
+  background-color: #ffffff; /* --color-white */
+  border-radius: 15px;
+  border: 1px solid #e2e8f0;
+  padding: 10px;
+  flex-grow: 1;
+}
+
+.table-header,
+.table-row {
+  display: grid;
+  /* La grille a 6 colonnes (l'ancienne avait 7 en comptant la checkbox) */
+  grid-template-columns: 1.2fr 1.5fr 1.2fr 1fr 1.3fr 1.5fr; 
+  align-items: center;
+  padding: 20px 24px;
+}
+
+.table-header {
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.67); /* --color-text-muted */
+  background-color: #e2e8f0; /* --color-background */
+  border-radius: 15px;
+}
+
+.table-row {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  border-top: 1px solid #e2e8f0;
+}
+ 
+.table-body .table-row:first-child {
+  border-top: none;
+}
+
+.status-badge {
+  border-radius: 40px;
+  padding: 4px 12px;
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.status-badge.active {
+  background-color: #dcffbe; /* --color-status-active-bg */
+  color: #0c8f11; /* --color-status-active-text */
+}
+
+.actions-cell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+.action-link {
+  background-color: #0b4f63; /* --color-primary */
+  color: #ffffff; /* --color-white */
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 13px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.action-icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 15px;
+  background-color: #e2e8f0; /* --color-background */
+  display: grid;
+  place-items: center;
+}
+
+/* Media Queries pour le responsive */
+
+@media (max-width: 1200px) {
+  .content-toolbar {
+    margin-left: 0; /* Annule la marge forcée pour le centrage ou l'alignement responsive */
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 992px) {
+  .budget-table-container {
+    overflow-x: auto; /* Active le défilement horizontal */
+  }
+  .budget-table {
+    min-width: 900px; /* Assure que la grille reste lisible */
+  }
+  .table-header {
+    display: none; /* Cache l'en-tête de la grille en mode mobile */
+  }
+  .table-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Passage à un format deux colonnes pour les données */
+    gap: 15px;
+    padding: 15px;
+  }
+  /* Pour simuler l'en-tête, on peut mettre en gras le premier élément de chaque paire */
+  .table-row > div:nth-child(odd) {
+    font-weight: 600;
+    color: #0b4f63; /* --color-primary */
+  }
+  /* Les actions restent sur une ligne */
+  .actions-cell {
+    grid-column: 1 / span 2; 
+    justify-content: center;
+  }
+}

@@ -1,0 +1,217 @@
+/* Définitions globales nécessaires pour la section */
+* {
+  box-sizing: border-box;
+}
+
+/* Styles spécifiques à la section utilisateurs */
+.users-section {
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
+}
+
+.controls-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 31px;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.filter-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.67); /* --text-muted */
+}
+
+.custom-select {
+  background-color: #ffffff; /* --background-white */
+  border: 2px solid rgba(0, 0, 0, 0.12);
+  border-radius: 10px;
+  padding: 11px 12px 11px 17px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.67); /* --text-muted */
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 15px;
+  height: 40px;
+}
+
+.btn-secondary {
+  background-color: #e2e8f0; /* --background-light */
+  border: 2px solid rgba(0, 0, 0, 0.12);
+  color: rgba(0, 0, 0, 0.67); /* --text-muted */
+  width: 117px;
+}
+
+.btn-primary {
+  background-color: #f59e0b; /* --primary-accent */
+  color: rgba(0, 0, 0, 0.67); /* --text-muted */
+  width: 182px;
+}
+
+.users-table-container {
+  background-color: #ffffff; /* --background-white */
+  border: 1px solid #000000;
+  border-radius: 15px;
+  overflow: hidden;
+  padding: 0;
+}
+
+.table-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1.5fr 2.5fr 1.5fr 1fr 1.2fr;
+  align-items: center;
+  padding: 0 24px;
+  height: 65px;
+}
+
+/* .table-header {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.67); --text-muted
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  padding-bottom: 22px;
+  background-color: rgba(22, 94, 189, 0.1);
+} */
+
+
+.table-header {
+  display: grid;
+  grid-template-columns: 1.5fr 1.5fr 2.5fr 1.5fr 1fr 1.2fr;
+  align-items: center;
+  height: 65px;
+  background-color: rgba(22, 94, 189, 0.1); /* fond bleu clair étendu */
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 0 24px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.67);
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+
+.table-row {
+  display: grid;
+  grid-template-columns: 1.5fr 1.5fr 2.5fr 1.5fr 1fr 1.2fr;
+  align-items: center;
+  height: 65px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  padding: 0 24px;
+}
+
+.table-row:last-child {
+  border-bottom: none;
+}
+
+.table-row > div:first-child {
+  font-weight: 600;
+  font-size: 15px;
+  color: rgba(0, 0, 0, 0.67); /* --text-muted */
+}
+
+.table-row > div:nth-child(4) {
+  color: rgba(0, 0, 0, 0.44);
+  font-weight: 600;
+}
+
+.role-badge, .status-badge {
+  padding: 5px 15px;
+  border-radius: 50px;
+  font-weight: 600;
+  text-align: center;
+  display: inline-block;
+}
+
+.role-badge {
+  background-color: #dcffbe; /* --status-active-bg */
+  color: #0c8f11; /* --status-active-text */
+  min-width: 108px;
+}
+
+.status-badge.status-active {
+  background-color: #dcffbe; /* --status-active-bg */
+  color: #0c8f11; /* --status-active-text */
+}
+
+.status-badge.status-inactive {
+  background-color: rgba(244, 13, 13, 0.12); /* --status-inactive-bg */
+  color: #f40d0d; /* --status-inactive-text */
+}
+
+.action-icons {
+  display: flex;
+  gap: 8px;
+}
+
+.action-icons a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: #e2e8f0; /* --background-light */
+  border-radius: 15px;
+}
+
+/* Media Queries pour la mise en page adaptative de la table et des contrôles */
+
+@media (max-width: 1200px) {
+  .table-grid {
+    grid-template-columns: 1fr 1fr 1.5fr 1fr 1fr 1fr;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .controls-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .filters, .actions {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+  .users-table-container {
+    overflow-x: auto;
+  }
+  .table-grid {
+    min-width: 800px; /* Assure que le contenu de la table ne s'écrase pas */
+  }
+}

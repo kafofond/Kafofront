@@ -1,0 +1,36 @@
+<section id="login" class="login-page">
+    <div class="login-container">
+        <aside class="brand-panel">
+            <div class="logo-wrapper">
+                <img src="assets/fae3c052cb9ef742681bdee0fd53c88f855d60bf.png" alt="KafoFond logo graphic" class="logo-image">
+                <p class="logo-text">
+                    <span class="logo-text-green">Kafo</span><span class="logo-text-orange">Fond</span>
+                </p>
+            </div>
+        </aside>
+        <main class="login-form-panel">
+            <h1 class="form-title">Connexion</h1>
+            <p class="form-subtitle">C'est le moment de se connecter</p>
+            <form (ngSubmit)="login(loginForm)" #loginForm="ngForm" class="login-form" action="#" method="post">
+                <div class="input-group">
+                    <label for="email" class="sr-only">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Email">
+                    <img src="assets/398_112.svg" class="input-icon" alt="">
+                </div>
+                <div class="input-group">
+                    <label for="password" class="sr-only">Mot de passe</label>
+                    <input type="password" id="password" name="password" placeholder="Mot de passe">
+                    <img src="assets/398_118.svg" class="input-icon" alt="">
+                </div>
+                <div class="form-options">
+                    <div class="remember-me">
+                        <input type="checkbox" id="remember-me" name="remember-me">
+                        <label for="remember-me">Se souvenir de moi</label>
+                    </div>
+                    <a [routerLink]="'/mot-de-passe-oublie'" class="forgot-password">Mot de passe oublier ?</a>
+                </div>
+                <button type="submit" class="submit-btn">Se connecter</button>
+            </form>
+        </main>
+    </div>
+</section>

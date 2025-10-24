@@ -1,0 +1,180 @@
+body {
+  margin: 0;
+  /* Assurez-vous d'inclure la police 'Inter' si elle est utilisée */
+  font-family: 'Inter', sans-serif; 
+  background-color: #e2e8f0;
+  color: #0b4f63;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+h1, h2, h3, p {
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* ------------------------------------------- */
+/* CSS Spécifique à la section 'content-body' */
+/* ------------------------------------------- */
+
+.content-body {
+  display: flex;
+  flex-direction: column;
+  gap: 39px;
+  /* On pourrait ajouter un padding si le content-body n'est pas dans un .main-content parent */
+  padding: 30px 20px; 
+}
+
+.stats-cards {
+  display: flex;
+  gap: 45px;
+  flex-wrap: wrap;
+}
+
+.stat-card-wrapper {
+  flex: 1;
+  min-width: 300px;
+  border-radius: 10px;
+  padding-top: 5px;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+.stat-card-wrapper.green { background-color: #14b53a; }
+.stat-card-wrapper.orange { background-color: #f59e0b; }
+.stat-card-wrapper.red { background-color: #f51919; }
+
+.stat-card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 19px 22px 14px;
+  height: 100%;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 19px;
+}
+
+.card-icon-container {
+  width: 50px;
+  height: 50px;
+  border-radius: 15px;
+  display: grid;
+  place-items: center;
+}
+.card-icon-container.green-bg { background-color: rgba(20, 181, 58, 0.2); }
+.card-icon-container.orange-bg { background-color: rgba(245, 158, 11, 0.2); }
+.card-icon-container.blue-bg { background-color: rgba(11, 79, 99, 0.2); }
+
+.card-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #000000;
+}
+
+.card-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.67);
+  opacity: 0.8;
+  margin-bottom: 19px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 10px;
+  background-color: #d9d9d9;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 10px;
+}
+.progress-fill.green { background-color: #14b53a; }
+.progress-fill.orange { background-color: #f59e0b; }
+.progress-fill.red { background-color: #f51919; }
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.67);
+  opacity: 0.8;
+}
+
+.chart-wrapper {
+  background-color: #ffffff;
+  padding: 24px;
+  border-radius: 8px;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chart-header h3 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #0b4f63;
+}
+
+.export-button {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 11px 15px;
+  background-color: #e2e8f0;
+  border: 2px solid rgba(0, 0, 0, 0.12);
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.67);
+  cursor: pointer;
+}
+
+.chart-image {
+  margin-top: 15px;
+}
+
+/* Media Queries pour le responsive de la section */
+@media (max-width: 1200px) {
+  .stats-cards {
+    gap: 20px;
+  }
+}
+
+@media (max-width: 992px) {
+  .content-body {
+    gap: 20px;
+  }
+  .stats-cards {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 768px) {
+  .chart-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}

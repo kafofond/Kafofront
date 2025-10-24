@@ -1,0 +1,122 @@
+<aside class="sidebar">
+  <!-- Logo -->
+  <div class="sidebar-header">
+    <a routerLink="/" class="logo">
+      <img
+        src="assets/714cbf89a893ed060d5aa944464a6360bc1f47ea.png"
+        alt="KafoFond Logo"
+        class="logo-img"
+      />
+      <h1 class="logo-text">
+        Kafo<span class="logo-text-highlight">Fond</span>
+      </h1>
+    </a>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="sidebar-nav">
+    <ul>
+      <li class="nav-item">
+        <a
+          routerLink=""
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <span class="nav-bar"></span>
+          <img
+            src="assets/87_48.svg"
+            alt=""
+            class="nav-icon"
+          />
+          <span class="nav-text">Tableau de bord</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a routerLink="/listbudget-gest" routerLinkActive="active">
+          <span class="nav-bar"></span>
+          <img
+            src="assets/87_54.svg"
+            alt=""
+            class="nav-icon"
+          />
+          <span class="nav-text">Budgets</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a
+          routerLink="fiche-de-besoin-gest"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <span class="nav-bar"></span>
+          <img
+            src="assets/87_60.svg"
+            alt=""
+            class="nav-icon"
+          />
+          <span class="nav-text">Fiches de besoins</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a
+          routerLink="demande-achat-gest"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <span class="nav-bar"></span>
+          <img
+            src="assets/120_164.svg"
+            alt=""
+            class="nav-icon"
+          />
+          <span class="nav-text">Demandes d'achat</span>
+        </a>
+      </li>
+
+      <!-- ✅ Menu "Bons de commande" retiré -->
+
+      <li class="nav-item">
+        <a
+          routerLink="/attestation-de-service-fait-gest"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <span class="nav-bar"></span>
+          <img
+            src="assets/427_96.svg"
+            alt=""
+            class="nav-icon"
+          />
+          <span class="nav-text">Attestation de service fait</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a
+          routerLink="/parametres-gest"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <span class="nav-bar"></span>
+          <img
+            src="assets/87_70.svg"
+            alt=""
+            class="nav-icon"
+          />
+          <span class="nav-text">Paramètres</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Déconnexion -->
+  <div class="sidebar-footer">
+    <a routerLink="/seconnecter" class="logout-button">
+      <img src="assets/87_33.svg" alt="" class="nav-icon" />
+      <span>Déconnexion</span>
+    </a>
+  </div>
+</aside>

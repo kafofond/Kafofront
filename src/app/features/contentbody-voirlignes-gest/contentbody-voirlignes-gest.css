@@ -1,0 +1,195 @@
+/* Styles de base */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background-color: #e2e8f0; /* --color-background */
+  color: rgba(0, 0, 0, 0.67); /* --color-text-secondary */
+  font-size: 16px;
+}
+
+a, button {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
+  font-family: inherit;
+}
+
+/* --- Main Content Header (Barre d'outils) --- */
+.main-content {
+  flex-grow: 1;
+  padding: 34px 18px 38px 18px;
+}
+
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 34px;
+}
+
+.content-title {
+  font-family: 'Roboto', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: #0b4f63; /* --color-text-primary */
+  margin: 0;
+}
+
+.content-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.back-button, .filter-button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 40px;
+  border-radius: 10px;
+  background-color: #f59e0b; /* --color-accent */
+  font-weight: 700;
+  font-size: 15px;
+  color: rgba(0, 0, 0, 0.67); /* --color-text-secondary */
+}
+ 
+.back-button {
+  font-size: 13px;
+  padding: 0 24px 0 11px;
+}
+
+.filter-button {
+  padding: 0 20px;
+}
+
+/* --- Budget Table (Lignes de Budget) --- */
+.budget-table-container {
+  background-color: #ffffff; /* --color-surface */
+  border: 1px solid #e2e8f0; /* --color-border-light */
+  border-radius: 15px;
+  padding: 25px 0;
+}
+
+.table-header, .table-row {
+  display: grid;
+  /* 7 colonnes: Intitulé(2.5) | Alloué(1.5) | Engagé(1.5) | Restant(1.5) | Taux(1.8) | Statut(1.2) | Actions(1) */
+  grid-template-columns: 2.5fr 1.5fr 1.5fr 1.5fr 1.8fr 1.2fr 1fr;
+  gap: 16px;
+  align-items: center;
+  padding: 0 24px;
+}
+
+.table-header {
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.67); /* --color-text-secondary */
+  padding-bottom: 25px;
+}
+
+.table-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background-color: #e2e8f0; /* --color-border-light (pour la séparation des lignes) */
+}
+
+.table-row {
+  background-color: #ffffff; /* --color-surface */
+  height: 65px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.44); /* --color-text-muted (couleur par défaut pour les chiffres) */
+}
+
+.col-intitule {
+  display: flex;
+  flex-direction: column;
+}
+
+.item-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.67); /* --color-text-secondary */
+}
+
+.col-taux {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.progress-bar {
+  width: 94px;
+  height: 10px;
+  background-color: #d9d9d9; /* --color-progress-bg */
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-bar-inner {
+  height: 100%;
+  background-color: #f59e0b; /* --color-accent */
+  border-radius: 10px;
+}
+
+.progress-percent {
+  font-size: 13px;
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 3px 20px;
+  border-radius: 40px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.status-badge.active {
+  background-color: #dcffbe; /* --color-status-active-bg */
+  color: #0c8f11; /* --color-status-active-text */
+}
+
+.col-actions {
+  justify-self: center;
+}
+
+.action-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 15px;
+  background-color: #e2e8f0; /* --color-background */
+  display: grid;
+  place-items: center;
+}
+
+/* --- Responsive (Mobile) --- */
+@media (max-width: 992px) {
+  /* Réduit la complexité du tableau sur mobile */
+  .table-header, .table-row {
+    /* 4 colonnes: Intitulé(2) | Alloué(1) | Engagé(1) | Restant(1) */
+    grid-template-columns: 2fr repeat(3, 1fr);
+    grid-auto-flow: row;
+    padding: 10px;
+    height: auto;
+  }
+  
+  /* Masque les colonnes moins prioritaires sur petit écran */
+  .col-taux, 
+  .col-actions, 
+  .table-header div:nth-child(5), /* Taux utilisation (en-tête) */
+  .table-header div:nth-child(6), /* Statut (en-tête) */
+  .table-header div:nth-child(7)  /* Actions (en-tête) */
+  { 
+    display: none; 
+  }
+}

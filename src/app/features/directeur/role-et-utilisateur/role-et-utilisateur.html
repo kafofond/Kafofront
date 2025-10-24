@@ -1,0 +1,81 @@
+<section class="users-section">
+  <div class="controls-bar">
+    <div class="filters">
+      <!-- Filtre Rôle -->
+      <div class="filter-group">
+        <label for="role-filter">Rôle :</label>
+        <select 
+          class="custom-select"
+          id="role-filter"
+          [(ngModel)]="selectedRole"
+          (change)="setRole(selectedRole)"
+        >
+          <option value="Tous">Tous les rôles</option>
+          <option *ngFor="let role of (Role | keyvalue)" [value]="role.value">
+            {{ role.value }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Filtre Statut -->
+      <div class="filter-group">
+        <label for="status-filter">Statut :</label>
+        <select
+          class="custom-select"
+          id="status-filter"
+          [(ngModel)]="selectedStatus"
+          (change)="setStatus(selectedStatus)"
+        >
+          <option value="Tous">Tous les statuts</option>
+          <option value="Actif">Actif</option>
+          <option value="Inactif">Inactif</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-secondary">
+        <img src="assets/87_477.svg" alt="" />
+        Exporter
+      </button>
+      <button class="btn btn-primary">
+        <img src="assets/heroicons-solid_user-add.svg" alt="" />
+        Ajouter membre
+      </button>
+    </div>
+  </div>
+
+  <div class="users-table-container">
+    <div class="table-grid table-header">
+      <div>Utilisateur</div>
+      <div>Rôle</div>
+      <div>Email</div>
+      <div>Dernière activité</div>
+      <div>Statut</div>
+      <div>Actions</div>
+    </div>
+
+    <!-- Boucle dynamique avec filtres -->
+    <div class="table-grid table-row" *ngFor="let user of filteredUsers">
+      <div>{{ user.nomUtilisateur }} {{ user.prenomUtilisateur }}</div>
+      <div><span class="role-badge">{{ user.role }}</span></div>
+      <div>{{ user.email }}</div>
+      <div>{{ user.derniereActivite || 'N/A' }}</div>
+      <div>
+        <span
+          class="status-badge"
+          [ngClass]="{
+            'status-active': user.etat,
+            'status-inactive': !user.etat
+          }"
+        >
+          {{ user.etat ? 'Active' : 'Inactive' }}
+        </span>
+      </div>
+      <div class="action-icons">
+        <a href="#"><img src="assets/87_501.svg" alt="Details" /></a>
+        <a href="#"><img src="assets/32_236.svg" alt="Edit" /></a>
+      </div>
+    </div>
+  </div>
+</section>
