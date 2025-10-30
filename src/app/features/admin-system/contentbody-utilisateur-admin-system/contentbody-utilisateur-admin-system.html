@@ -1,0 +1,60 @@
+<section class="utilisateurs-section">
+  <div class="utilisateurs-header">
+    <h3>Liste des Utilisateurs</h3>
+
+    <div class="utilisateurs-actions">
+      <select [(ngModel)]="filtreStatut">
+        <option value="tous">Tous</option>
+        <option value="actifs">Actifs</option>
+        <option value="bloques">Bloqués</option>
+      </select>
+
+      <button class="btn btn-secondary" (click)="exporter()">
+        <img src="assets/Group 901.svg" alt="Exporter" />
+        Exporter
+      </button>
+
+      <button class="btn btn-primary" (click)="ajouterUtilisateur()">
+        <img src="assets/bxs_user-plus.svg" alt="Ajouter" />
+        Ajouter un utilisateur
+      </button>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <table class="utilisateurs-table">
+      <thead class="header-color">
+        <tr>
+          <th>Nom</th>
+          <th>Prénom</th>
+          <th>Email</th>
+          <th>Rôle</th>
+          <th>État</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let u of utilisateursFiltres">
+          <td>{{ u.nomUtilisateur }}</td>
+          <td>{{ u.prenomUtilisateur }}</td>
+          <td>{{ u.email }}</td>
+          <td>{{ u.role }}</td>
+          <td>
+            <span class="status" [ngClass]="{ active: u.etat, inactive: !u.etat }">
+              {{ u.etat ? 'Actif' : 'Bloqué' }}
+            </span>
+          </td>
+          <td class="actions">
+            <button class="action-btn" title="Activer" (click)="activerUtilisateur(u)">
+              <img src="assets/Frame icon approuver.svg" alt="Activer" />
+            </button>
+            <button class="action-btn" title="Bloquer" (click)="bloquerUtilisateur(u)">
+              <img src="assets/bx_block.svg" alt="Bloquer" />
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

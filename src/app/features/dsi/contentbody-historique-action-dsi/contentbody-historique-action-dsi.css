@@ -1,0 +1,87 @@
+.historique-section {
+  padding: 20px;
+  background-color: #f8fafc;
+}
+
+.historique-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.historique-header h3 {
+  color: #0b4f63;
+  font-size: 1.4rem;
+}
+
+.historique-filtres {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.historique-filtres label {
+  font-size: 14px;
+  color: #333;
+}
+
+select {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.table-container {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+}
+
+.historique-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.historique-table th,
+.historique-table td {
+  padding: 12px 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.action-status {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: capitalize;
+}
+
+.action-status.cree {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.action-status.modifie {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.action-status.valide {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.action-status.rejete {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.header-color {
+    background-color: #E2E8F0;
+}

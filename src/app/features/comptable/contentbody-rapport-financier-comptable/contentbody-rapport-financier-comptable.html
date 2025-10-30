@@ -1,0 +1,91 @@
+<section class="content-area">
+
+  <!-- BARRE D’EXPORT -->
+  <div class="filter-bar">
+    <div class="filter-group">
+      <h2 style="font-size: 18px; font-weight: 600; color: #0b4f63;">
+        Tableau de Suivi Financier
+      </h2>
+    </div>
+
+    <div style="display: flex; gap: 15px;">
+      <button class="export-btn">
+        <img src="assets/fa6-solid_file-excel.svg" alt="Export Excel" />
+        <span>Exporter Excel</span>
+      </button>
+      <button class="export-btn">
+        <img src="assets/fa6-solid_file-pdf.svg" alt="Export PDF" />
+        <span>Exporter PDF</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="data-card">
+
+    <!-- TABLEAU 1 : Lignes de Crédit -->
+    <div class="table-section">
+      <h2 class="table-title">Lignes de crédit</h2>
+
+      <div class="data-table">
+        <div class="table-header">
+          <div class="col col-1">Intitulé</div>
+          <div class="col col-2">Montant Alloué</div>
+          <div class="col col-3">Montant Engagé</div>
+          <div class="col col-4">Montant Restant</div>
+          <div class="col col-5">Statut</div>
+        </div>
+
+        <div class="table-row" *ngFor="let ligne of lignesBudget">
+          <div class="col col-1">{{ ligne.intituleLigne }}</div>
+          <div class="col col-2">{{ ligne.montantAlloue | number }} FCFA</div>
+          <div class="col col-3">{{ ligne.montantEngage | number }} FCFA</div>
+          <div class="col col-4">{{ ligne.montantRestant | number }} FCFA</div>
+          <div class="col col-5">
+            <span
+              class="status-badge"
+              [ngClass]="{
+                'status-success': ligne.statut === 'Validé',
+                'status-danger': ligne.statut === 'Rejeté',
+                'status-pending': ligne.statut === 'En attente'
+              }"
+              >{{ ligne.statut }}</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABLEAU 2 : Rapports d'Achat -->
+    <div class="table-section">
+      <h2 class="table-title">Rapports d'achat</h2>
+
+      <div class="data-table">
+        <div class="table-header">
+          <div class="col col-1">Nom</div>
+          <div class="col col-2">Fiche de besoin</div>
+          <div class="col col-3">Demande d'achat</div>
+          <div class="col col-4">Bon de commande</div>
+          <div class="col col-5">Date de création</div>
+          <div class="col col-6">Actions</div>
+        </div>
+
+        <div class="table-row" *ngFor="let rapport of rapportDachats">
+          <div class="col col-1">{{ rapport.nom }}</div>
+          <div class="col col-2">{{ rapport.ficheDeBesoin }}</div>
+          <div class="col col-3">{{ rapport.demandeAchat }}</div>
+          <div class="col col-4">{{ rapport.bonDeCommande }}</div>
+          <div class="col col-5">{{ rapport.dateDeCreation | date: 'dd/MM/yyyy' }}</div>
+          <div class="col col-6" style="display: flex; justify-content: center; gap: 12px;">
+            <button class="action-btn" title="Voir détails">
+              <img src="assets/fa6-solid_file-excel.svg" alt="Export Excel" />
+            </button>
+            <button class="action-btn" title="Modifier">
+              <img src="assets/fa6-solid_file-pdf.svg" alt="Export PDF" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>

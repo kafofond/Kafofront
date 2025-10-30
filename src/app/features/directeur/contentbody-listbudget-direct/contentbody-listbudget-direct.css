@@ -36,23 +36,7 @@ button {
     justify-content: flex-start;
 }
 
-/* Nouveau style pour le bouton "Créer budget" */
-.create-btn {
-    display: flex;
-    align-items: center;
-    gap: 13px;
-    padding: 12px 27px;
-    background-color: #0b4f63; /* Couleur principale */
-    border: none;
-    border-radius: 10px;
-    font-size: 15px;
-    font-weight: 700;
-    color: #ffffff;
-}
-.create-btn img {
-    /* Style pour les icônes sur fond sombre (si nécessaire) */
-    filter: brightness(0) invert(1);
-}
+c
 
 
 /* --- Styles pour le bouton de Filtre et le Dropdown --- */
@@ -484,7 +468,7 @@ input:checked + .slider:before {
     }
 }
 
-/* 
+/*
 * --- Fin Fenêtre Modale ---
  */
 

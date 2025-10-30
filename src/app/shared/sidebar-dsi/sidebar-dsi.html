@@ -1,0 +1,74 @@
+<aside class="sidebar">
+    <div class="sidebar-header">
+        <a class="logo">
+            <img
+                src="assets/714cbf89a893ed060d5aa944464a6360bc1f47ea.png"
+                alt="KafoFond Logo"
+                class="logo-img"
+            />
+            <h1 class="logo-text">
+                Kafo<span class="logo-text-highlight">Fond</span>
+            </h1>
+        </a>
+    </div>
+
+    <nav class="sidebar-nav">
+        <ul>
+            <li class="nav-item">
+                <a
+                    routerLink="/dsi"
+                    routerLinkActive="active"
+                    [routerLinkActiveOptions]="{ exact: true }"
+                >
+                    <span class="nav-bar"></span>
+                    <img src="assets/87_48.svg" alt="" class="nav-icon" />
+                    <span class="nav-text">Tableau de bord</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a
+                    routerLink="utilisateurs-dsi"
+                    routerLinkActive="active"
+                    [routerLinkActiveOptions]="{ exact: true }"
+                >
+                    <span class="nav-bar"></span>
+                    <img src="assets/fa6-solid_users-gear.svg" alt="" class="nav-icon" />
+                    <span class="nav-text">Utilisateurs</span>
+                </a>
+            </li>
+
+             <li class="nav-item">
+                <a
+                    routerLink="historiques-dsi"
+                    routerLinkActive="active"
+                    [routerLinkActiveOptions]="{ exact: true }"
+                >
+                    <span class="nav-bar"></span>
+                    <img src="assets/fa-solid_file-upload.svg" alt="" class="nav-icon" />
+                    <span class="nav-text">Historiques</span>
+                </a>
+            </li>
+
+
+            <li class="nav-item">
+                <a
+                    routerLink="parametres-dsi"
+                    routerLinkActive="active"
+                    [routerLinkActiveOptions]="{ exact: true }"
+                >
+                    <span class="nav-bar"></span>
+                    <img src="assets/87_70.svg" alt="" class="nav-icon" />
+                    <span class="nav-text">Paramètres</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+        <a routerLink="/seconnecter" class="logout-button">
+            <img src="assets/87_33.svg" alt="" class="nav-icon" />
+            <span>Déconnexion</span>
+        </a>
+    </div>
+</aside>

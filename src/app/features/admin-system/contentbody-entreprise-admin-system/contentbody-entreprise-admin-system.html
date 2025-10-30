@@ -1,0 +1,65 @@
+<section class="entreprises-section">
+  <div class="entreprises-header">
+    <h3>Liste des Entreprises</h3>
+
+    <div class="entreprises-actions">
+      <!-- Sélecteur de filtre par statut -->
+      <select [(ngModel)]="filtreStatut" class="filtre-select">
+        <option value="tous">Tous</option>
+        <option value="actif">Actives</option>
+        <option value="inactif">Bloquées</option>
+      </select>
+
+      <button class="btn btn-secondary" (click)="exporterEntreprises()">
+        <img src="assets/Group 901.svg" alt="Exporter" />
+        Exporter
+      </button>
+
+      <button class="btn btn-primary" (click)="ajouterEntreprise()">
+        <img src="assets/bi_building-fill_white.svg" alt="Ajouter" />
+        Ajouter une entreprise
+      </button>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <table class="entreprises-table">
+      <thead class="header-color">
+        <tr>
+          <th>Nom</th>
+          <th>Adresse</th>
+          <th>Domaine</th>
+          <th>Email</th>
+          <th>Téléphone</th>
+          <th>Date de création</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let e of filteredEntreprises">
+          <td>{{ e.nom }}</td>
+          <td>{{ e.adresse }}</td>
+          <td>{{ e.domaine }}</td>
+          <td>{{ e.email }}</td>
+          <td>{{ e.telephone }}</td>
+          <td>{{ e.dateCreation | date: 'yyyy-MM-dd' }}</td>
+          <td>
+            <span class="status" [ngClass]="{ active: e.statut, inactive: !e.statut }">
+              {{ e.statut ? 'Active' : 'Bloquée' }}
+            </span>
+          </td>
+          <td class="actions">
+            <button class="action-btn" (click)="afficherDetails(e)">
+              <img src="assets/87_501.svg" alt="Voir détails" />
+            </button>
+            <button class="action-btn" (click)="bloquerEntreprise(e)">
+              <img src="assets/bx_block.svg" alt="Bloquer" />
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

@@ -1,0 +1,48 @@
+<section class="historique-section">
+  <div class="historique-header">
+    <h3>Historique des Actions</h3>
+
+    <div class="historique-filtres">
+      <label for="filtre">Filtrer par action :</label>
+      <select id="filtre" [(ngModel)]="filtreAction">
+        <option value="toutes">Toutes</option>
+        <option value="cree">Créé</option>
+        <option value="modifie">Modifié</option>
+        <option value="valide">Validé</option>
+        <option value="rejete">Rejeté</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <table class="historique-table">
+      <thead class="header-color">
+        <tr>
+          <th>Fichier</th>
+          <th>Auteur</th>
+          <th>Type de document</th>
+          <th>Action</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let h of historiquesFiltres">
+          <td>{{ h.fichier }}</td>
+          <td>{{ h.auteur }}</td>
+          <td>{{ h.typeDocument }}</td>
+          <td>
+            <span class="action-status" [ngClass]="{
+              cree: h.action === 'Créé',
+              modifie: h.action === 'Modifié',
+              valide: h.action === 'Validé',
+              rejete: h.action === 'Rejeté'
+            }">
+              {{ h.action }}
+            </span>
+          </td>
+          <td>{{ h.date | date: 'yyyy-MM-dd' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
