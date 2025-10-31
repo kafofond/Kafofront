@@ -23,7 +23,7 @@ img {
   padding: 39px 29px;
 }
 
-.filter-bar {
+/* .filter-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -46,7 +46,7 @@ img {
   display: flex;
   align-items: center;
   gap: 7px;
-  background-color: #ffffff; /* --bg-card */
+  background-color: #ffffff; --bg-card 
   border: 2px solid rgba(0, 0, 0, 0.12);
   border-radius: 10px;
   padding: 12px 15px;
@@ -56,7 +56,75 @@ img {
 .filter-select span {
   font-size: 13px;
   font-weight: 700;
-  color: rgba(0, 0, 0, 0.67); /* --text-muted */
+  color: rgba(0, 0, 0, 0.67); /* --text-muted 
+} */
+
+.filter-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 38px;
+}
+
+.filter-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.67);
+}
+
+.filter-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.filter-select {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #ffffff;
+    border: 2px solid rgba(0, 0, 0, 0.12);
+    border-radius: 10px;
+    padding: 12px 15px;
+    cursor: pointer;
+    width: 180px;
+}
+
+.filter-select span {
+    font-size: 13px;
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.67);
+}
+
+.dropdown-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 180px;
+    background: #fff;
+    border: 2px solid rgba(0, 0, 0, 0.12);
+    border-radius: 10px;
+    margin-top: 4px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    list-style: none;
+    padding: 5px 0;
+    z-index: 10;
+}
+
+.dropdown-list li {
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.67);
+    transition: background 0.2s ease;
+}
+
+.dropdown-list li:hover,
+.dropdown-list li.active {
+    background-color: #f59e0b;
+    color: #fff;
 }
 
 .export-btn {
