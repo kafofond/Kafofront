@@ -14,6 +14,7 @@ import { CommonModule } from '@angular/common';
 export class Depenses {
   Statut = Statut;
   selectedStatus: string = 'Tous';
+  statusDropdownOpen: boolean = false;
 
   demandesAchat: DemandeAchat[] = [
     {
@@ -109,8 +110,14 @@ export class Depenses {
     return filtered.slice(0, 5);
   }
 
+
+   toggleStatusDropdown() {
+    this.statusDropdownOpen = !this.statusDropdownOpen;
+  }
+
   setStatus(status: string) {
     this.selectedStatus = status;
+    this.statusDropdownOpen = false; // fermer dropdown après sélection
   }
 
 

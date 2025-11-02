@@ -1,0 +1,137 @@
+<aside class="sidebar">
+    <div class="sidebar-header">
+        <a class="logo">
+            <img
+                src="assets/714cbf89a893ed060d5aa944464a6360bc1f47ea.png"
+                alt="KafoFond Logo"
+                class="logo-img"
+            />
+            <h1 class="logo-text">
+                Kafo<span class="logo-text-highlight">Fond</span>
+            </h1>
+        </a>
+    </div>
+
+    <nav class="sidebar-nav">
+        <ul>
+            <li class="nav-item">
+                <a
+                    routerLink="/comptable"
+                    routerLinkActive="active"
+                    [routerLinkActiveOptions]="{ exact: true }"
+                >
+                    <span class="nav-bar"></span>
+                    <img src="assets/87_48.svg" alt="" class="nav-icon" />
+                    <span class="nav-text">Tableau de bord</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a
+                    routerLink="depenses-comptable"
+                    routerLinkActive="active"
+                    [routerLinkActiveOptions]="{ exact: true }"
+                >
+                    <span class="nav-bar"></span>
+                    <img src="assets/87_60.svg" alt="" class="nav-icon" />
+                    <span class="nav-text">Dépenses</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a
+                    routerLink="attestation-de-service-fait-comptable"
+                    routerLinkActive="active"
+                    [routerLinkActiveOptions]="{ exact: true }"
+                >
+                    <span class="nav-bar"></span>
+                    <img src="assets/attestation-service-fait.svg" alt="" class="nav-icon" />
+                    <span class="nav-text">Attestation de service fait</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a
+                    routerLink="bons-de-commande-comptable"
+                    routerLinkActive="active"
+                    [routerLinkActiveOptions]="{ exact: true }"
+                >
+                    <span class="nav-bar"></span>
+                    <img src="assets/bons-de-commande.svg" alt="" class="nav-icon" />
+                    <span class="nav-text">Bons de commande</span>
+                </a>
+            </li>
+
+
+            <li class="nav-item">
+                <a
+                    routerLink="decision-prelevement-comptable"
+                    routerLinkActive="active"
+                    [routerLinkActiveOptions]="{ exact: true }"
+                >
+                    <span class="nav-bar"></span>
+                    <img
+                        src="assets/decisions-prelevement.svg"
+                        alt=""
+                        class="nav-icon"
+                    />
+                    <span class="nav-text">Décisions de prélèvement</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a
+                    routerLink="ordre-paiement-comptable"
+                    routerLinkActive="active"
+                    [routerLinkActiveOptions]="{ exact: true }"
+                >
+                    <span class="nav-bar"></span>
+                    <img
+                        src="assets/ordres_prelevement.svg"
+                        alt=""
+                        class="nav-icon"
+                    />
+                    <span class="nav-text">Ordres de prélèvement</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a
+                    routerLink="rapport-financier-comptable"
+                    routerLinkActive="active"
+                    [routerLinkActiveOptions]="{ exact: true }"
+                >
+                    <span class="nav-bar"></span>
+                    <img
+                        src="assets/rapports_financiers.svg"
+                        alt=""
+                        class="nav-icon"
+                    />
+                    <span class="nav-text">Rapports financiers</span>
+                </a>
+            </li>
+
+
+            
+
+            <li class="nav-item">
+                <a
+                    routerLink="parametres-comptable"
+                    routerLinkActive="active"
+                    [routerLinkActiveOptions]="{ exact: true }"
+                >
+                    <span class="nav-bar"></span>
+                    <img src="assets/87_70.svg" alt="" class="nav-icon" />
+                    <span class="nav-text">Paramètres</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+        <a routerLink="/seconnecter" class="logout-button">
+            <img src="assets/87_33.svg" alt="" class="nav-icon" />
+            <span>Déconnexion</span>
+        </a>
+    </div>
+</aside>

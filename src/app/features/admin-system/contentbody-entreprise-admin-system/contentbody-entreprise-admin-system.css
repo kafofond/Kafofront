@@ -1,0 +1,107 @@
+.entreprises-section {
+  padding: 20px;
+  background-color: #f8fafc;
+}
+
+.entreprises-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.entreprises-header h3 {
+  color: #0b4f63;
+  font-size: 1.4rem;
+}
+
+.entreprises-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Filtre par statut */
+.filtre-select {
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: #0b4f63;
+  color: white;
+}
+
+.btn-secondary {
+  background-color: #f59e0b;
+  color: white;
+}
+
+.table-container {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+}
+
+.entreprises-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.entreprises-table th,
+.entreprises-table td {
+  padding: 12px 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.status {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.status.active {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.status.inactive {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.actions {
+  display: flex;
+  gap: 6px;
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.action-btn img {
+  width: 20px;
+}
+
+.header-color {
+    background-color: #E2E8F0;
+}

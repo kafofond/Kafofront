@@ -128,7 +128,15 @@ img {
 .col-3 { flex: 1.5; font-size: 13px; font-weight: 600; color: rgba(0, 0, 0, 0.44); } /* --text-muted-light */
 .col-4 { flex: 1.5; font-size: 13px; font-weight: 600; color: rgba(0, 0, 0, 0.44); } /* --text-muted-light */
 .col-5 { flex: 1.5; text-align: center; }
-.col-6 { flex: 1; text-align: center; }
+.col-6 {
+  flex: 1;
+  text-align: center;
+  display: flex;              /* Permet d’aligner les boutons sur une ligne */
+  justify-content: center;    /* Centre horizontalement les boutons */
+  align-items: center;        /* Aligne verticalement au centre */
+  gap: 8px;                   /* Espacement entre les boutons */
+}
+
 
 .status-badge {
   display: inline-block;
@@ -148,12 +156,6 @@ img {
   color: #f51919; /* --status-danger */
 }
 
-.action-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-}
 
 /* ---------------------------------- */
 /* Media Queries */
@@ -224,11 +226,32 @@ img {
   font-weight: 700;
 }
 
+
+/* Aligne les icônes horizontalement */
+.action-icons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Style identique à celui de la section utilisateurs */
 .action-btn {
-  background: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: #e2e8f0; /* fond clair */
   border: none;
+  border-radius: 15px;
   cursor: pointer;
+  transition: all 0.2s ease;
   padding: 0;
-  margin-right: 5px;
+}
+
+.action-btn:hover {
+  background-color: #d9dee6;
+  transform: scale(1.05);
 }
 

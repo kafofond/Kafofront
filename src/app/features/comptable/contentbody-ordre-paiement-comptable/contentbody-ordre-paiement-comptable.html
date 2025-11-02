@@ -1,0 +1,70 @@
+<!-- Barre de filtre -->
+<div class="filter-bar">
+  <div class="filter-group">
+    <label>Statut :</label>
+    <div class="filter-select" (click)="toggleStatusDropdown()">
+      <span>{{ selectedStatus }}</span>
+      <img src="assets/87_539.svg" alt="dropdown arrow">
+    </div>
+    <ul class="dropdown-list" *ngIf="statusDropdownOpen">
+      <li *ngFor="let s of ['Tous', 'Validé', 'En attente', 'Rejeté']"
+            (click)="setStatus(s)"
+            [class.active]="selectedStatus === s">
+          {{ s }}
+      </li>
+    </ul>
+  </div>
+
+  <button class="create-btn">
+        <img src="assets/foundation_plus.svg" alt="Créer">
+        <span>Créer OP</span>
+    </button>
+
+  <button class="export-btn">
+    <img src="assets/87_477.svg" alt="Export Icon">
+    <span>Exporter</span>
+  </button>
+</div>
+
+<div class="table-section">
+  <h2 class="table-title">Ordres de Paiement</h2>
+
+  <div class="data-table">
+    <div class="table-header">
+      <div class="col col-1">Code</div>
+      <div class="col col-2">Réf. Décision Prélèvement</div>
+      <div class="col col-3">Montant</div>
+      <div class="col col-4">Compte Destinataire</div>
+      <div class="col col-5">Statut</div>
+      <div class="col col-6">Actions</div>
+    </div>
+
+    <div class="table-row" *ngFor="let od of ordreDePaiements">
+      <div class="col col-1">{{ od.code }}</div>
+      <div class="col col-2">{{ od.referenceDecionDePrelevement }}</div>
+      <div class="col col-3">{{ od.montantAPrelever | currency:'XOF':'symbol':'1.0-0' }}</div>
+      <div class="col col-4">{{ od.compteDestinataire }}</div>
+      <div class="col col-5">
+        <span class="status-badge"
+              [ngClass]="{
+                'status-success': od.statut === 'Validé',
+                'status-danger': od.statut === 'Rejeté',
+                'status-pending': od.statut === 'En attente'
+              }">
+          {{ od.statut }}
+        </span>
+      </div>
+
+      <div class="col col-6">
+        <div class="action-icons">
+          <button class="action-btn">
+            <img src="assets/87_501.svg" alt="details" />
+          </button>
+          <button class="action-btn" (click)="validerDecision(od)">
+            <img src="assets/32_236.svg" alt="modifier" />
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

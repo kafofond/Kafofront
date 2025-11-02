@@ -1,0 +1,63 @@
+<section class="content-area">
+  <!-- Barre de filtre -->
+  <div class="filter-bar">
+    <div class="filter-group">
+      <label>Statut :</label>
+      <div class="filter-select" (click)="toggleStatusDropdown()">
+        <span>{{ selectedStatus }}</span>
+        <img src="assets/87_539.svg" alt="dropdown arrow" />
+      </div>
+      <ul class="dropdown-list" *ngIf="statusDropdownOpen">
+        <li *ngFor="let s of ['Tous', 'Validé', 'En attente', 'Rejeté']"
+            (click)="setStatus(s)"
+            [class.active]="selectedStatus === s">
+          {{ s }}
+        </li>
+      </ul>
+    </div>
+
+    <button class="export-btn">
+      <img src="assets/87_477.svg" alt="Export Icon" />
+      <span>Exporter</span>
+    </button>
+  </div>
+
+  <!-- Tableau des Bons de Commande -->
+  <div class="data-card">
+    <h2 class="table-title">Bons de Commande</h2>
+    <div class="data-table">
+      <div class="table-header">
+        <div class="col col-1">Code</div>
+        <div class="col col-2">Réf. Demande</div>
+        <div class="col col-3">Fournisseur</div>
+        <div class="col col-4">Montant Total</div>
+        <div class="col col-5">Statut</div>
+        <div class="col col-6">Actions</div>
+      </div>
+
+      <div class="table-row" *ngFor="let bon of filteredBons">
+        <div class="col col-1">{{ bon.code }}</div>
+        <div class="col col-2">{{ bon.referenceDemande }}</div>
+        <div class="col col-3">{{ bon.fournisseur }}</div>
+        <div class="col col-4">{{ bon.montantTotal | currency:'XOF':'symbol':'1.0-0' }}</div>
+        <div class="col col-5">
+          <span
+            class="status-badge"
+            [ngClass]="{
+              'status-success': bon.statut === 'Validé',
+              'status-danger': bon.statut === 'Rejeté',
+              'status-pending': bon.statut === 'En attente'
+            }"
+          >
+            {{ bon.statut }}
+          </span>
+        </div>
+        <div class="col col-6 action-icons">
+          <button class="action-btn"><img src="assets/87_501.svg" alt="details" /></button>
+          <button class="action-btn"><img src="assets/32_236.svg" alt="Modifier"></button>
+          <button class="action-btn"><img src="assets/Frame icon approuver.svg" alt="valider" /></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

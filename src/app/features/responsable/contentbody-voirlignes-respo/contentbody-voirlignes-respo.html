@@ -1,0 +1,152 @@
+<div class="content-header">
+  <div class="header-left">
+    <button class="action-btn back-button" routerLink="/responsable/listbudget-responsable">
+      <img src="assets/tabler_arrow-left.svg" alt="Retour" />
+      <span>Retour</span>
+    </button>
+  </div>
+
+  <h3 class="content-title">Lignes de crédit budgétaire</h3>
+
+  <div class="header-right">
+    <button class="action-btn filter-button">
+      <img src="assets/417_213.svg" alt="Filtrer" />
+      <span>Filtrer</span>
+    </button>
+    <button class="action-btn credit-button" (click)="openCreateLigneModal()">
+      <img src="assets/foundation_plus.svg" alt="Ajouter" />
+      <span>Nouvelle ligne</span>
+    </button>
+  </div>
+</div>
+
+<div class="budget-table-container">
+  <div class="budget-table">
+    <div class="table-header">
+      <div>Intitulé</div>
+      <div>Montant Alloué</div>
+      <div>Montant Engagé</div>
+      <div>Montant Restant</div>
+      <div>Taux d'utilisation</div>
+      <div>Statut</div>
+      <div>Actions</div>
+    </div>
+
+    <div class="table-body">
+      <div class="table-row" *ngFor="let ligne of lignes">
+        <div class="col-intitule">
+          <span class="item-title">{{ ligne.intituleLigne }}</span>
+        </div>
+        <div>{{ ligne.montantAlloue }} FCFA</div>
+        <div>{{ ligne.montantEngage }} FCFA</div>
+        <div>{{ ligne.montantRestant }} FCFA</div>
+        <div class="col-taux">
+          <div class="progress-bar">
+            <div class="progress-bar-inner" [style.width.%]="ligne.tauxUtilisation"></div>
+          </div>
+          <span class="progress-percent">{{ ligne.tauxUtilisation }}%</span>
+        </div>
+        <div>
+          <span class="status-badge active">{{ ligne.statut }}</span>
+        </div>
+        <div class="actions-cell">
+          <button class="action-icon-btn">
+            <img src="assets/417_144.svg" alt="Détails" />
+          </button>
+          <button class="action-icon-btn">
+            <img src="assets/32_236.svg" alt="Modifier" />
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal pour la création de nouvelle ligne de crédit -->
+
+<div id="createLigneModal" class="modal-overlay" *ngIf="showCreateLigneModal" (click)="closeCreateLigneModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2 class="modal-title">Créer une nouvelle ligne de crédit</h2>
+            <button class="close-btn" (click)="closeCreateLigneModal()">
+                <img src="assets/mdi_cancel-bold.svg" alt="Fermer" class="close-icon">
+            </button>
+        </div>
+
+                <form class="budget-form" (ngSubmit)="submitNewLigneCredit()"> 
+            <div class="form-section">
+                                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="intituleLigne">Intitulé de la ligne de crédit</label>
+                                                <input type="text" id="intituleLigne" name="intituleLigne" placeholder="Ex: Budget Achat Licences" 
+                               [ngModel]="newLigneCredit.intituleLigne" (ngModelChange)="newLigneCredit.intituleLigne = $event" required>
+                    </div>
+                </div>
+                
+                                <div class="form-row">
+                    <div class="form-group half-width">
+                        <label for="montantAlloueLigne">Montant Alloué (FCFA)</label>
+                                                <input type="number" id="montantAlloueLigne" name="montantAlloue" placeholder="Ex: 5 000 000" 
+                               [ngModel]="newLigneCredit.montantAlloue" (ngModelChange)="newLigneCredit.montantAlloue = $event" required>
+                    </div>
+                    <div class="form-group half-width">
+                        <label for="statutLigne">Statut initial</label>
+                                                <input type="text" id="statutLigne" name="statut" [value]="newLigneCredit.statut" readonly>
+                    </div>
+                </div>
+
+                                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="descriptionLigne">Description</label>
+                                                <textarea id="descriptionLigne" name="description" rows="3" placeholder="Description courte de l'objectif de cette ligne de crédit..."
+                                  [ngModel]="newLigneCredit.description" (ngModelChange)="newLigneCredit.description = $event"></textarea>
+                    </div>
+                </div>
+            </div>
+
+                        <div class="form-section date-section">
+                <div class="form-row">
+                                        <div class="form-group half-width">
+                        <label for="dateDebutLigne">Date de début</label>
+                                                <input type="date" id="dateDebutLigne" name="dateDebut" 
+                               [ngModel]="newLigneCredit.dateDebut" (ngModelChange)="newLigneCredit.dateDebut = $event">
+                    </div>
+                    <div class="form-group half-width">
+                        <label for="dateFinLigne">Date de fin</label>
+                                                <input type="date" id="dateFinLigne" name="dateFin" 
+                               [ngModel]="newLigneCredit.dateFin" (ngModelChange)="newLigneCredit.dateFin = $event">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group full-width">
+                        <label for="commentaireLigne">Commentaire</label>
+                        <textarea id="commentaireLigne" name="commentaire" rows="2" placeholder="Ajoutez un commentaire ou une justification si nécessaire..."
+                                  [ngModel]="newLigneCredit.commentaire" (ngModelChange)="newLigneCredit.commentaire = $event"></textarea>
+                    </div>
+                </div>
+            </div>
+            
+                        <div class="form-section toggle-section">
+                <div class="form-group full-width toggle-group">
+                    <label>État de la ligne (Actif/Inactif)</label>
+                    <div class="toggle-control">
+                        <span>Inactif</span>
+                        <label class="switch">
+                                                        <input type="checkbox" name="etat" [ngModel]="newLigneCredit.etat" (ngModelChange)="newLigneCredit.etat = $event">
+                            <span class="slider round"></span>
+                        </label>
+                        <span>Actif</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary cancel-btn" (click)="closeCreateLigneModal()">Annuler</button>
+                <button type="submit" class="btn btn-primary save-btn">Soumettre la ligne de crédit</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Fin de création de ligne de credit -->
