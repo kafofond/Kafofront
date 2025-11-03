@@ -1,136 +1,146 @@
 .sidebar {
-  width: 400px;
-  background-color: #0b4f63;
-  position: sticky;
-  top: 0;
-  display: flex;
-  flex-direction: column;
-  z-index: 100;
-  height: 100vh; 
+    width: 400px;
+    background-color: #0b4f63;
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    /* Assure que la sidebar remplisse exactement la hauteur du viewport */
+    height: 100vh;
 }
 
-
 .sidebar-header {
-  padding: 20px 20px 4px;
-  display: flex;
+    /* Padding réduit de 20px à 15px pour économiser de l'espace */
+    padding: 15px 20px 4px; 
+    display: flex;
+    flex-shrink: 0; 
 }
 
 .logo {
-  display: flex;
-  align-items: center;
-  gap: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Gap réduit */
 }
 
 .logo-img {
-  width: 145px;
-  height: 109px;
+    /* Taille du logo réduite */
+    width: 100px; 
+    height: 75px; 
 }
 
 .logo-text {
-  font-size: 1.5rem;
-  color: #ffffff;
+    /* Taille du texte du logo réduite */
+    font-size: 1.3rem; 
+    color: #ffffff;
 }
 
 .logo-text-highlight {
-  color: #f59e0b;
+    color: #f59e0b;
 }
 
 .sidebar-nav {
-  flex: 1;
-  padding: auto 0;
+    flex: 1;
+    padding: 0;
+    /*Suppression du défilement. Le contenu doit tenir. */
+    overflow-y: hidden; 
 }
 
 .sidebar-nav ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
 .nav-item a {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 10px 20px;
-  font-size: 22px;
-  font-weight: 600;
-  position: relative;
-  text-decoration: none;
-  color: #ffffff;
-  background: transparent;
-  transition: background-color 0.3s, color 0.3s;
-  margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Gap réduit entre icône et texte */
+    /* Padding réduit pour compacter les éléments */
+    padding: 8px 20px; 
+    /* Taille de police réduite */
+    font-size: 20px; 
+    font-weight: 600;
+    position: relative;
+    text-decoration: none;
+    color: #ffffff;
+    background: transparent;
+    transition: background-color 0.3s, color 0.3s;
+    margin-bottom: 5px; /* Marge réduite entre les liens */
 }
 
 .nav-bar {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 10px;
-  /* height: 100%; */
-  background-color: #0b4f63;
-  transition: background-color 0.3s;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 10px;
+    background-color: #0b4f63;
+    transition: background-color 0.3s;
 }
 
 .nav-item a.active {
-  background-color: rgba(245, 158, 11, 0.17);
-  color: #f59e0b;
+    background-color: rgba(245, 158, 11, 0.17);
+    color: #f59e0b;
 }
 
 .nav-item .active .nav-text {
-  color: #f9aa21;
+    color: #f9aa21;
 }
 
 .nav-item a.active .nav-icon,
 .nav-item a.active .nav-text {
-  filter: brightness(0) saturate(100%) invert(64%) sepia(89%) 
-    saturate(1842%) hue-rotate(0deg) brightness(101%) contrast(101%);
-  color: #f59e0b;
+    filter: brightness(0) saturate(100%) invert(64%) sepia(89%)
+        saturate(1842%) hue-rotate(0deg) brightness(101%) contrast(101%);
+    color: #f59e0b;
 }
 
 .nav-item a:hover {
-  background-color: rgba(245, 158, 11, 0.17);
+    background-color: rgba(245, 158, 11, 0.17);
 }
 
 .nav-icon {
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
+    /* Taille des icônes réduite */
+    width: 30px; 
+    height: 30px; 
+    object-fit: contain;
 }
 
 .sidebar-footer {
-  padding: 0 30px 36px;
-  margin-top: auto;
-  background: #0b4f63;
+    /* Padding réduit */
+    padding: 0 30px 20px; 
+    margin-top: auto;
+    background: #0b4f63;
+    flex-shrink: 0; 
 }
 
 .logout-button {
-  display: flex;
-  align-items: center;
-  gap: 29px;
-  padding: 17px 29px;
-  background-color: rgba(91, 88, 88, 0.17);
-  border-radius: 5px;
-  font-size: 32px;
-  font-weight: 600;
-  color: #ffffff;
-  text-decoration: none;
-  float: left;
-  margin-top: 10px;
-
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Gap réduit */
+    /* Padding et taille de police du bouton de déconnexion réduits */
+    padding: 10px 20px; 
+    background-color: rgba(91, 88, 88, 0.17);
+    border-radius: 5px;
+    font-size: 24px; 
+    font-weight: 600;
+    color: #ffffff;
+    text-decoration: none;
+    float: left;
+    margin-top: 10px;
 }
 
 @media (max-width: 1200px) {
-  .sidebar {
-    width: 320px;
-  }
+    .sidebar {
+        width: 320px;
+    }
 
-  .nav-item a {
-    font-size: 24px;
-    padding: 15px 20px;
-    gap: 12px;
-  }
+    .nav-item a {
+        font-size: 20px; /* Taille conservée pour les petits écrans */
+        padding: 10px 20px;
+        gap: 10px;
+    }
 
-  .logout-button {
-    font-size: 24px;
-  }
+    .logout-button {
+        font-size: 20px;
+    }
 }
