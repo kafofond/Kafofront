@@ -1,51 +1,51 @@
 * {
     box-sizing: border-box;
-}
-
-/* 1. Modifications pour supprimer le scroll vertical sur la page */
-html, body {
-    height: 100%; /* S'assurer que le body occupe 100% de la hauteur du viewport */
-    overflow: hidden; /* Supprimer la barre de défilement du viewport */
     margin: 0;
-    font-family: 'Inter', sans-serif;
-    background-color: #0b4f63;
+    padding: 0;
 }
 
-/* 2. Adapter le conteneur principal */
+html, body {
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+    background-color: #e2e8f0; 
+}
+
+#password-reset{
+    background-color: #e2e8f0;
+    height: 100vh;
+    overflow: hidden;
+}
+
 .password-reset-container {
-    max-width: 1440px;
-    height: 100vh; /* Utiliser 100% de la hauteur du viewport */
-    /* Utilisez `height: 100%` si vous voulez exclure l'éventuel padding du body dans le calcul de la hauteur. */
+    max-width: 1000px; 
+    height: 100vh;
     margin: 0 auto;
     display: flex;
-    align-items: center; /* Centrer verticalement le contenu */
+    align-items: center;
     justify-content: center;
     padding: 40px;
-    gap: 77px;
-    /* Rendre le conteneur défilant si nécessaire, sans faire défiler la page entière */
-    overflow-y: auto; 
+    gap: 60px; 
+    overflow: hidden;
+    background-color: #e2e8f0; 
 }
 
-/* 3. Ajustement du panneau d'information */
 .info-panel {
-    width: 594px;
-    /* Remplacer la hauteur fixe (848px) par une hauteur flexible */
-    height: auto;
-    max-height: calc(100vh - 80px); /* Hauteur maximale = 100% du viewport - (padding haut + padding bas) */
+    width: 400px;
+    height: 550px;
+    max-height: calc(100vh - 80px);
     background-color: #0b4f63;
-    border: 1px solid #ffffff;
     border-radius: 15px;
-    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
     display: flex;
     justify-content: center;
     align-items: center;
     flex-shrink: 0;
-    padding: 40px; /* Ajouter un padding pour que le contenu ne touche pas les bords */
+    padding: 80px; 
 }
 
 .logo-wrapper {
-    width: 330px;
-    height: 330px;
+    width: 280px; 
+    height: 280px; 
     background-color: #ffffff;
     border-radius: 15px;
     display: flex;
@@ -56,8 +56,8 @@ html, body {
 }
 
 .logo-graphic {
-    width: 208px;
-    height: 123px;
+    width: 160px; 
+    height: 95px; 
     object-fit: contain;
 }
 
@@ -65,44 +65,45 @@ html, body {
     margin: 20px 0 0 0;
     font-family: 'Inter', sans-serif;
     font-weight: 700;
-    font-size: 40px;
+    font-size: 32px; 
     line-height: 1.2;
 }
 
 .logo-text-kafo {
-    color: #85c441; /* Approximated from image */
+    color: #85c441;
 }
 
 .logo-text-fond {
-    color: #f59e0b; /* From Figma style textStyle_17 */
+    color: #f59e0b;
 }
 
 .form-panel {
     width: 100%;
-    max-width: 500px;
+    max-width: 400px; 
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center; 
 }
 
 .form-title {
     color: #0b4f63;
     font-family: 'Inter', sans-serif;
     font-weight: 600;
-    font-size: 64px;
-    line-height: 1.21; /* 77.45px */
-    text-align: left;
-    margin: 0 0 3px 0;
+    font-size: 36px; 
+    line-height: 44px; 
+    text-align: center; 
+    margin: 0 0 8px 0;
 }
 
 .form-subtitle {
     color: #0b4f63;
     font-family: 'Inter', sans-serif;
     font-weight: 600;
-    font-size: 24px;
-    line-height: 1.21; /* 29.04px */
-    text-align: left;
-    margin: 0 0 63px 0;
+    font-size: 18px; 
+    line-height: 22px; 
+    text-align: center; 
+    margin: 0 0 40px 0; 
 }
 
 .reset-form {
@@ -115,113 +116,366 @@ html, body {
 .form-group {
     position: relative;
     width: 100%;
-    margin-bottom: 28px;
+    margin-bottom: 20px; 
 }
 
 .form-input {
     width: 100%;
-    height: 80px;
+    height: 60px; 
     background-color: #ffffff;
     border: 2px solid rgba(0, 0, 0, 0.19);
-    border-radius: 40px;
-    padding: 0 65px 0 30px;
+    border-radius: 30px; 
+    padding: 0 50px 0 20px; 
     font-family: 'Inter', sans-serif;
     font-weight: 400;
-    font-size: 32px;
+    font-size: 18px; 
     color: #333;
 }
 
 .form-input::placeholder {
     color: rgba(0, 0, 0, 0.67);
     opacity: 1;
+    font-size: 16px; 
+}
+
+.form-input:disabled {
+    background-color: #f5f5f5;
+    cursor: not-allowed;
 }
 
 .form-icon {
     position: absolute;
-    right: 30px;
+    right: 20px; 
     top: 50%;
     transform: translateY(-50%);
     pointer-events: none;
+    width: 25px; 
+    height: auto;
 }
 
 .submit-button {
-    width: 300px;
-    height: 54px;
+    width: 250px; 
+    height: 48px; 
     background-color: #0b4f63;
-    border-radius: 40px;
+    border-radius: 30px; 
     color: #ffffff;
     font-family: 'Inter', sans-serif;
-    font-weight: 300;
-    font-size: 24px;
+    font-weight: 400; 
+    font-size: 18px; 
     border: none;
     cursor: pointer;
-    margin-top: 6px; 
+    margin-top: 10px; 
+    transition: background-color 0.3s ease;
 }
 
-/* Media Queries (Ajustement pour la responsivité) */
+.submit-button:hover:not(:disabled) {
+    background-color: #106a81;
+}
+
+.submit-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.back-link {
+    margin-top: -20px;
+    text-align: left;
+    margin-left: -200px; /* 🔹 déplace un peu plus à gauche */
+}
+
+
+.back-button {
+    background: none;
+    border: none;
+    color: #0b4f63;
+    cursor: pointer;
+    font-size: 16px; 
+    text-decoration: underline;
+}
+
+.back-button:hover {
+    color: #106a81;
+}
+
+.email-info {
+    background: #e3f2fd;
+    border: 1px solid #bbdefb;
+    color: #1565c0;
+    padding: 12px; 
+    border-radius: 6px;
+    margin-bottom: 1.5rem; 
+    font-size: 16px; 
+    text-align: center;
+    width: 100%; 
+}
+
+.error-message {
+    background: #fee;
+    border: 1px solid #f5c6cb;
+    color: #f0818c;
+    padding: 10px; 
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    font-size: 16px; 
+    text-align: center;
+    width: 100%; 
+}
+
+.success-message {
+    background: #e8f5e8;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+    padding: 10px; 
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    font-size: 16px; 
+    text-align: center;
+    width: 100%; 
+}
+
+.form-group {
+    position: relative;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 5px; 
+    transform: translateY(-50%); 
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+    z-index: 10;
+}
+
+.password-toggle:hover:not(:disabled) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.password-toggle:disabled {
+    cursor: not-allowed;
+    opacity: 0.2;
+}
+
+.form-icon {
+    width: 26px;
+    height: 26px;
+    object-fit: contain;
+}
+
+.form-input {
+    width: 100%;
+    height: 60px;
+    background-color: #ffffff;
+    border: 2px solid rgba(0, 0, 0, 0.19);
+    border-radius: 30px;
+    padding: 0 50px 0 20px; 
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+    color: #333;
+}
 
 @media (max-width: 1200px) {
     .password-reset-container {
         flex-direction: column;
         gap: 40px;
         padding: 40px 20px;
-        /* Sur les petits écrans, il est possible que nous ayons besoin du défilement */
-        overflow-y: auto; 
+        overflow: hidden;
+        max-width: 500px; 
+        height: auto;
+        min-height: 100vh;
     }
 
     .info-panel {
         width: 100%;
-        max-width: 594px;
+        max-width: 400px;
         height: auto;
-        padding: 60px 20px;
-        /* En mode colonne, la max-height n'est plus nécessaire */
-        max-height: none; 
+        padding: 40px 20px; 
+        max-height: none;
     }
 
     .form-panel {
-        max-width: 500px;
+        max-width: 400px;
         align-items: center;
         text-align: center;
-        /* Ajout d'un padding pour un meilleur espacement sur mobile */
-        padding-bottom: 20px; 
+        padding-bottom: 20px;
     }
+    
     .form-title, .form-subtitle {
         text-align: center;
     }
-}
-
-@media (max-width: 576px) {
-    .form-title {
-        font-size: 48px;
-    }
-
-    .form-subtitle {
-        font-size: 20px;
-        margin-bottom: 40px;
-    }
-
-    .form-input {
-        height: 60px;
-        font-size: 20px;
-        padding-left: 20px;
-        padding-right: 50px;
+    
+    .logo-wrapper {
+        width: 200px; 
+        height: 200px; 
     }
     
-    .form-icon {
-        right: 20px;
+    .logo-graphic {
+        width: 120px; 
+        height: 70px; 
+    }
+    
+    .logo-text {
+        font-size: 24px; 
+    }
+}
+
+@media (max-width: 768px) {
+    #password-reset {
+        overflow: auto;
+    }
+
+    .password-reset-container {
+        padding: 20px 15px; 
+        gap: 30px; 
+        overflow: visible;
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .info-panel {
+        padding: 30px 15px; 
+        border-radius: 10px; 
+        height: 300px;
     }
 
     .logo-wrapper {
-        width: 250px;
-        height: 250px;
+        width: 150px; 
+        height: 150px; 
+    }
+
+    .logo-graphic {
+        width: 90px; 
+        height: 55px; 
     }
 
     .logo-text {
-        font-size: 32px;
+        font-size: 20px; 
+    }
+
+    .form-panel {
+        padding: 0 10px; 
+    }
+
+    .form-title {
+        font-size: 28px; 
+    }
+
+    .form-subtitle {
+        font-size: 16px; 
+        margin-bottom: 30px; 
+    }
+
+    .form-input {
+        height: 50px; 
+        font-size: 16px; 
+        padding: 0 45px 0 15px; 
     }
     
-    .submit-button {
-        width: 100%;
-        max-width: 300px;
+    .form-icon {
+        right: 15px; 
+        width: 20px; 
     }
+
+    .submit-button {
+        width: 100%; 
+        max-width: 250px; 
+        font-size: 16px; 
+    }
+
+    .email-info,
+    .error-message,
+    .success-message {
+        font-size: 14px; 
+        padding: 8px; 
+    }
+
+    .back-button {
+        font-size: 14px; 
+    }
+}
+
+@media (max-width: 480px) {
+    .password-reset-container {
+        padding: 15px 10px; 
+        overflow: visible;
+    }
+    
+    .info-panel {
+        padding: 20px 10px; 
+        height: 250px;
+    }
+    
+    .logo-wrapper {
+        width: 120px; 
+        height: 120px; 
+    }
+    
+    .logo-graphic {
+        width: 70px; 
+        height: 45px; 
+    }
+    
+    .logo-text {
+        font-size: 18px; 
+    }
+    
+    .form-title {
+        font-size: 24px; 
+    }
+
+    .form-subtitle {
+        font-size: 14px;
+        margin-bottom: 25px;
+    }
+
+    .form-input {
+        height: 45px;
+        font-size: 14px;
+        padding: 0 40px 0 15px;
+    }
+
+    .form-icon {
+        right: 12px;
+        width: 18px;
+    }
+
+    .submit-button {
+        height: 42px;
+        font-size: 14px;
+    }
+
+    .email-info,
+    .error-message,
+    .success-message {
+        font-size: 12px;
+        padding: 6px;
+    }
+
+    .back-button {
+        font-size: 12px;
+    }
+
+    .email-info, .error-message, .success-message {
+  transition: opacity 0.5s ease;
+}
+
+.email-info.hidden, .error-message.hidden, .success-message.hidden {
+  opacity: 0;
+  height: 0;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
 }

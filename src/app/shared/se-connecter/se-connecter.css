@@ -6,11 +6,11 @@
 
 /* Modifications pour supprimer le scroll vertical sur la page */
 html, body {
-    height: 100%; /* S'assurer que le body occupe 100% de la hauteur du viewport */
-    overflow: hidden; /* Supprimer la barre de défilement du viewport */
+    height: 100%;
+    overflow: hidden;
     font-family: 'Inter', sans-serif;
-    background-color: #E2E8F0; /* --background-light */
-    color: #0b4f63; /* --primary-dark */
+    background-color: #e2e8f0;
+    color: #0b4f63;
 }
 
 body {
@@ -22,38 +22,41 @@ body {
 .login-page {
     width: 100%;
     padding: 20px;
-    /* Permet à la page de défiler localement si le contenu est plus grand que le viewport */
     height: 100vh;
     overflow-y: auto; 
+    background-color: #e2e8f0;
 }
 
 .login-container {
     display: flex;
-    max-width: 1188px;
+    max-width: 1000px; 
     width: 100%;
-    height: 200px;
+    height: auto; 
     margin: 0 auto;
-    background-color: #e2e8f0; /* --background-light */
+    background-color: #e2e8f0;
     border-radius: 15px;
-    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    /*box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);*/
     overflow: hidden;
-    /* Assurer que le conteneur principal est centré verticalement dans l'espace disponible */
-    min-height: calc(100vh - 40px); /* 100vh moins le padding du .login-page */
+    min-height: calc(100vh - 40px);
+    align-items: center; 
 }
 
 .brand-panel {
-    flex: 0 0 500px;
-    background-color: #0b4f63; /* --primary-dark */
+    flex: 0 0 400px; /* Augmente la largeur (ex : 500px ou 40%) */
+    background-color: #0b4f63;
     display: flex;
+    border-radius: 15px;
     justify-content: center;
     align-items: center;
-    padding: 40px;
+    padding: 80px; /* Augmente l’espace interne */
+    height: 550px; /* Ajoute une hauteur fixe */
 }
 
+
 .logo-wrapper {
-    width: 330px;
-    height: 330px;
-    background-color: #ffffff; /* --text-light */
+    width: 280px; 
+    height: 280px; 
+    background-color: #ffffff;
     border-radius: 15px;
     display: flex;
     flex-direction: column;
@@ -62,61 +65,66 @@ body {
 }
     
 .logo-image {
-    width: 208px;
-    height: 123px;
+    width: 160px; 
+    height: 95px; 
     object-fit: contain;
 }
 
 .logo-text {
-    font-size: 40px;
+    font-size: 32px; 
     font-weight: 700;
-    line-height: 48px;
+    line-height: 38px; 
     margin-top: 0; 
 }
 
 .logo-text-green {
-    color: #6ab04c; /* --logo-green */
+    color: #6ab04c;
 }
 
 .logo-text-orange {
-    color: #f59e0b; /* --logo-orange */
+    color: #f59e0b;
 }
 
 .login-form-panel {
     flex: 1;
-    padding: 118px 80px 118px 140px;
+    padding: 60px 60px 60px 80px; 
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center; 
 }
 
 .form-title {
-    font-size: 50px;
+    font-size: 36px; 
     font-weight: 600;
-    line-height: 77px;
-    color: #0b4f63; /* --text-dark */
+    line-height: 44px; 
+    color: #0b4f63;
     margin: 0;
+    text-align: center; 
 }
 
 .form-subtitle {
-    font-size: 24px;
+    font-size: 18px; 
     font-weight: 600;
-    line-height: 29px;
-    color: #0b4f63; /* --text-dark */
-    margin-top: 4px;
-    margin-bottom: 132px;
+    line-height: 22px; 
+    color: #0b4f63;
+    margin-top: 8px;
+    margin-bottom: 60px; 
+    text-align: center; 
 }
 
 .login-form {
     display: flex;
     flex-direction: column;
     width: 100%;
-    max-width: 500px;
+    max-width: 400px; 
+    align-items: center; 
 }
 
 .input-group {
     position: relative;
-    margin-bottom: 21px;
+    margin-bottom: 18px; 
+    width: 100%; 
 }
 
 .input-group:last-of-type {
@@ -125,27 +133,28 @@ body {
 
 .input-group input {
     width: 100%;
-    height: 80px;
-    border-radius: 40px;
-    border: 2px solid rgba(0, 0, 0, 0.19); /* --border-color */
-    background-color: #ffffff; /* --text-light */
-    padding: 0 60px 0 30px;
-    font-size: 32px;
+    height: 60px; 
+    border-radius: 30px; 
+    border: 2px solid rgba(0, 0, 0, 0.19);
+    background-color: #ffffff;
+    padding: 0 50px 0 20px; 
+    font-size: 18px; 
     font-family: 'Inter', sans-serif;
-    color: rgba(0, 0, 0, 0.67); /* --text-placeholder */
+    color: rgba(0, 0, 0, 0.67);
 }
     
 .input-group input::placeholder {
-    color: rgba(0, 0, 0, 0.67); /* --text-placeholder */
+    color: rgba(0, 0, 0, 0.67);
     opacity: 1;
+    font-size: 16px;
 }
 
 .input-icon {
     position: absolute;
     top: 50%;
-    right: 30px;
+    right: 20px; 
     transform: translateY(-50%);
-    width: 35px;
+    width: 25px; 
     height: auto;
 }
 
@@ -153,22 +162,23 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 24px;
-    margin-bottom: 34px;
-    padding: 0 10px;
+    margin-top: 20px; 
+    margin-bottom: 25px; 
+    padding: 0 5px; 
+    width: 100%; 
 }
 
 .remember-me {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
 
 .remember-me input[type="checkbox"] {
-    width: 25px;
-    height: 25px;
+    width: 20px; 
+    height: 20px; 
     border: 1px solid rgba(0, 0, 0, 0.26);
-    background-color: #ffffff; /* --text-light */
+    background-color: #ffffff;
     appearance: none;
     -webkit-appearance: none;
     border-radius: 2px;
@@ -176,36 +186,89 @@ body {
 }
     
 .remember-me input[type="checkbox"]:checked {
-    background-color: #0b4f63; /* --primary-dark */
+    background-color: #0b4f63;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e");
 }
 
 .remember-me label,
 .forgot-password {
-    font-size: 20px;
+    font-size: 16px; 
     font-weight: 400;
-    line-height: 24px;
-    color: #0b4f63; /* --text-dark */
+    line-height: 20px; 
+    color: #0b4f63;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.forgot-password.disabled-link {
+    color: #999;
+    cursor: not-allowed;
     text-decoration: none;
 }
 
 .submit-btn {
-    width: 300px;
-    height: 54px;
-    background-color: #0b4f63; /* --primary-dark */
+    width: 250px; 
+    height: 48px; 
+    background-color: #0b4f63;
     border: none;
-    border-radius: 40px;
-    color: #ffffff; /* --text-light */
-    font-size: 24px;
-    font-weight: 300;
-    line-height: 29px;
+    border-radius: 30px; 
+    color: #ffffff;
+    font-size: 18px; 
+    font-weight: 400; 
+    line-height: 22px; 
     cursor: pointer;
     align-self: center;
     transition: background-color 0.3s ease;
 }
 
-.submit-btn:hover {
+.submit-btn:hover:not(:disabled) {
     background-color: #106a81;
+}
+
+.submit-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.register-link {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.register-link p {
+    font-size: 16px; 
+    color: #0b4f63;
+}
+
+.register-button {
+    color: #0b4f63;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* Styles pour les messages d'erreur et de succès */
+.error-message {
+    background: #fee;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+    padding: 10px; 
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    font-size: 16px; 
+    text-align: center;
+    width: 100%; 
+}
+
+.success-message {
+    background: #e8f5e8;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+    padding: 10px; 
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    font-size: 16px; 
+    text-align: center;
+    width: 100%; 
 }
 
 .sr-only {
@@ -224,72 +287,95 @@ body {
 @media (max-width: 1200px) {
     .login-container {
         flex-direction: column;
-        min-height: auto; /* Permet au conteneur de s'adapter au contenu sur les petits écrans */
+        min-height: auto;
+        max-width: 500px; 
     }
     .brand-panel {
         flex: 0 0 auto;
-        height: 350px;
+        height: 300px; 
         border-radius: 15px 15px 0 0;
+        width: 100%;
     }
     .login-form-panel {
-        padding: 60px 40px;
+        padding: 40px 30px; 
         align-items: center;
     }
     .login-form {
         align-items: center;
     }
+    .logo-wrapper {
+        width: 200px; 
+        height: 200px; 
+    }
+    .logo-image {
+        width: 120px; 
+        height: 70px; 
+    }
+    .logo-text {
+        font-size: 24px; 
+    }
 }
 
 @media (max-width: 768px) {
     .login-page {
-        padding: 0;
+        padding: 10px; 
     }
     .login-container {
-        border-radius: 0;
-        min-height: 100vh;
+        border-radius: 10px; 
+        min-height: calc(100vh - 20px);
+        max-width: 100%; 
     }
     .brand-panel {
-        height: 250px;
-        border-radius: 0;
+        height: 200px; 
+        border-radius: 10px 10px 0 0;
+        padding: 20px; 
     }
     .logo-wrapper {
-        width: 200px;
-        height: 200px;
+        width: 150px; 
+        height: 150px; 
     }
     .logo-image {
-        width: 120px;
-        height: auto;
+        width: 90px; 
+        height: 55px; 
     }
     .logo-text {
-        font-size: 32px;
+        font-size: 20px; 
     }
     .login-form-panel {
-        padding: 40px 20px;
+        padding: 30px 20px; 
     }
     .form-title {
-        font-size: 48px;
+        font-size: 28px; 
         text-align: center;
     }
     .form-subtitle {
-        font-size: 18px;
+        font-size: 16px; 
         text-align: center;
-        margin-bottom: 60px;
+        margin-bottom: 40px; 
     }
     .input-group input {
-        height: 60px;
-        font-size: 20px;
+        height: 50px; 
+        font-size: 16px; 
     }
     .form-options {
         flex-direction: column;
         align-items: flex-start;
-        gap: 16px;
+        gap: 12px; 
         width: 100%;
     }
     .remember-me label,
     .forgot-password {
-        font-size: 16px;
+        font-size: 14px; 
     }
     .submit-btn {
-        width: 100%;
+        width: 100%; 
+        max-width: 250px; 
+    }
+    .error-message,
+    .success-message {
+        font-size: 14px; 
+    }
+    .register-link p {
+        font-size: 14px; 
     }
 }

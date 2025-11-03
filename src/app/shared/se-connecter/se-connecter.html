@@ -11,25 +11,76 @@
         <main class="login-form-panel">
             <h1 class="form-title">Connexion</h1>
             <p class="form-subtitle">C'est le moment de se connecter</p>
+            
+            <!-- Message d'erreur -->
+            <div *ngIf="errorMessage" class="error-message">
+                {{ errorMessage }}
+            </div>
+
+            <!-- Message de succès pour le code envoyé -->
+            <div *ngIf="successMessage" class="success-message">
+                {{ successMessage }}
+            </div>
+            
             <form (ngSubmit)="login(loginForm)" #loginForm="ngForm" class="login-form" action="#" method="post">
                 <div class="input-group">
                     <label for="email" class="sr-only">Email</label>
-                    <input type="email" id="email" name="email" placeholder="Email">
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="Email"
+                        [(ngModel)]="email"
+                        #emailField="ngModel"
+                        required
+                        [disabled]="isLoading">
                     <img src="assets/398_112.svg" class="input-icon" alt="">
                 </div>
+
                 <div class="input-group">
-                    <label for="password" class="sr-only">Mot de passe</label>
-                    <input type="password" id="password" name="password" placeholder="Mot de passe">
-                    <img src="assets/398_118.svg" class="input-icon" alt="">
-                </div>
+    <label for="password" class="sr-only">Mot de passe</label>
+    <input 
+        [type]="showPassword ? 'text' : 'password'"
+        id="password" 
+        name="password" 
+        placeholder="Mot de passe"
+        [(ngModel)]="password"
+        required
+        [disabled]="isLoading">
+    <button 
+        type="button" 
+        class="password-toggle"
+        (click)="togglePasswordVisibility()"
+        [disabled]="isLoading">
+        <img 
+            [src]="showPassword ? 'assets/398_117.svg' : 'assets/398_118.svg'" 
+            class="input-icon" 
+            alt="Afficher/masquer le mot de passe">
+    </button>
+</div>
+
                 <div class="form-options">
                     <div class="remember-me">
-                        <input type="checkbox" id="remember-me" name="remember-me">
+                        <input type="checkbox" id="remember-me" name="remember-me" [disabled]="isLoading">
                         <label for="remember-me">Se souvenir de moi</label>
                     </div>
-                    <a [routerLink]="'/mot-de-passe-oublie'" class="forgot-password">Mot de passe oublier ?</a>
+                    <a 
+                        href="javascript:void(0)" 
+                        class="forgot-password"
+                        [class.disabled-link]="!emailField.valid || isLoading"
+                        (click)="sendResetCode()">
+                        Mot de passe oublié ?
+                    </a>
                 </div>
-                <button type="submit" class="submit-btn">Se connecter</button>
+
+                <button 
+                    type="submit" 
+                    class="submit-btn" 
+                    [disabled]="isLoading">
+                    <span *ngIf="!isLoading">Se connecter</span>
+                    <span *ngIf="isLoading">Connexion en cours...</span>
+                </button>
+
             </form>
         </main>
     </div>
