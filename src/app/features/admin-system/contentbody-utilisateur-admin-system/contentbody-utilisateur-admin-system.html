@@ -1,34 +1,43 @@
 <section class="utilisateurs-section">
+  <!-- Message d'erreur -->
+  <div *ngIf="errorMessage" class="error-banner">
+    {{ errorMessage }}
+    <button class="retry-btn" (click)="loadUtilisateurs()">Réessayer</button>
+  </div>
+
   <div class="utilisateurs-header">
     <h3>Liste des Utilisateurs</h3>
 
     <div class="utilisateurs-actions">
-      <select [(ngModel)]="filtreStatut">
+      <select [(ngModel)]="filtreStatut" class="filtre-select">
         <option value="tous">Tous</option>
         <option value="actifs">Actifs</option>
         <option value="bloques">Bloqués</option>
       </select>
 
       <button class="btn btn-secondary" (click)="exporter()">
-        <img src="assets/Group 901.svg" alt="Exporter" />
         Exporter
       </button>
 
       <button class="btn btn-primary" (click)="ajouterUtilisateur()">
-        <img src="assets/bxs_user-plus.svg" alt="Ajouter" />
         Ajouter un utilisateur
       </button>
     </div>
   </div>
 
   <div class="table-container">
-    <table class="utilisateurs-table">
+    <div *ngIf="loading" class="loading-spinner">
+      <p>Chargement des utilisateurs...</p>
+    </div>
+
+    <table class="utilisateurs-table" *ngIf="!loading">
       <thead class="header-color">
         <tr>
           <th>Nom</th>
           <th>Prénom</th>
           <th>Email</th>
           <th>Rôle</th>
+          <th>Entreprise</th>
           <th>État</th>
           <th>Actions</th>
         </tr>
@@ -36,25 +45,132 @@
 
       <tbody>
         <tr *ngFor="let u of utilisateursFiltres">
-          <td>{{ u.nomUtilisateur }}</td>
-          <td>{{ u.prenomUtilisateur }}</td>
+          <td>{{ u.nom }}</td>
+          <td>{{ u.prenom }}</td>
           <td>{{ u.email }}</td>
           <td>{{ u.role }}</td>
+          <td>{{ getEntrepriseNom(u.entrepriseId) }}</td>
           <td>
-            <span class="status" [ngClass]="{ active: u.etat, inactive: !u.etat }">
-              {{ u.etat ? 'Actif' : 'Bloqué' }}
+            <span class="status" [ngClass]="{ active: u.actif, inactive: !u.actif }">
+              {{ u.actif ? 'Actif' : 'Bloqué' }}
             </span>
           </td>
           <td class="actions">
-            <button class="action-btn" title="Activer" (click)="activerUtilisateur(u)">
-              <img src="assets/Frame icon approuver.svg" alt="Activer" />
+            <button class="action-btn btn-activate" title="Activer" (click)="activerUtilisateur(u)">
+              Activer
             </button>
-            <button class="action-btn" title="Bloquer" (click)="bloquerUtilisateur(u)">
-              <img src="assets/bx_block.svg" alt="Bloquer" />
+            <button class="action-btn btn-block" title="Bloquer" (click)="bloquerUtilisateur(u)">
+              Bloquer
             </button>
           </td>
         </tr>
       </tbody>
     </table>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="!loading && totalPages > 1">
+      <div class="pagination-info">
+        {{ paginationInfo }}
+      </div>
+      <div class="pagination-controls">
+        <button class="pagination-btn" (click)="prevPage()" [disabled]="currentPage === 1">
+          ‹
+        </button>
+
+        <button
+          *ngFor="let page of [].constructor(totalPages); let i = index"
+          class="pagination-btn"
+          [class.active]="currentPage === i + 1"
+          (click)="goToPage(i + 1)">
+          {{ i + 1 }}
+        </button>
+
+        <button class="pagination-btn" (click)="nextPage()" [disabled]="currentPage === totalPages">
+          ›
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="!loading && utilisateursFiltres.length === 0" class="no-data">
+      <p>Aucun utilisateur trouvé</p>
+    </div>
+  </div>
+
+  <!-- Modale de création d'utilisateur -->
+  <div *ngIf="showCreateModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Créer un nouvel utilisateur</h3>
+        <button class="close-btn" (click)="closeCreateModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="nom">Nom *</label>
+          <input type="text" id="nom" [(ngModel)]="newUser.nom" placeholder="Entrez le nom">
+        </div>
+        <div class="form-group">
+          <label for="prenom">Prénom *</label>
+          <input type="text" id="prenom" [(ngModel)]="newUser.prenom" placeholder="Entrez le prénom">
+        </div>
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input type="email" id="email" [(ngModel)]="newUser.email" placeholder="Entrez l'email">
+        </div>
+        <div class="form-group">
+          <label for="motDePasse">Mot de passe *</label>
+          <input type="password" id="motDePasse" [(ngModel)]="newUser.motDePasse" placeholder="Entrez le mot de passe">
+        </div>
+        <div class="form-group">
+          <label for="departement">Département *</label>
+          <input type="text" id="departement" [(ngModel)]="newUser.departement" placeholder="Entrez le département">
+        </div>
+        <div class="form-group">
+          <label for="role">Rôle *</label>
+          <select id="role" [(ngModel)]="newUser.role" class="form-select">
+            <option value="ADMIN">Administrateur</option>
+            <option value="SUPER_ADMIN">Super Admin</option>
+            <option value="TRESORERIE">Trésorier</option>
+            <option value="GESTIONNAIRE">Gestionnaire</option>
+            <option value="COMPTABLE">Comptable</option>
+            <option value="RESPONSABLE">Responsable</option>
+            <option value="DIRECTEUR">Directeur</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="entreprise">Entreprise *</label>
+          <select id="entreprise" [(ngModel)]="newUser.entrepriseId" class="form-select">
+            <option value="0">Sélectionnez une entreprise</option>
+            <option *ngFor="let e of entreprises" [value]="e.id">
+              {{ e.nom }} - {{ e.domaine }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeCreateModal()">Annuler</button>
+        <button class="btn btn-primary" (click)="creerUtilisateur()">Valider la création</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Popup de confirmation pour la désactivation -->
+  <div *ngIf="showConfirmModal" class="modal-overlay">
+    <div class="modal confirm-modal">
+      <div class="modal-header">
+        <h3>Confirmation de blocage</h3>
+        <button class="close-btn" (click)="closeConfirmModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="confirm-icon">
+          ⚠️
+        </div>
+        <p class="confirm-message">{{ confirmMessage }}</p>
+        <p class="confirm-warning">Cette action empêchera l'utilisateur de se connecter au système.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeConfirmModal()">Annuler</button>
+        <button class="btn btn-danger" (click)="confirmDeactivation()">Confirmer le blocage</button>
+      </div>
+    </div>
   </div>
 </section>

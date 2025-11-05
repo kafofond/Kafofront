@@ -1,33 +1,29 @@
 <header class="navbar">
-  <!-- Titre et fil d’Ariane -->
   <div class="navbar-title">
-    <h1>Tableau de bord</h1>
-    <p>Administrateur du systeme / <span class="highlight">Vue d'ensemble</span></p>
+    <h1>{{ pageTitle }}</h1>
+    <p>{{ userRole }} / <span class="highlight">{{ breadcrumb }}</span></p>
   </div>
 
-  <!-- Zone droite : recherche, notifications, profil -->
   <div class="navbar-actions">
-    <!-- Barre de recherche -->
     <div class="search-container">
       <span class="search-icon">🔍</span>
       <input type="text" placeholder="Recherche" class="search-input" />
     </div>
 
-    <!-- Bouton de notification -->
-    <button class="notification-btn">
+    <button class="notification-btn" (click)="onNotificationsClick()">
       <span class="bell-icon">🔔</span>
-      <span class="notification-badge">10</span>
+      <span class="notification-badge" *ngIf="unreadNotifications > 0">
+        {{ unreadNotifications > 99 ? '99+' : unreadNotifications }}
+      </span>
     </button>
 
-    <!-- Séparateur -->
     <div class="divider"></div>
 
-    <!-- Profil -->
     <div class="profile">
-      <div class="avatar">IB</div>
+      <div class="avatar">{{ userInitials }}</div>
       <div class="profile-info">
-        <p class="name">Ibrahim BAH</p>
-        <p class="role">Administrateur</p>
+        <p class="name">{{ userName }}</p>
+        <p class="role">{{ userRoleDisplay }}</p>
       </div>
     </div>
   </div>
