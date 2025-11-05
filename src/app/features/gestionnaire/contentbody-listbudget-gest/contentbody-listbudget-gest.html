@@ -4,7 +4,45 @@
     <span>Filtrer</span>
   </button>
 </div>
+
 <div class="budget-table-container">
+  <div class="budget-table">
+    <div class="table-header">
+      <div>Intitulé</div>
+      <div>Description</div>
+      <div>Date de création</div>
+      <div>Statut</div>
+      <div>Montant Alloué</div>
+      <div>Actions</div>
+    </div>
+
+    <div class="table-body">
+      <div *ngFor="let budget of budgets" class="table-row">
+        <div>{{ budget.intituleBudget }}</div>
+        <div>{{ budget.description }}</div>
+        <div>{{ budget.dateCreation | date: 'dd/MM/yyyy' }}</div>
+        <div>
+          <span class="status-badge" [ngClass]="budget.statut?.toLowerCase()">
+            {{ budget.statut }}
+          </span>
+        </div>
+        <div>{{ budget.montantBudget | number }} FCFA</div>
+        <div class="actions-cell">
+          <a [routerLink]="['/listbudget-gest/listlignesbudget-gest', budget.id]" class="action-link">Voir lignes</a>
+          <button class="action-icon-btn">
+            <img src="assets/417_144.svg" alt="View Details">
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="budgets.length === 0" class="empty-state">
+        Aucun budget trouvé.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <div class="budget-table-container">
   <div class="budget-table">
     <div class="table-header">
       <div>Intitulé</div>
@@ -82,4 +120,4 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->
