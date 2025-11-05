@@ -1,71 +1,86 @@
 import { Component } from '@angular/core';
 import { Role } from '../../../enums/role';
-import { Utilisateur } from '../../../models/utilisateur';
+import { Utilisateur } from '../../../models/user.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-role-et-utilisateur',
+  standalone: true, // important pour Angular 17+ standalone components
   imports: [CommonModule, FormsModule],
   templateUrl: './role-et-utilisateur.html',
-  styleUrl: './role-et-utilisateur.css'
+  styleUrls: ['./role-et-utilisateur.css']
 })
 export class RoleEtUtilisateur {
-  Role = Role; // pour pouvoir utiliser l’enum dans le template
+  Role = Role; // pour utiliser l'enum dans le template
 
   utilisateurs: Utilisateur[] = [
     {
-      nomUtilisateur: 'Keita',
-      prenomUtilisateur: 'Moussa',
+      id: 1,
+      nom: 'Keita',
+      prenom: 'Moussa',
       email: 'moussa@gmail.com',
       motDePasse: '********',
       role: Role.DIRECTEUR,
-      etat: true,
-      derniereActivite: '2023-10-01T10:15:30',
+      departement: 'Finance',
+      actif: true,
+      entrepriseId: 1,
+      entrepriseNom: 'Entreprise A',
+      dateCreation: '2023-10-01T10:15:30'
     },
     {
-      nomUtilisateur: 'Diallo',
-      prenomUtilisateur: 'Aminata',
+      id: 2,
+      nom: 'Diallo',
+      prenom: 'Aminata',
       email: 'aminata@gmail.com',
       motDePasse: '********',
       role: Role.GESTIONNAIRE,
-      etat: false,
-      derniereActivite: '2023-09-28T14:22:10',
+      departement: 'Achats',
+      actif: false,
+      entrepriseId: 1,
+      entrepriseNom: 'Entreprise A',
+      dateCreation: '2023-09-28T14:22:10'
     },
     {
-      nomUtilisateur: 'Traoré',
-      prenomUtilisateur: 'Ibrahim',
+      id: 3,
+      nom: 'Traoré',
+      prenom: 'Ibrahim',
       email: 'ibrahim@gmail.com',
       motDePasse: '********',
       role: Role.COMPTABLE,
-      etat: true,
-      derniereActivite: '2023-10-02T09:05:45',
+      departement: 'Comptabilité',
+      actif: true,
+      entrepriseId: 2,
+      entrepriseNom: 'Entreprise B',
+      dateCreation: '2023-10-02T09:05:45'
     },
     {
-      nomUtilisateur: 'Coulibaly',
-      prenomUtilisateur: 'Fatoumata',
+      id: 4,
+      nom: 'Coulibaly',
+      prenom: 'Fatoumata',
       email: 'fatou@gmail.com',
       motDePasse: '********',
       role: Role.RESPONSABLE,
-      etat: true,
-      derniereActivite: '2023-10-01T16:30:20',
+      departement: 'Marketing',
+      actif: true,
+      entrepriseId: 1,
+      entrepriseNom: 'Entreprise A',
+      dateCreation: '2023-10-01T16:30:20'
     },
-    // Ajoutez plus d'utilisateurs si nécessaire
   ];
 
   // Filtres sélectionnés
   selectedRole: string = 'Tous';
   selectedStatus: string = 'Tous';
 
-  //  Getter dynamique : utilisateurs filtrés
+  // Getter dynamique : utilisateurs filtrés
   get filteredUsers(): Utilisateur[] {
-    return this.utilisateurs.filter((user) => {
-      const roleMatch =
-        this.selectedRole === 'Tous' || user.role === this.selectedRole;
+    return this.utilisateurs.filter(user => {
+      const roleMatch = this.selectedRole === 'Tous' || user.role === this.selectedRole;
       const statusMatch =
         this.selectedStatus === 'Tous' ||
-        (this.selectedStatus === 'Actif' && user.etat) ||
-        (this.selectedStatus === 'Inactif' && !user.etat);
+        (this.selectedStatus === 'Actif' && user.actif) ||
+        (this.selectedStatus === 'Inactif' && !user.actif);
       return roleMatch && statusMatch;
     });
   }
@@ -78,5 +93,4 @@ export class RoleEtUtilisateur {
   setStatus(status: string) {
     this.selectedStatus = status;
   }
-
 }

@@ -248,5 +248,15 @@ export const routes: Routes = [
                 component: Parametres
             }
         ]
-    }
+    },
+
+        {
+  path: '',
+  redirectTo: 'seconnecter',
+  pathMatch: 'full'
+},
+{
+  path: '**',
+  redirectTo: 'seconnecter'
+},
 ];

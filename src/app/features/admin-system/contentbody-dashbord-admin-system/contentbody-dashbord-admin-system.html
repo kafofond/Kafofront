@@ -1,21 +1,31 @@
 <main class="main-content">
 
+  <div *ngIf="errorMessage" class="error-banner">
+    {{ errorMessage }}
+    <button class="retry-btn" (click)="loadDashboardData()">Réessayer</button>
+  </div>
+
   <section id="stats" class="stats-grid">
     <article class="stat-card success">
       <div class="card-header">
         <div class="card-icon-wrapper">
           <img src="assets/30_23.svg" alt="Building Icon">
         </div>
-        <span class="card-value">165</span>
+        <span class="card-value" [class.loading]="isLoading">
+          {{ isLoading ? '...' : formatNumber(stats.entreprisesActives) }}
+        </span>
       </div>
       <div class="card-body">
         <p class="card-title">Entreprises actives</p>
         <div class="progress-bar">
-          <div class="progress-bar-fill" style="width: 85%;"></div>
+          <div class="progress-bar-fill" 
+               [style.width.%]="stats.pourcentageEntreprisesActives"
+               [class.animate]="!isLoading">
+          </div>
         </div>
         <div class="card-footer">
-          <span>Sur 183 totals</span>
-          <span>85 %</span>
+          <span>Sur {{ isLoading ? '...' : formatNumber(stats.totalEntreprises) }} totals</span>
+          <span>{{ isLoading ? '...' : stats.pourcentageEntreprisesActives }} %</span>
         </div>
       </div>
     </article>
@@ -25,16 +35,21 @@
         <div class="card-icon-wrapper">
           <img src="assets/30_77.svg" alt="Users Icon">
         </div>
-        <span class="card-value">2,456</span>
+        <span class="card-value" [class.loading]="isLoading">
+          {{ isLoading ? '...' : formatNumber(stats.utilisateursActifs) }}
+        </span>
       </div>
       <div class="card-body">
-        <p class="card-title">Utilisateurs inscrits</p>
+        <p class="card-title">Utilisateurs actifs</p>
         <div class="progress-bar">
-          <div class="progress-bar-fill" style="width: 78%;"></div>
+          <div class="progress-bar-fill" 
+               [style.width.%]="stats.pourcentageUtilisateursActifs"
+               [class.animate]="!isLoading">
+          </div>
         </div>
         <div class="card-footer">
-          <span>Actifs ce mois</span>
-          <span>78 %</span>
+          <span>Sur {{ isLoading ? '...' : formatNumber(stats.totalUtilisateurs) }} totals</span>
+          <span>{{ isLoading ? '...' : stats.pourcentageUtilisateursActifs }} %</span>
         </div>
       </div>
     </article>
@@ -44,16 +59,21 @@
         <div class="card-icon-wrapper">
           <img src="assets/30_80.svg" alt="Document Icon">
         </div>
-        <span class="card-value">165</span>
+        <span class="card-value" [class.loading]="isLoading">
+          {{ isLoading ? '...' : formatNumber(totalDocuments) }}
+        </span>
       </div>
       <div class="card-body">
         <p class="card-title">Documents partagés</p>
         <div class="progress-bar">
-          <div class="progress-bar-fill" style="width: 85%;"></div>
+          <div class="progress-bar-fill" 
+               [style.width.%]="100"
+               [class.animate]="!isLoading">
+          </div>
         </div>
         <div class="card-footer">
-          <span>Pendant ce mois</span>
-          <span>85 %</span>
+          <span>Total documents</span>
+          <span>100 %</span>
         </div>
       </div>
     </article>
@@ -63,18 +83,32 @@
     <div class="activity-header">
       <h3>Activité globale de la plateforme</h3>
       <div class="activity-actions">
-        <button class="btn btn-secondary">
-          <img src="assets/31_94.svg" alt="">
+        <select class="periode-select" 
+                [value]="currentPeriode" 
+                (change)="onPeriodeChange($any($event.target).value)"
+                [disabled]="chartLoading">
+          <option value="jour">Aujourd'hui</option>
+          <option value="semaine">Cette semaine</option>
+          <option value="mois">Ce mois</option>
+        </select>
+        
+        <button class="btn btn-primary" (click)="exportChart()">
+          <img src="" alt="">
           Exporter
-        </button>
-        <button class="btn btn-primary">
-          <img src="assets/31_98.svg" alt="">
-          Filtrer
         </button>
       </div>
     </div>
     <div class="chart-container">
-      <img src="assets/5347c4799e2e58154af9b5fe355c91ec632c849d.png" alt="Platform activity chart">
+      <div *ngIf="chartLoading" class="chart-loading">
+        <div class="loading-spinner"></div>
+        <p>Chargement des données en temps réel...</p>
+      </div>
+      <canvas baseChart
+              [data]="lineChartData"
+              [options]="lineChartOptions"
+              [type]="lineChartType"
+              *ngIf="!chartLoading">
+      </canvas>
     </div>
   </section>
 
