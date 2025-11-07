@@ -5,4 +5,5 @@ export enum Role {
     GESTIONNAIRE = 'Gestionnaire',
     COMPTABLE = 'Comptable',
     RESPONSABLE = 'Responsable',
+    TRESORERIE = 'Tresorier'
 }
