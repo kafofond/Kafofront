@@ -1,8 +1,8 @@
 <header class="navbar">
-  <!-- Titre et fil d’Ariane -->
+  <!-- Titre et fil d'Ariane dynamiques -->
   <div class="navbar-title">
-    <h1>Gestion des fiches</h1>
-    <p>Gestionnaire / <span class="highlight">Budgets</span></p>
+    <h1>{{ pageTitle }}</h1>
+    <p>{{ userRole }} / <span class="highlight">{{ breadcrumb }}</span></p>
   </div>
 
   <!-- Zone droite : recherche, notifications, profil -->
@@ -10,13 +10,21 @@
     <!-- Barre de recherche -->
     <div class="search-container">
       <span class="search-icon">🔍</span>
-      <input type="text" placeholder="Recherche" class="search-input" />
+      <input 
+        type="text" 
+        placeholder="Recherche" 
+        class="search-input" 
+        (input)="onSearch($event)"
+        (keyup.enter)="onSearch($event)"
+      />
     </div>
 
     <!-- Bouton de notification -->
-    <button class="notification-btn">
+    <button class="notification-btn" (click)="onNotificationsClick()">
       <span class="bell-icon">🔔</span>
-      <span class="notification-badge">10</span>
+      <span class="notification-badge" *ngIf="unreadNotifications > 0">
+        {{ unreadNotifications > 99 ? '99+' : unreadNotifications }}
+      </span>
     </button>
 
     <!-- Séparateur -->
@@ -24,10 +32,10 @@
 
     <!-- Profil -->
     <div class="profile">
-      <div class="avatar">HS</div>
+      <div class="avatar">{{ userInitials }}</div>
       <div class="profile-info">
-        <p class="name">Hamza SANMO</p>
-        <p class="role">Gestionnaire</p>
+        <p class="name">{{ userName }}</p>
+        <p class="role">{{ userRoleDisplay }}</p>
       </div>
     </div>
   </div>

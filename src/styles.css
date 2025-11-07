@@ -6,3 +6,32 @@
     margin: 0;
     padding: 0;
 }
+
+/* Variables CSS pour les thèmes */
+:root {
+  /* Thème clair (par défaut) */
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --text-primary: #0b4f63;
+  --text-secondary: #334155;
+  --text-muted: rgba(0, 0, 0, 0.67);
+  --border-color: #e2e8f0;
+  --accent-color: #f59e0b;
+}
+
+.dark-theme {
+  --bg-primary: #1e293b;
+  --bg-secondary: #334155;
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --border-color: #475569;
+  --accent-color: #f59e0b;
+}
+
+/* Application des variables */
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-secondary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}

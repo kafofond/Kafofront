@@ -1,66 +1,61 @@
 <section id="parametres" class="content-body">
-    <div class="settings-header">
-        <h1 class="page-title">Paramètres de l'application</h1>
-        <p class="breadcrumb">Gestionnaire / Paramètres</p>
-    </div>
-
     <div class="settings-controls">
-        <button class="save-button">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <button class="save-button" (click)="saveSettings()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M19 21H5C3.89543 21 3 20.1046 3 19V5C3 3.89543 3.89543 3 5 3H14.5L21 9.5V19C21 20.1046 20.1046 21 19 21ZM12 18C13.6569 18 15 16.6569 15 15C15 13.3431 13.6569 12 12 12C10.3431 12 9 13.3431 9 15C9 16.6569 10.3431 18 12 18ZM13 11V5.5L18.5 11H13Z" fill="white"/>
             </svg>
-            <span>Sauvegarder Modification</span>
+            <span>{{ translations['saveChanges'] || 'Sauvegarder Modification' }}</span>
         </button>
     </div>
 
     <div class="settings-sections">
-        <h3 class="section-title">Apparence et Thème</h3>
+        <h3 class="section-title">{{ translations['appearanceTheme'] || 'Apparence et Thème' }}</h3>
         
         <div class="settings-group">
             <div class="setting-card">
                 <div class="setting-info">
-                    <h4 class="setting-name">Thème Visuelle</h4>
-                    <p class="setting-description">Utilise un arrière-plan clair avec du texte sombre</p>
+                    <h4 class="setting-name">{{ translations['lightTheme'] || 'Thème Clair' }}</h4>
+                    <p class="setting-description">{{ translations['lightThemeDesc'] || 'Utilise un arrière-plan clair avec du texte sombre' }}</p>
                 </div>
-                <label class="toggle-switch active">
-                    <input type="checkbox" checked>
+                <label class="toggle-switch" [class.active]="isLightThemeActive()">
+                    <input type="checkbox" [checked]="isLightThemeActive()" (change)="onThemeChange('light')">
                     <span class="slider round"></span>
                 </label>
             </div>
 
             <div class="setting-card">
                 <div class="setting-info">
-                    <h4 class="setting-name">Thème sombre</h4>
-                    <p class="setting-description">Utilise un arrière-plan sombre avec du texte clair</p>
+                    <h4 class="setting-name">{{ translations['darkTheme'] || 'Thème sombre' }}</h4>
+                    <p class="setting-description">{{ translations['darkThemeDesc'] || 'Utilise un arrière-plan sombre avec du texte clair' }}</p>
                 </div>
-                <label class="toggle-switch">
-                    <input type="checkbox">
+                <label class="toggle-switch" [class.active]="isDarkThemeActive()">
+                    <input type="checkbox" [checked]="isDarkThemeActive()" (change)="onThemeChange('dark')">
                     <span class="slider round"></span>
                 </label>
             </div>
         </div>
         
-        <h3 class="section-title">Langues</h3>
+        <h3 class="section-title">{{ translations['languages'] || 'Langues' }}</h3>
 
         <div class="settings-group">
             <div class="setting-card">
                 <div class="setting-info">
-                    <h4 class="setting-name">Français</h4>
-                    <p class="setting-description">Utiliser la langue par défaut de l'application</p>
+                    <h4 class="setting-name">{{ translations['french'] || 'Français' }}</h4>
+                    <p class="setting-description">{{ translations['frenchDesc'] || 'Utiliser la langue par défaut de l\'application' }}</p>
                 </div>
-                <label class="toggle-switch active">
-                    <input type="checkbox" checked>
+                <label class="toggle-switch" [class.active]="isFrenchActive()">
+                    <input type="checkbox" [checked]="isFrenchActive()" (change)="onLanguageChange('fr')">
                     <span class="slider round"></span>
                 </label>
             </div>
 
             <div class="setting-card">
                 <div class="setting-info">
-                    <h4 class="setting-name">Anglais</h4>
-                    <p class="setting-description">Modifier la langue par défaut de l'application</p>
+                    <h4 class="setting-name">{{ translations['english'] || 'Anglais' }}</h4>
+                    <p class="setting-description">{{ translations['englishDesc'] || 'Modifier la langue par défaut de l\'application' }}</p>
                 </div>
-                <label class="toggle-switch">
-                    <input type="checkbox">
+                <label class="toggle-switch" [class.active]="isEnglishActive()">
+                    <input type="checkbox" [checked]="isEnglishActive()" (change)="onLanguageChange('en')">
                     <span class="slider round"></span>
                 </label>
             </div>

@@ -6,29 +6,29 @@ import { UserService } from '../../services/user.service';
 import { NotificationService } from '../../services/notification.service';
 
 @Component({
-  selector: 'app-navbar-comptable',
+  selector: 'app-navbar-directeur',
   imports: [CommonModule],
-  templateUrl: './navbar-comptable.html',
-  styleUrl: './navbar-comptable.css'
+  templateUrl: './navbar-directeur.html',
+  styleUrl: './navbar-directeur.css'
 })
-export class NavbarComptable implements OnInit {
+export class NavbarDirecteur implements OnInit {
   pageTitle: string = 'Tableau de bord';
   breadcrumb: string = 'Vue d\'ensemble';
   userName: string = 'Utilisateur';
-  userRole: string = 'Comptable';
-  userRoleDisplay: string = 'Comptable';
+  userRole: string = 'Directeur';
+  userRoleDisplay: string = 'Directeur';
   userInitials: string = 'UU';
   unreadNotifications: number = 0;
 
   private routeTitles: { [key: string]: { title: string, breadcrumb: string } } = {
-    'comptable': { title: 'Tableau de bord', breadcrumb: 'Vue d\'ensemble' },
-    'comptable/depenses-comptable': { title: 'Gestion des dépenses', breadcrumb: 'Dépenses' },
-    'comptable/attestation-de-service-fait-comptable': { title: 'Attestations de service fait', breadcrumb: 'Attestations' },
-    'comptable/bons-de-commande-comptable': { title: 'Bons de commande', breadcrumb: 'Commandes' },
-    'comptable/decision-prelevement-comptable': { title: 'Décisions de prélèvement', breadcrumb: 'Prélèvements' },
-    'comptable/ordre-paiement-comptable': { title: 'Ordres de paiement', breadcrumb: 'Paiements' },
-    'comptable/rapport-financier-comptable': { title: 'Rapports financiers', breadcrumb: 'Rapports' },
-    'comptable/parametres-comptable': { title: 'Paramètres', breadcrumb: 'Configuration' }
+    'directeur': { title: 'Tableau de bord', breadcrumb: 'Vue d\'ensemble' },
+    'directeur/listbudget-directeur': { title: 'Gestion des budgets', breadcrumb: 'Budgets' },
+    'directeur/listbudget-directeur/listlignesbudget-directeur': { title: 'Détails du budget', breadcrumb: 'Lignes budgétaires' },
+    'directeur/utilisateurs-directeur': { title: 'Utilisateurs et rôles', breadcrumb: 'Gestion des accès' },
+    'directeur/depenses-directeur': { title: 'Suivi des dépenses', breadcrumb: 'Dépenses' },
+    'directeur/documents-execution-directeur': { title: 'Documents d\'exécution', breadcrumb: 'Documents' },
+    'directeur/gestion-prelevement': { title: 'Gestion des prélèvements', breadcrumb: 'Prélèvements' },
+    'directeur/parametres-directeur': { title: 'Paramètres', breadcrumb: 'Configuration' }
   };
 
   constructor(
@@ -116,7 +116,7 @@ export class NavbarComptable implements OnInit {
   }
 
   private getRoleText(role: string): string {
-    return role === 'COMPTABLE' ? 'Comptable' : 'Utilisateur';
+    return role === 'DIRECTEUR' ? 'Directeur' : 'Utilisateur';
   }
 
   onNotificationsClick() {

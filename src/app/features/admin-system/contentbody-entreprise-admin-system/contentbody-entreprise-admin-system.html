@@ -41,7 +41,7 @@
           <th>Domaine</th>
           <th>Email</th>
           <th>Téléphone</th>
-          <th>Date de création</th>
+          <!-- <th>Date de création</th> -->
           <th>Etat</th>
           <th>Actions</th>
         </tr>
@@ -54,7 +54,7 @@
           <td>{{ e.domaine }}</td>
           <td>{{ e.email }}</td>
           <td>{{ e.telephone }}</td>
-          <td>{{ e.dateCreation | date: 'yyyy-MM-dd' }}</td>
+          <!-- <td>{{ e.dateCreation | date: 'yyyy-MM-dd' }}</td> -->
           <td>
             <span class="status" [ngClass]="{ active: e.etat, inactive: !e.etat }">
               {{ e.etat ? 'Active' : 'Bloquée' }}
