@@ -20,15 +20,25 @@ export class ContentbodyListbudgetGest {
     this.loadBudgets();
   }
 
-  loadBudgets(): void {
-    this.budgetService.getBudgets().subscribe({
-      next: (response) => {
-        this.budgets = response.budgets || [];
-      },
-      error: (err) => {
-        console.log("Erreur lors du chargement des budgets :", err);
-        
-      }
-    })
-  }
+  
+  isLoading: boolean = false;
+errorMessage: string = '';
+
+loadBudgets(): void {
+  this.isLoading = true;
+  this.errorMessage = '';
+
+  this.budgetService.getBudgets().subscribe({
+    next: (response) => {
+      this.budgets = response;
+      this.isLoading = false;
+    },
+    error: (err) => {
+      this.errorMessage = 'Impossible de charger les budgets';
+      console.error(err);
+      this.isLoading = false;
+    }
+  });
+}
+
 }
