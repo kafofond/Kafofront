@@ -39,8 +39,9 @@ app-navbar-dsi {
 .page-content {
   flex: 1;
   overflow-y: auto;
-  padding: 24px;
-  background-color: #f9fafb;
+  padding: 35px;
+  background-color: #e2e8f0;
+  margin-top: -20px;
 }
 
 /* Barre de défilement esthétique */

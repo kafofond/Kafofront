@@ -1,21 +1,33 @@
 <main class="main-content">
 
-  <section id="stats" class="stats-grid">
+  <!-- Indicateur de chargement -->
+  <div *ngIf="isLoading" class="loading-indicator">
+    <div class="spinner"></div>
+    <p>Chargement des données DSI...</p>
+  </div>
+
+  <!-- Message d'erreur -->
+  <div *ngIf="errorMessage" class="error-banner">
+    {{ errorMessage }}
+    <button class="retry-btn" (click)="loadDashboardData()">Réessayer</button>
+  </div>
+
+  <section id="stats" class="stats-grid" *ngIf="!isLoading && !errorMessage">
     <article class="stat-card success">
       <div class="card-header">
         <div class="card-icon-wrapper">
           <img src="assets/30_23.svg" alt="Building Icon">
         </div>
-        <span class="card-value">165</span>
+        <span class="card-value">{{ formatNumber(stats.totalUsers) }}</span>
       </div>
       <div class="card-body">
-        <p class="card-title">Entreprises actives</p>
+        <p class="card-title">Utilisateurs total de l'Entreprise</p>
         <div class="progress-bar">
-          <div class="progress-bar-fill" style="width: 85%;"></div>
+          <div class="progress-bar-fill" [style.width]="getActiveUsersWidth()"></div>
         </div>
         <div class="card-footer">
-          <span>Sur 183 totals</span>
-          <span>85 %</span>
+          <span>Actifs ce mois</span>
+          <span>{{ stats.activeUsersPercentage }} %</span>
         </div>
       </div>
     </article>
@@ -25,16 +37,16 @@
         <div class="card-icon-wrapper">
           <img src="assets/30_77.svg" alt="Users Icon">
         </div>
-        <span class="card-value">2,456</span>
+        <span class="card-value">{{ formatNumber(stats.disabledUsers) }}</span>
       </div>
       <div class="card-body">
-        <p class="card-title">Utilisateurs inscrits</p>
+        <p class="card-title">Utilisateurs désactivés</p>
         <div class="progress-bar">
-          <div class="progress-bar-fill" style="width: 78%;"></div>
+          <div class="progress-bar-fill" [style.width]="getDisabledUsersWidth()"></div>
         </div>
         <div class="card-footer">
-          <span>Actifs ce mois</span>
-          <span>78 %</span>
+          <span>Ce mois</span>
+          <span>{{ stats.disabledUsersPercentage }} %</span>
         </div>
       </div>
     </article>
@@ -44,37 +56,49 @@
         <div class="card-icon-wrapper">
           <img src="assets/30_80.svg" alt="Document Icon">
         </div>
-        <span class="card-value">165</span>
+        <span class="card-value">{{ formatNumber(stats.sharedDocuments) }}</span>
       </div>
       <div class="card-body">
         <p class="card-title">Documents partagés</p>
         <div class="progress-bar">
-          <div class="progress-bar-fill" style="width: 85%;"></div>
+          <div class="progress-bar-fill" [style.width]="getDocumentsWidth()"></div>
         </div>
         <div class="card-footer">
           <span>Pendant ce mois</span>
-          <span>85 %</span>
+          <span>{{ stats.documentsPercentage }} %</span>
         </div>
       </div>
     </article>
   </section>
 
-  <section id="activity" class="activity-section">
+  <section id="activity" class="activity-section" *ngIf="!isLoading && !errorMessage">
     <div class="activity-header">
-      <h3>Activité globale de la plateforme</h3>
-      <div class="activity-actions">
-        <button class="btn btn-secondary">
-          <img src="assets/31_94.svg" alt="">
-          Exporter
-        </button>
-        <button class="btn btn-primary">
-          <img src="assets/31_98.svg" alt="">
-          Filtrer
-        </button>
+      <h3>Activité de mon entreprise</h3>
+      <div class="activity-controls">
+        <select id="periodSelect" [value]="currentPeriode" (change)="onPeriodeChange($event)">
+          <option value="jour">Aujourd'hui</option>
+          <option value="semaine">Cette semaine</option>
+          <option value="mois">Ce mois</option>
+        </select>
+
+        <div class="activity-actions">
+          <button class="btn btn-secondary" (click)="exportChart()">
+            <!-- <img src="assets/31_94.svg" > -->
+            Exporter
+          </button>
+        </div>
       </div>
     </div>
     <div class="chart-container">
-      <img src="assets/5347c4799e2e58154af9b5fe355c91ec632c849d.png" alt="Platform activity chart">
+      <div *ngIf="chartLoading" class="chart-loading">
+        <div class="spinner"></div>
+        <p>Chargement du graphique...</p>
+      </div>
+      <canvas baseChart
+        [data]="lineChartData"
+        [options]="lineChartOptions"
+        [type]="'line'">
+      </canvas>
     </div>
   </section>
 

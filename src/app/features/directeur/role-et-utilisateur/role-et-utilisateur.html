@@ -57,21 +57,12 @@
 
     <!-- Boucle dynamique avec filtres -->
     <div class="table-grid table-row" *ngFor="let user of filteredUsers">
-      <div>{{ user.nomUtilisateur }} {{ user.prenomUtilisateur }}</div>
-      <div><span class="role-badge">{{ user.role }}</span></div>
-      <div>{{ user.email }}</div>
-      <div>{{ user.derniereActivite || 'N/A' }}</div>
-      <div>
-        <span
-          class="status-badge"
-          [ngClass]="{
-            'status-active': user.etat,
-            'status-inactive': !user.etat
-          }"
-        >
-          {{ user.etat ? 'Active' : 'Inactive' }}
-        </span>
-      </div>
+      <div>{{ user.nom }} {{ user.prenom }}</div>
+<div>{{ user.dateCreation || 'N/A' }}</div>
+<div [ngClass]="{'status-active': user.actif, 'status-inactive': !user.actif}">
+  {{ user.actif ? 'Active' : 'Inactive' }}
+</div>
+
       <div class="action-icons">
         <a href="#"><img src="assets/87_501.svg" alt="Details" /></a>
         <a href="#"><img src="assets/32_236.svg" alt="Edit" /></a>

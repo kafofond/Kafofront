@@ -1,10 +1,16 @@
 <section class="entreprises-section">
+  <!-- Message d'erreur -->
+  <div *ngIf="errorMessage" class="error-banner">
+    {{ errorMessage }}
+    <button class="retry-btn" (click)="loadEntreprises()">Réessayer</button>
+  </div>
+
   <div class="entreprises-header">
     <h3>Liste des Entreprises</h3>
 
     <div class="entreprises-actions">
       <!-- Sélecteur de filtre par statut -->
-      <select [(ngModel)]="filtreStatut" class="filtre-select">
+      <select [(ngModel)]="filtreStatut" class="filtre-select" (change)="filteredEntreprises">
         <option value="tous">Tous</option>
         <option value="actif">Actives</option>
         <option value="inactif">Bloquées</option>
@@ -15,7 +21,7 @@
         Exporter
       </button>
 
-      <button class="btn btn-primary" (click)="ajouterEntreprise()">
+      <button class="btn btn-primary" (click)="openAjouterModal()">
         <img src="assets/bi_building-fill_white.svg" alt="Ajouter" />
         Ajouter une entreprise
       </button>
@@ -23,7 +29,11 @@
   </div>
 
   <div class="table-container">
-    <table class="entreprises-table">
+    <div *ngIf="loading" class="loading-spinner">
+      <p>Chargement des entreprises...</p>
+    </div>
+
+    <table class="entreprises-table" *ngIf="!loading">
       <thead class="header-color">
         <tr>
           <th>Nom</th>
@@ -31,8 +41,8 @@
           <th>Domaine</th>
           <th>Email</th>
           <th>Téléphone</th>
-          <th>Date de création</th>
-          <th>Statut</th>
+          <!-- <th>Date de création</th> -->
+          <th>Etat</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -44,22 +54,110 @@
           <td>{{ e.domaine }}</td>
           <td>{{ e.email }}</td>
           <td>{{ e.telephone }}</td>
-          <td>{{ e.dateCreation | date: 'yyyy-MM-dd' }}</td>
+          <!-- <td>{{ e.dateCreation | date: 'yyyy-MM-dd' }}</td> -->
           <td>
-            <span class="status" [ngClass]="{ active: e.statut, inactive: !e.statut }">
-              {{ e.statut ? 'Active' : 'Bloquée' }}
+            <span class="status" [ngClass]="{ active: e.etat, inactive: !e.etat }">
+              {{ e.etat ? 'Active' : 'Bloquée' }}
             </span>
           </td>
           <td class="actions">
-            <button class="action-btn" (click)="afficherDetails(e)">
+            <button class="action-btn" (click)="openDetailModal(e)" title="Voir détails">
               <img src="assets/87_501.svg" alt="Voir détails" />
             </button>
-            <button class="action-btn" (click)="bloquerEntreprise(e)">
-              <img src="assets/bx_block.svg" alt="Bloquer" />
+            <button class="action-btn" (click)="bloquerEntreprise(e)" [title]="e.etat ? 'Bloquer' : 'Activer'">
+              <img [src]="e.etat ? 'assets/bx_block.svg' : 'assets/check-circle.svg'" 
+                   [alt]="e.etat ? 'Bloquer' : 'Activer'" />
             </button>
           </td>
         </tr>
       </tbody>
     </table>
+
+    <div *ngIf="!loading && filteredEntreprises.length === 0" class="no-data">
+      <p>Aucune entreprise trouvée</p>
+    </div>
+  </div>
+
+  <!-- Modale de détails -->
+  <div *ngIf="showDetailModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Détails de l'entreprise</h3>
+        <button class="close-btn" (click)="closeDetailModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="detail-item">
+          <label>Nom :</label>
+          <span>{{ selectedEntreprise?.nom }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Domaine :</label>
+          <span>{{ selectedEntreprise?.domaine }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Adresse :</label>
+          <span>{{ selectedEntreprise?.adresse }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Email :</label>
+          <span>{{ selectedEntreprise?.email }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Téléphone :</label>
+          <span>{{ selectedEntreprise?.telephone }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Date de création :</label>
+          <span>{{ selectedEntreprise?.dateCreation | date: 'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Statut :</label>
+          <span [ngClass]="selectedEntreprise?.etat ? 'status active' : 'status inactive'">
+            {{ selectedEntreprise?.etat ? 'Active' : 'Bloquée' }}
+          </span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" (click)="closeDetailModal()">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modale d'ajout -->
+  <div *ngIf="showAjouterModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Ajouter une entreprise</h3>
+        <button class="close-btn" (click)="closeAjouterModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="creerEntreprise()" #entrepriseForm="ngForm">
+          <div class="form-group">
+            <label for="nom">Nom *</label>
+            <input type="text" id="nom" name="nom" [(ngModel)]="nouvelleEntreprise.nom" required>
+          </div>
+          <div class="form-group">
+            <label for="domaine">Domaine *</label>
+            <input type="text" id="domaine" name="domaine" [(ngModel)]="nouvelleEntreprise.domaine" required>
+          </div>
+          <div class="form-group">
+            <label for="adresse">Adresse *</label>
+            <input type="text" id="adresse" name="adresse" [(ngModel)]="nouvelleEntreprise.adresse" required>
+          </div>
+          <div class="form-group">
+            <label for="email">Email *</label>
+            <input type="email" id="email" name="email" [(ngModel)]="nouvelleEntreprise.email" required>
+          </div>
+          <div class="form-group">
+            <label for="telephone">Téléphone *</label>
+            <input type="text" id="telephone" name="telephone" [(ngModel)]="nouvelleEntreprise.telephone" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeAjouterModal()">Annuler</button>
+        <button class="btn btn-primary" (click)="creerEntreprise()" [disabled]="!entrepriseForm.valid">Valider</button>
+      </div>
+    </div>
   </div>
 </section>

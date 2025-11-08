@@ -1,5 +1,5 @@
 .sidebar {
-    width: 400px;
+    width: 250px;
     background-color: #0b4f63;
     position: sticky;
     top: 0;
@@ -31,8 +31,9 @@
 
 .logo-text {
     /* Taille du texte du logo réduite */
-    font-size: 1.3rem; 
+    font-size: 2.3rem; 
     color: #ffffff;
+    font-weight: bold;
 }
 
 .logo-text-highlight {

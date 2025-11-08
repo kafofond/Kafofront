@@ -1,10 +1,74 @@
 .main-content {
   flex-grow: 1;
-  padding: 0 40px 40px 40px;
+  /* padding: 0 40px 40px 40px; */
   background-color: #e2e8f0;
 }
 
-/* --- Section Statistiques --- */
+/* Indicateur de chargement */
+.loading-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  margin-top: 38px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e2e8f0;
+  border-top: 4px solid #0b4f63;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-indicator p {
+  margin: 0;
+  color: #0b4f63;
+  font-weight: 500;
+}
+
+/* Message d'erreur */
+.error-banner {
+  background: #fef2f2;
+  border: 1px solid #f5c2c7;
+  color: #b91c1c;
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.retry-btn {
+  background: #0b4f63;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.chart-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+/* Le reste du CSS reste identique à votre version précédente */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -46,7 +110,7 @@
   height: 50px;
   border-radius: 15px;
   background-color: #e2e8f0;
-  border: 1px solid rgba(0, 0, 0, 0.19);
+  /* border: 1px solid rgba(0, 0, 0, 0.19); */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -82,6 +146,7 @@
 .progress-bar-fill {
   height: 100%;
   border-radius: 10px;
+  transition: width 0.5s ease-in-out;
 }
 
 .stat-card.success .progress-bar-fill { background-color: #0c8f11; }
@@ -95,7 +160,6 @@
   color: rgba(0, 0, 0, 0.67);
 }
 
-/* --- Section Activité --- */
 .activity-section {
   margin-top: 38px;
 }
@@ -114,9 +178,83 @@
   color: #0b4f63;
 }
 
+.activity-controls {
+  display: flex;
+  align-items: center;  
+  gap: 20px;            
+}
+
+
+/* Cible directe du select dans .activity-controls */
+.activity-controls select {
+  background-color: #ffffff !important;  
+  border: 1px solid #cbd5e1 !important;  
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  appearance: none;  
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.activity-controls select:hover {
+  border-color: #94a3b8;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+
+.period-selector {
+  position: relative; /* pour placer le select et masquer le focus natif */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Select normal */
+.period-selector select {
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-size: 13px;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  outline: none !important;      /* supprime outline navigateur */
+  box-shadow: none !important;   /* supprime focus shadow navigateur */
+}
+
+
+/* Contour lors du focus */
+.period-selector select:focus {
+  border-color: #cbd5e1;  /* bordure constante même au focus */
+  box-shadow: none;       /* supprime ombre */
+}
+
+/* Wrapper pour “forcer” la bordure et cacher le focus du navigateur */
+.period-selector::after {
+  content: '▼';
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 12px;
+  color: #0b4f63;
+}
+
+
 .activity-actions {
   display: flex;
-  gap: 58px;
+  gap: 15px;
+}
+
+.activity-actions .btn-secondary {
+  padding: 10px 20px;  /* même hauteur que le select */
+  font-size: 13px;     /* même que le select */
 }
 
 .btn {
@@ -129,49 +267,77 @@
   font-family: 'Inter', sans-serif;
   font-weight: 700;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .btn-secondary {
-  background-color: #e2e8f0;
-  border: 2px solid rgba(0, 0, 0, 0.12);
+  background-color: #f59e0b;
+  border: 1px solid rgba(0, 0, 0, 0.12);
   color: rgba(0, 0, 0, 0.67);
   font-size: 13px;
-}
-
-.btn-primary {
-  background-color: #f59e0b;
-  color: rgba(0, 0, 0, 0.67);
-  font-size: 15px;
 }
 
 .chart-container {
   background-color: #ffffff;
   border-radius: 15px;
-  padding: 8px 16px;
+  padding: 20px;
+  height: 400px;
+  position: relative;
 }
 
-.chart-container img {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-/* --- Responsive --- */
+/* Responsive */
 @media (max-width: 1200px) {
   .stats-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
   .activity-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 15px;
   }
+  
+  .activity-controls {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    gap: 15px;
+  }
+  
   .activity-actions {
     width: 100%;
     justify-content: space-between;
     gap: 10px;
+  }
+
+  .main-content {
+    padding: 0 20px 20px 20px;
+  }
+
+  .chart-container {
+    height: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .activity-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .btn {
+    width: 100%;
+    justify-content: center;
   }
 }

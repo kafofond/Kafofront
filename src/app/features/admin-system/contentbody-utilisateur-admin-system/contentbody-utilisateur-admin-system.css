@@ -1,48 +1,53 @@
+/* ====== SECTION PRINCIPALE ====== */
 .utilisateurs-section {
   padding: 20px;
   background-color: #f8fafc;
+  min-height: 100vh;
 }
 
+/* ====== EN-TÊTE ====== */
 .utilisateurs-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .utilisateurs-header h3 {
   color: #0b4f63;
-  font-size: 1.4rem;
+  font-size: 1.5rem;
+  font-weight: 700;
 }
 
+/* ====== ACTIONS ====== */
 .utilisateurs-actions {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-select {
+.filtre-select {
   padding: 6px 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  background-color: #fff;
-  cursor: pointer;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
   font-size: 14px;
+  background: #fff;
+  cursor: pointer;
 }
 
 .btn {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   padding: 8px 12px;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
-  font-weight: 500;
-}
-
-.btn img {
-  width: 18px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
 }
 
 .btn-primary {
@@ -50,35 +55,69 @@ select {
   color: #fff;
 }
 
+.btn-primary:hover {
+  background-color: #0a4154;
+}
+
 .btn-secondary {
   background-color: #f59e0b;
   color: #fff;
 }
 
+.btn-secondary:hover {
+  background-color: #d97706;
+}
+
+/* ====== TABLEAU ====== */
 .table-container {
   background: #fff;
   border-radius: 10px;
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
   overflow-x: auto;
+  padding: 10px;
 }
 
 .utilisateurs-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
 .utilisateurs-table th,
 .utilisateurs-table td {
   padding: 12px 10px;
   text-align: left;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #e2e8f0;
+  vertical-align: middle;
+  font-size: 14px;
 }
 
+.utilisateurs-table th {
+  background-color: #e2e8f0;
+  color: #0b4f63;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.utilisateurs-table td {
+  color: #334155;
+}
+
+.utilisateurs-table th:nth-child(7),
+.utilisateurs-table td:nth-child(7) {
+  width: 18%;
+  min-width: 140px;
+}
+
+/* ====== STATUT ====== */
 .status {
-  padding: 4px 8px;
+  padding: 4px 10px;
   border-radius: 6px;
   font-weight: 600;
   font-size: 13px;
+  display: inline-block;
+  text-align: center;
+  min-width: 80px;
 }
 
 .status.active {
@@ -91,21 +130,347 @@ select {
   color: #991b1b;
 }
 
+/* ====== ACTIONS DANS TABLE ====== */
 .actions {
   display: flex;
-  gap: 6px;
+  justify-content: center; /* centre horizontalement dans la cellule */
+  align-items: center;     /* aligne verticalement */
+  gap: 10px;               /* espace entre les boutons */
+  flex-wrap: nowrap;       /* empêche les boutons de passer à la ligne */
 }
 
 .action-btn {
-  background: none;
   border: none;
+  border-radius: 6px;
   cursor: pointer;
+  padding: 4px 10px;       /* même que les badges */
+  font-size: 13px;         /* même que les badges */
+  font-weight: 600;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;     /* empêche le texte de casser */
+  min-width: auto;         /* pour ne pas forcer la largeur */
 }
 
-.action-btn img {
-  width: 22px;
+
+.btn-activate {
+  background-color: #10b981;
 }
 
-.header-color {
-    background-color: #E2E8F0;
+.btn-activate:hover {
+  background-color: #059669;
+}
+
+.btn-block {
+  background-color: #ef4444;
+}
+
+.btn-block:hover {
+  background-color: #dc2626;
+}
+
+.action-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* ====== BANDEAU ERREUR ====== */
+.error-banner {
+  background: #fef2f2;
+  border: 1px solid #f5c2c7;
+  color: #b91c1c;
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.retry-btn {
+  background: #0b4f63;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* ====== PAGINATION ====== */
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: #475569;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pagination-btn {
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pagination-btn.active {
+  background: #0b4f63;
+  color: #fff;
+  font-weight: bold;
+}
+
+.pagination-btn:hover:not(.active) {
+  background: #e2e8f0;
+}
+
+/* ====== MODALE ====== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal {
+  background: #fff;
+  width: 480px;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: #0b4f63;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.close-btn {
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  cursor: pointer;
+  color: #64748b;
+  transition: color 0.2s ease;
+}
+
+.close-btn:hover {
+  color: #0b4f63;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-group label {
+  font-weight: 600;
+  font-size: 14px;
+  color: #475569;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #1e293b;
+  transition: border-color 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #0b4f63;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 15px;
+  gap: 10px;
+}
+
+/* ====== POPUP DE CONFIRMATION ====== */
+.confirm-modal {
+  max-width: 450px;
+  text-align: center;
+  padding: 25px;
+}
+
+.confirm-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+.confirm-message {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #0b4f63;
+  line-height: 1.4;
+}
+
+.confirm-warning {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin-bottom: 0;
+  line-height: 1.4;
+}
+
+.btn-danger {
+  background-color: #ef4444;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.btn-danger:hover {
+  background-color: #dc2626;
+  transform: translateY(-1px);
+}
+
+/* ====== ÉTAT VIDE & CHARGEMENT ====== */
+.no-data {
+  text-align: center;
+  color: #64748b;
+  font-style: italic;
+  padding: 20px 0;
+}
+
+.loading-spinner {
+  text-align: center;
+  padding: 20px 0;
+  font-weight: 500;
+  color: #0b4f63;
+}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 768px) {
+  .utilisateurs-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .utilisateurs-actions {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .action-btn {
+    width: 100%;
+    padding: 6px 10px;
+  }
+
+  .modal {
+    width: 90%;
+    margin: 20px;
+  }
+
+  .confirm-modal {
+    padding: 20px 15px;
+  }
+
+  .modal-footer {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .modal-footer .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .utilisateurs-table {
+    table-layout: auto;
+  }
+
+  .utilisateurs-table th:nth-child(7),
+  .utilisateurs-table td:nth-child(7) {
+    width: auto;
+    min-width: auto;
+  }
+
+  .pagination {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+  }
+
+  .pagination-controls {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .utilisateurs-section {
+    padding: 15px 10px;
+  }
+
+  .utilisateurs-header h3 {
+    font-size: 1.3rem;
+  }
+
+  .utilisateurs-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filtre-select,
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .confirm-message {
+    font-size: 1rem;
+  }
+
+  .confirm-icon {
+    font-size: 2.5rem;
+  }
 }
