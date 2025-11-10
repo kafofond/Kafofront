@@ -3,7 +3,7 @@ import { RapportDachat } from '../../../models/rapport-dachat';
 import { Statut } from '../../../enums/statut';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { LigneBudget } from '../../../models/ligne-budget';
+import { LigneBudget } from '../../../models/ligne-budget.model';
 
 @Component({
   selector: 'app-contentbody-rapport-financier-comptable',
@@ -15,53 +15,67 @@ export class ContentbodyRapportFinancierComptable {
 
   
   // --- Données Ligne de Crédit ---
-  lignesBudget: LigneBudget[] = [
-    {
-      intituleLigne: 'Achat matériel informatique',
-      description: 'Ordinateurs et accessoires',
-      dateDeCreation: new Date('2024-01-15'),
-      commentaire: 'Prioritaire pour le service IT',
-      statut: 'Validé',
-      etat: true,
-      dateDebut: new Date('2024-01-01'),
-      dateFin: new Date('2024-12-31'),
-      montantAlloue: 15000000,
-      montantEngage: 9000000,
-      montantRestant: 6000000,
-      tauxUtilisation: 60
-    },
-    {
-      intituleLigne: 'Achat mobilier de bureau',
-      description: 'Chaises, bureaux, armoires',
-      dateDeCreation: new Date('2024-02-20'),
-      commentaire: 'Pour le service RH',
-      statut: 'En attente',
-      etat: true,
-      dateDebut: new Date('2024-02-01'),
-      dateFin: new Date('2024-11-30'),
-      montantAlloue: 10000000,
-      montantEngage: 4000000,
-      montantRestant: 6000000,
-      tauxUtilisation: 40
-    },
-    {
-      intituleLigne: 'Maintenance équipements réseau',
-      description: 'Réseau interne et sécurité',
-      dateDeCreation: new Date('2024-03-05'),
-      commentaire: 'Renouvellement contrat',
-      statut: 'Rejeté',
-      etat: false,
-      dateDebut: new Date('2024-03-01'),
-      dateFin: new Date('2024-10-15'),
-      montantAlloue: 8000000,
-      montantEngage: 8000000,
-      montantRestant: 0,
-      tauxUtilisation: 100
-    }
-  ];
+lignesBudget: LigneBudget[] = [
+  {
+    id: 1,
+    code: 'LB-001',
+    budgetId: 101,
+    intituleLigne: 'Achat matériel informatique',
+    description: 'Ordinateurs et accessoires',
+    dateDeCreation: new Date('2024-01-15'),
+    commentaire: 'Prioritaire pour le service IT',
+    statut: 'Validé',
+    etat: true,
+    dateDebut: new Date('2024-01-01'),
+    dateFin: new Date('2024-12-31'),
+    montantAlloue: 15000000,
+    montantEngage: 9000000,
+    montantRestant: 6000000,
+    tauxUtilisation: 60,
+    createurNom: 'Hamza Sanmo',
+    createurEmail: 'hamza.sanmo@entreprise.com'
+  },
+  {
+    id: 2,
+    code: 'LB-002',
+    budgetId: 102,
+    intituleLigne: 'Achat mobilier de bureau',
+    description: 'Chaises, bureaux, armoires',
+    dateDeCreation: new Date('2024-02-20'),
+    commentaire: 'Pour le service RH',
+    statut: 'En attente',
+    etat: true,
+    dateDebut: new Date('2024-02-01'),
+    dateFin: new Date('2024-11-30'),
+    montantAlloue: 10000000,
+    montantEngage: 4000000,
+    montantRestant: 6000000,
+    tauxUtilisation: 40,
+    createurNom: 'Hamza Sanmo',
+    createurEmail: 'hamza.sanmo@entreprise.com'
+  },
+  {
+    id: 3,
+    code: 'LB-003',
+    budgetId: 103,
+    intituleLigne: 'Maintenance équipements réseau',
+    description: 'Réseau interne et sécurité',
+    dateDeCreation: new Date('2024-03-05'),
+    commentaire: 'Renouvellement contrat',
+    statut: 'Rejeté',
+    etat: false,
+    dateDebut: new Date('2024-03-01'),
+    dateFin: new Date('2024-10-15'),
+    montantAlloue: 8000000,
+    montantEngage: 8000000,
+    montantRestant: 0,
+    tauxUtilisation: 100,
+    createurNom: 'Hamza Sanmo',
+    createurEmail: 'hamza.sanmo@entreprise.com'
+  }
+];
 
-  // --- Données Rapport d’Achat ---
-  rapportDachats: RapportDachat[] = [
+rapportDachats = [
     {
       nom: 'Rapport d’achat – Matériel Informatique',
       ficheDeBesoin: 'FB-101',

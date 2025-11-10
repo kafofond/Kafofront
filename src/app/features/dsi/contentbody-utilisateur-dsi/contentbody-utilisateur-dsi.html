@@ -1,31 +1,25 @@
-<section class="utilisateurs-section">
-  <div *ngIf="errorMessage" class="error-banner">
-    {{ errorMessage }}
-    <button class="retry-btn" (click)="loadUtilisateurs()">Réessayer</button>
-  </div>
-
-  <div class="utilisateurs-header">
-    <h3>Liste des Utilisateurs</h3>
-
-    <div class="utilisateurs-actions">
+<div class="page-header">
+  <div class="header-controls">
+    <div class="filtre-control">
       <select [(ngModel)]="filtreStatut" class="filtre-select">
         <option value="tous">Tous</option>
         <option value="actifs">Actifs</option>
         <option value="bloques">Bloqués</option>
       </select>
+    </div>
 
+    <div class="header-actions">
       <button class="btn btn-secondary" (click)="exporter()">
-        <img src="assets/Group 901.svg" alt="Exporter" />
         Exporter
       </button>
-
       <button class="btn btn-primary" (click)="ajouterUtilisateur()">
-        <img src="assets/bxs_user-plus.svg" alt="Ajouter" />
         Ajouter un utilisateur
       </button>
     </div>
   </div>
+</div>
 
+<section class="utilisateurs-section">
   <div class="table-container">
     <div *ngIf="loading" class="loading-spinner">
       <p>Chargement des utilisateurs...</p>
@@ -34,34 +28,39 @@
     <table class="utilisateurs-table" *ngIf="!loading">
       <thead class="header-color">
         <tr>
-          <th>Nom</th>
-          <th>Prénom</th>
-          <th>Email</th>
-          <th>Rôle</th>
-          <!-- <th>Entreprise</th> -->
-          <th>État</th>
-          <th>Actions</th>
+          <th class="col-nom">Nom</th>
+          <th class="col-prenom">Prénom</th>
+          <th class="col-email">Email</th>
+          <th class="col-role">Rôle</th>
+          <th class="col-etat">État</th>
+          <th class="col-actions">Actions</th>
         </tr>
       </thead>
 
       <tbody>
         <tr *ngFor="let u of utilisateursFiltres">
-          <td>{{ u.nom }}</td>
-          <td>{{ u.prenom }}</td>
-          <td>{{ u.email }}</td>
-          <td>{{ getRoleLabel(u.role) }}</td>
-          <!-- <td>{{ getEntrepriseNom(u.entrepriseId) }}</td> -->
-          <td>
+          <td class="col-nom">{{ u.nom }}</td>
+          <td class="col-prenom">{{ u.prenom }}</td>
+          <td class="col-email">{{ u.email }}</td>
+          <td class="col-role">
+            <span class="role-badge" [ngClass]="getRoleBadgeClass(u.role)">
+              {{ getRoleLabel(u.role) }}
+            </span>
+          </td>
+          <td class="col-etat">
             <span class="status" [ngClass]="{ active: u.actif, inactive: !u.actif }">
               {{ u.actif ? 'Actif' : 'Bloqué' }}
             </span>
           </td>
-          <td class="actions">
-            <button *ngIf="!u.actif" class="action-btn" title="Activer" (click)="activerUtilisateur(u)">
-              <img src="assets/Frame icon approuver.svg" alt="Activer" />
+          <td class="col-actions">
+            <button class="btn-action btn-toggle" 
+                    (click)="toggleUtilisateurStatut(u)"
+                    [class.btn-activate]="!u.actif"
+                    [class.btn-block]="u.actif">
+              {{ u.actif ? 'Bloquer' : 'Activer' }}
             </button>
-            <button *ngIf="u.actif" class="action-btn" title="Bloquer" (click)="bloquerUtilisateur(u)">
-              <img src="assets/bx_block.svg" alt="Bloquer" />
+            <button class="btn-action btn-modify" (click)="modifierUtilisateur(u)">
+              Modifier
             </button>
           </td>
         </tr>
@@ -96,6 +95,7 @@
     </div>
   </div>
 
+  <!-- Modal de création -->
   <div *ngIf="showCreateModal" class="modal-overlay">
     <div class="modal">
       <div class="modal-header">
@@ -120,6 +120,10 @@
           <input type="password" id="motDePasse" [(ngModel)]="newUser.motDePasse" placeholder="Entrez le mot de passe">
         </div>
         <div class="form-group">
+          <label for="confirmPassword">Confirmer le mot de passe *</label>
+          <input type="password" id="confirmPassword" [(ngModel)]="confirmPassword" placeholder="Confirmez le mot de passe">
+        </div>
+        <div class="form-group">
           <label for="departement">Département *</label>
           <input type="text" id="departement" [(ngModel)]="newUser.departement" placeholder="Entrez le département">
         </div>
@@ -127,24 +131,55 @@
           <label for="role">Rôle *</label>
           <select id="role" [(ngModel)]="newUser.role" class="form-select">
             <option value="">Sélectionnez un rôle</option>
-            <option *ngFor="let role of roles" [value]="role">
-              {{ getRoleLabel(role) }}
+            <option *ngFor="let role of roles" [value]="role.value">
+              {{ role.label }}
             </option>
           </select>
         </div>
-        <!-- <div class="form-group">
-          <label for="entreprise">Entreprise *</label>
-          <select id="entreprise" [(ngModel)]="newUser.entrepriseId" class="form-select">
-            <option value="0">Sélectionnez une entreprise</option>
-            <option *ngFor="let e of entreprises" [value]="e.id">
-              {{ e.nom }} - {{ e.domaine }}
-            </option>
-          </select>
-        </div> -->
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" (click)="closeCreateModal()">Annuler</button>
-        <button class="btn btn-primary" (click)="creerUtilisateur()">Valider la création</button>
+        <button class="btn btn-primary" (click)="creerUtilisateur()">Créer le compte</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de modification -->
+  <div *ngIf="showEditModal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Modifier l'utilisateur</h3>
+        <button class="close-btn" (click)="closeEditModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="edit-nom">Nom *</label>
+          <input type="text" id="edit-nom" [(ngModel)]="editUser!.nom" placeholder="Entrez le nom">
+        </div>
+        <div class="form-group">
+          <label for="edit-prenom">Prénom *</label>
+          <input type="text" id="edit-prenom" [(ngModel)]="editUser!.prenom" placeholder="Entrez le prénom">
+        </div>
+        <div class="form-group">
+          <label for="edit-email">Email *</label>
+          <input type="email" id="edit-email" [(ngModel)]="editUser!.email" placeholder="Entrez l'email">
+        </div>
+        <div class="form-group">
+          <label for="edit-departement">Département *</label>
+          <input type="text" id="edit-departement" [(ngModel)]="editUser!.departement" placeholder="Entrez le département">
+        </div>
+        <div class="form-group">
+          <label for="edit-role">Rôle *</label>
+          <select id="edit-role" [(ngModel)]="editUser!.role" class="form-select">
+            <option *ngFor="let role of roles" [value]="role.value">
+              {{ role.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeEditModal()">Annuler</button>
+        <button class="btn btn-primary" (click)="updateUtilisateur()">Modifier</button>
       </div>
     </div>
   </div>

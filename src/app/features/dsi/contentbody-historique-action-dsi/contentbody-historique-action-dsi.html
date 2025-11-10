@@ -1,9 +1,7 @@
 <section class="historique-section">
   <div class="historique-header">
-    <h3>Historique des Actions</h3>
-
+  
     <div class="historique-filtres">
-      <label for="filtre">Filtrer par action :</label>
       <select id="filtre" [(ngModel)]="filtreAction">
         <option value="toutes">Toutes</option>
         <option value="cree">Créé</option>
@@ -14,7 +12,19 @@
     </div>
   </div>
 
-  <div class="table-container">
+  <!-- Message d'erreur -->
+  <div *ngIf="error" class="error-banner">
+    <span>{{ error }}</span>
+    <button class="retry-btn" (click)="retry()">Réessayer</button>
+  </div>
+
+  <!-- Chargement -->
+  <div *ngIf="isLoading" class="loading-spinner">
+    Chargement de l'historique...
+  </div>
+
+  <!-- Tableau -->
+  <div *ngIf="!isLoading && historiquesFiltres.length > 0" class="table-container">
     <table class="historique-table">
       <thead class="header-color">
         <tr>
@@ -26,7 +36,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let h of historiquesFiltres">
+        <tr *ngFor="let h of historiquesPageCourante">
           <td>{{ h.fichier }}</td>
           <td>{{ h.auteur }}</td>
           <td>{{ h.typeDocument }}</td>
@@ -35,14 +45,28 @@
               cree: h.action === 'Créé',
               modifie: h.action === 'Modifié',
               valide: h.action === 'Validé',
-              rejete: h.action === 'Rejeté'
+              rejete: h.action === 'Rejeté',
+              desactive: h.action === 'Désactivé',
+              reactive: h.action === 'Réactivé'
             }">
               {{ h.action }}
             </span>
           </td>
-          <td>{{ h.date | date: 'yyyy-MM-dd' }}</td>
+          <td>{{ h.date | date: 'yyyy-MM-dd HH:mm' }}</td>
         </tr>
       </tbody>
     </table>
+
+    <!-- Pagination -->
+    <div class="pagination">
+      <button (click)="pagePrecedente()" [disabled]="pageActuelle === 1">Précédent</button>
+      <span>Page {{ pageActuelle }} / {{ totalPages }}</span>
+      <button (click)="pageSuivante()" [disabled]="pageActuelle === totalPages">Suivant</button>
+    </div>
+  </div>
+
+  <!-- Aucun résultat -->
+  <div *ngIf="!isLoading && historiquesFiltres.length === 0 && !error" class="no-data">
+    Aucune action trouvée dans l'historique
   </div>
 </section>

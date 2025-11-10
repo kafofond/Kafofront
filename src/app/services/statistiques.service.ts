@@ -51,6 +51,28 @@ export interface DsiChartData {
   };
 }
 
+// NOUVELLES INTERFACES POUR DIRECTEUR
+export interface DirecteurDashboardStats {
+  totalBudget: number;
+  totalLignesCredit: number;
+  totalDepenses: number;
+  budgetEnCours: number;
+  lignesCreditEnAttente: number;
+  depensesEnAttente: number;
+  budgetPercentage: number;
+  lignesCreditPercentage: number;
+  depensesPercentage: number;
+}
+
+export interface DirecteurChartData {
+  labels: string[];
+  datasets: {
+    budgets: number[];
+    lignesCredit: number[];
+    depenses: number[];
+  };
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -139,6 +161,39 @@ export class StatistiquesService {
       catchError((error) => {
         console.error(`Erreur API DSI chart ${periode} (entreprise):`, error);
         return of(this.getEmptyDsiChartData(periode));
+      })
+    );
+  }
+
+  // NOUVELLES MÉTHODES DIRECTEUR - Données financières et budgétaires
+  getDirecteurDashboardStats(): Observable<DirecteurDashboardStats> {
+    const cacheKey = 'directeur-dashboard';
+    
+    return this.getCachedOrFetch<DirecteurDashboardStats>(
+      cacheKey,
+      `${this.baseUrl}/directeur/dashboard`
+    ).pipe(
+      tap(data => console.log('💰 Données Directeur dashboard (financier):', data)),
+      map(data => this.normalizeDirecteurDashboardStats(data)),
+      catchError((error): Observable<DirecteurDashboardStats> => {
+        console.error('Erreur API Directeur dashboard (financier):', error);
+        return of(this.getEmptyDirecteurStats());
+      })
+    );
+  }
+
+  getDirecteurChartData(periode: string = 'semaine'): Observable<DirecteurChartData> {
+    const cacheKey = `directeur-chart-${periode}`;
+    
+    return this.getCachedOrFetch<DirecteurChartData>(
+      cacheKey,
+      `${this.baseUrl}/directeur/chart?periode=${periode}`
+    ).pipe(
+      tap(data => console.log(`📊 Données Directeur chart ${periode} (financier):`, data)),
+      map(data => this.normalizeDirecteurChartData(data)),
+      catchError((error) => {
+        console.error(`Erreur API Directeur chart ${periode} (financier):`, error);
+        return of(this.getEmptyDirecteurChartData(periode));
       })
     );
   }
@@ -238,6 +293,32 @@ export class StatistiquesService {
     };
   }
 
+  // NORMALISATION DES DONNÉES DIRECTEUR
+  private normalizeDirecteurDashboardStats(data: DirecteurDashboardStats): DirecteurDashboardStats {
+    return {
+      totalBudget: this.ensureNumber(data.totalBudget),
+      totalLignesCredit: this.ensureNumber(data.totalLignesCredit),
+      totalDepenses: this.ensureNumber(data.totalDepenses),
+      budgetEnCours: this.ensureNumber(data.budgetEnCours),
+      lignesCreditEnAttente: this.ensureNumber(data.lignesCreditEnAttente),
+      depensesEnAttente: this.ensureNumber(data.depensesEnAttente),
+      budgetPercentage: this.ensurePercentage(data.budgetPercentage),
+      lignesCreditPercentage: this.ensurePercentage(data.lignesCreditPercentage),
+      depensesPercentage: this.ensurePercentage(data.depensesPercentage)
+    };
+  }
+
+  private normalizeDirecteurChartData(data: DirecteurChartData): DirecteurChartData {
+    return {
+      labels: data?.labels || this.generateLabels('semaine'),
+      datasets: {
+        budgets: this.ensurePositiveNumbers(data?.datasets?.budgets),
+        lignesCredit: this.ensurePositiveNumbers(data?.datasets?.lignesCredit),
+        depenses: this.ensurePositiveNumbers(data?.datasets?.depenses)
+      }
+    };
+  }
+
   // FONCTIONS DE VALIDATION
   private ensureNumber(value: any): number {
     if (value === null || value === undefined) return 0;
@@ -280,6 +361,20 @@ export class StatistiquesService {
     };
   }
 
+  private getEmptyDirecteurStats(): DirecteurDashboardStats {
+    return {
+      totalBudget: 0,
+      totalLignesCredit: 0,
+      totalDepenses: 0,
+      budgetEnCours: 0,
+      lignesCreditEnAttente: 0,
+      depensesEnAttente: 0,
+      budgetPercentage: 0,
+      lignesCreditPercentage: 0,
+      depensesPercentage: 0
+    };
+  }
+
   private getEmptyChartData(periode: string): ChartData {
     const labels = this.generateLabels(periode);
     return {
@@ -300,6 +395,18 @@ export class StatistiquesService {
         utilisateurs: Array(labels.length).fill(0),
         documents: Array(labels.length).fill(0),
         desactivations: Array(labels.length).fill(0)
+      }
+    };
+  }
+
+  private getEmptyDirecteurChartData(periode: string): DirecteurChartData {
+    const labels = this.generateLabels(periode);
+    return {
+      labels,
+      datasets: {
+        budgets: Array(labels.length).fill(0),
+        lignesCredit: Array(labels.length).fill(0),
+        depenses: Array(labels.length).fill(0)
       }
     };
   }

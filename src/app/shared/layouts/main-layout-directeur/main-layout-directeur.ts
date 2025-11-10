@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { SidebarDirec } from "../../sidebar-direc/sidebar-direc";
-import { Navbar } from "../../navbar/navbar";
 import { RouterModule } from "@angular/router";
+import { NavbarDirecteur } from "../../navbar-directeur/navbar-directeur";
 
 @Component({
   selector: 'app-main-layout-directeur',
-  imports: [SidebarDirec, Navbar, RouterModule],
+  imports: [SidebarDirec, RouterModule, NavbarDirecteur],
   templateUrl: './main-layout-directeur.html',
   styleUrl: './main-layout-directeur.css'
 })

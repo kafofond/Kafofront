@@ -1,68 +1,100 @@
-import { Component } from '@angular/core';
-import { HistoriqueAction } from '../../../models/historique-action';
+import { Component, OnInit } from '@angular/core';
+import { HistoriqueService, HistoriqueAction } from '../../../services/historique.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-contentbody-historique-action-dsi',
-  imports: [FormsModule, CommonModule],
+  standalone: true,
+  imports: [FormsModule, CommonModule, HttpClientModule],
   templateUrl: './contentbody-historique-action-dsi.html',
   styleUrl: './contentbody-historique-action-dsi.css'
 })
-export class ContentbodyHistoriqueActionDsi {
+export class ContentbodyHistoriqueActionDsi implements OnInit {
 
   filtreAction: string = 'toutes';
+  historiques: HistoriqueAction[] = [];
+  isLoading: boolean = false;
+  error: string = '';
 
-  historiques: HistoriqueAction[] = [
-    {
-      fichier: 'Rapport_Achat_Q1.pdf',
-      auteur: 'Ibrahim Bah',
-      typeDocument: 'Rapport d’achat',
-      action: 'Créé',
-      date: new Date('2025-03-10')
-    },
-    {
-      fichier: 'Budget_2025.xlsx',
-      auteur: 'Aminata Traoré',
-      typeDocument: 'Budget',
-      action: 'Validé',
-      date: new Date('2025-04-15')
-    },
-    {
-      fichier: 'Demande_Formation.docx',
-      auteur: 'Moussa Keita',
-      typeDocument: 'Demande RH',
-      action: 'Rejeté',
-      date: new Date('2025-05-08')
-    },
-    {
-      fichier: 'Bon_Commande_009.pdf',
-      auteur: 'Fatou Diallo',
-      typeDocument: 'Bon de commande',
-      action: 'Modifié',
-      date: new Date('2025-06-22')
-    },
-    {
-      fichier: 'Rapport_Final_ProjetAI.pdf',
-      auteur: 'Ibrahim Bah',
-      typeDocument: 'Rapport projet',
-      action: 'Validé',
-      date: new Date('2025-07-01')
-    }
-  ];
+  // Pagination
+  pageActuelle: number = 1;
+  lignesParPage: number = 10;
 
-  // Filtrage selon le type d’action sélectionné
-  get historiquesFiltres() {
-    if (this.filtreAction === 'valide') {
-      return this.historiques.filter(h => h.action === 'Validé');
-    } else if (this.filtreAction === 'rejete') {
-      return this.historiques.filter(h => h.action === 'Rejeté');
-    } else if (this.filtreAction === 'modifie') {
-      return this.historiques.filter(h => h.action === 'Modifié');
-    } else if (this.filtreAction === 'cree') {
-      return this.historiques.filter(h => h.action === 'Créé');
-    }
-    return this.historiques;
+  constructor(private historiqueService: HistoriqueService) {}
+
+  ngOnInit() {
+    this.loadHistorique();
   }
 
+  loadHistorique() {
+    this.isLoading = true;
+    this.error = '';
+
+    this.historiqueService.getHistoriqueUtilisateur().subscribe({
+      next: (response) => {
+        this.historiques = response.historique;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        if (err.status === 0) {
+          this.error = 'Erreur de connexion au serveur. Vérifiez que le serveur est démarré.';
+        } else if (err.status === 403) {
+          this.error = 'Accès refusé. Vérifiez vos autorisations.';
+        } else {
+          this.error = 'Erreur lors du chargement de l\'historique';
+        }
+        this.isLoading = false;
+        console.error('Erreur historique:', err);
+      }
+    });
+  }
+
+  transformHistoriqueData(historique: HistoriqueAction): any {
+    return {
+      ...historique,
+      fichier: this.historiqueService.genererNomFichier(historique),
+      auteur: historique.utilisateurNomComplet,
+      typeDocument: this.historiqueService.formaterTypeDocument(historique.typeDocument),
+      action: this.historiqueService.formaterAction(historique.action),
+      date: new Date(historique.dateAction)
+    };
+  }
+
+  get historiquesFiltres() {
+    const historiquesTransformes = this.historiques.map(h => this.transformHistoriqueData(h));
+    if (this.filtreAction === 'toutes') return historiquesTransformes;
+
+    const filtreMap: { [key: string]: string } = {
+      'cree': 'Créé',
+      'modifie': 'Modifié',
+      'valide': 'Validé',
+      'rejete': 'Rejeté'
+    };
+
+    return historiquesTransformes.filter(h => h.action === filtreMap[this.filtreAction]);
+  }
+
+  // Pagination calculée
+  get totalPages(): number {
+    return Math.ceil(this.historiquesFiltres.length / this.lignesParPage);
+  }
+
+  get historiquesPageCourante() {
+    const debut = (this.pageActuelle - 1) * this.lignesParPage;
+    return this.historiquesFiltres.slice(debut, debut + this.lignesParPage);
+  }
+
+  pageSuivante() {
+    if (this.pageActuelle < this.totalPages) this.pageActuelle++;
+  }
+
+  pagePrecedente() {
+    if (this.pageActuelle > 1) this.pageActuelle--;
+  }
+
+  retry() {
+    this.loadHistorique();
+  }
 }

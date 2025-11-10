@@ -7,8 +7,8 @@
 
 body {
     font-family: 'Inter', 'Poppins', sans-serif;
-    background-color: #e2e8f0; /* --color-background */
-    color: #000000; /* --color-text-dark */
+    background-color: #e2e8f0;
+    color: #000000;
 }
 
 a {
@@ -28,26 +28,20 @@ button {
 /* ---------------------------------------------------- */
 
 .content-toolbar {
-    /* Changement pour aligner les boutons horizontalement */
     display: flex; 
-    gap: 15px; /* Espacement entre les boutons */
+    gap: 15px;
     margin-bottom: 34px;
-    margin-left: 326px; /* Maintient l'alignement initial (ajustez si nécessaire selon le layout global) */
+    margin-left: 326px;
     justify-content: flex-start;
 }
 
-c
-
-
 /* --- Styles pour le bouton de Filtre et le Dropdown --- */
-
 .filter-dropdown-container {
-    position: relative; /* Conteneur pour positionner le dropdown */
+    position: relative;
     display: inline-block;
 }
 
 .filter-btn {
-    /* Style déjà présent, s'assurer qu'il a une position relative si l'icône de filtre actif est ajoutée */
     position: relative;
     display: flex;
     align-items: center;
@@ -74,14 +68,14 @@ c
 
 .active-filter-label {
     margin-left: 8px;
-    color: #0b4f63; /* Couleur KafoFond */
+    color: #0b4f63;
     font-weight: 600;
 }
 
 /* Dropdown Menu Style */
 .filter-dropdown {
     position: absolute;
-    top: 100%; /* Positionnement juste en dessous du bouton */
+    top: 100%;
     right: 0;
     z-index: 10;
     min-width: 220px;
@@ -119,16 +113,16 @@ c
 }
 
 .dropdown-item:hover {
-    background-color: #f4f7fa; /* Fond léger au survol */
+    background-color: #f4f7fa;
 }
 
 .dropdown-item.reset {
-    color: #cc0000; /* Couleur rouge pour la réinitialisation */
+    color: #cc0000;
     font-weight: 500;
 }
 
 .check-icon {
-    color: #0c8f11; /* Couleur verte pour le filtre actif */
+    color: #0c8f11;
     font-weight: 700;
 }
 
@@ -137,10 +131,9 @@ c
     background-color: #f0f4f7;
     margin: 5px 0;
 }
-/* -- Fin styles du bouton de filtre et dropdown -- */
 
 .budget-table-container {
-    background-color: #ffffff; /* --color-white */
+    background-color: #ffffff;
     border-radius: 15px;
     border: 1px solid #e2e8f0;
     padding: 10px;
@@ -150,7 +143,6 @@ c
 .table-header,
 .table-row {
     display: grid;
-    /* La grille a 6 colonnes */
     grid-template-columns: 1.2fr 1.5fr 1.2fr 1fr 1.3fr 1.5fr;
     align-items: center;
     padding: 20px 24px;
@@ -160,8 +152,8 @@ c
     font-family: 'Poppins', sans-serif;
     font-size: 13px;
     font-weight: 600;
-    color: rgba(0, 0, 0, 0.67); /* --color-text-muted */
-    background-color: #e2e8f0; /* --color-background */
+    color: rgba(0, 0, 0, 0.67);
+    background-color: #e2e8f0;
     border-radius: 15px;
 }
 
@@ -185,12 +177,26 @@ c
 }
 
 .status-badge.active {
-    background-color: #dcffbe; /* --color-status-active-bg */
-    color: #0c8f11; /* --color-status-active-text */
+    background-color: #dcffbe;
+    color: #0c8f11;
+}
+
+.status-badge.warning {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-badge.draft {
+    background-color: #e2e3e5;
+    color: #383d41;
+}
+
+.status-badge.rejected {
+    background-color: #f8d7da;
+    color: #721c24;
 }
 
 .actions-cell {
-    /* Augmentation de l'espace pour accueillir le nouveau bouton */
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -198,8 +204,8 @@ c
 }
 
 .action-link {
-    background-color: #0b4f63; /* --color-primary */
-    color: #ffffff; /* --color-white */
+    background-color: #0b4f63;
+    color: #ffffff;
     border-radius: 8px;
     padding: 4px 10px;
     font-size: 13px;
@@ -210,18 +216,10 @@ c
     width: 40px;
     height: 40px;
     border-radius: 15px;
-    background-color: #e2e8f0; /* --color-background */
+    background-color: #e2e8f0;
     display: grid;
     place-items: center;
 }
-/* Style pour le bouton de modification si on veut le distinguer */
-/* .action-icon-btn.edit-btn {
-    Aucune modification nécessaire, mais la classe est là si vous voulez un style différent
-} */
-
-/* 
- * Pour la fenêtre modale, voir le fichier fenetre-modal-budget.css
-*/
 
 /* --- Modale générale --- */
 .modal-overlay {
@@ -230,22 +228,20 @@ c
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Arrière-plan semi-transparent */
+    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; /* Assurez-vous qu'elle est au-dessus de tout */
-    /* Par défaut, la modale sera masquée par JS */
-    /* display: none; */
+    z-index: 1000;
 }
 
 .modal-content {
     background-color: #ffffff;
     border-radius: 12px;
     width: 90%;
-    max-width: 800px; /* Taille maximale appropriée pour un grand formulaire */
+    max-width: 800px;
     max-height: 90vh;
-    overflow-y: auto; /* Permet le défilement si le formulaire est trop long */
+    overflow-y: auto;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     padding: 30px;
 }
@@ -261,7 +257,7 @@ c
 }
 
 .modal-title {
-    color: #0b4f63; /* Couleur principale KafoFond */
+    color: #0b4f63;
     font-size: 26px;
     font-weight: 700;
 }
@@ -275,6 +271,7 @@ c
     justify-content: center;
     align-items: center;
 }
+
 .close-icon {
     width: 18px;
     height: 18px;
@@ -291,6 +288,7 @@ c
     padding: 15px 0;
     border-bottom: 1px solid #f0f4f7;
 }
+
 .form-section:last-child {
     border-bottom: none;
 }
@@ -308,7 +306,7 @@ c
 
 .full-width { flex: 1; }
 .half-width { flex: 1; }
-.third-width { flex: 1 1 30%; } /* Pour aligner les trois champs de date */
+.third-width { flex: 1 1 30%; }
 
 label {
     font-size: 14px;
@@ -320,21 +318,54 @@ label {
 input[type="text"], 
 input[type="number"], 
 input[type="date"], 
-textarea {
+textarea,
+.form-control {
     width: 100%;
     padding: 12px 15px;
     border: 1px solid #d9d9d9;
     border-radius: 8px;
     font-size: 16px;
     color: #333;
-    background-color: #f7f9fb; /* Léger fond pour l'input */
+    background-color: #f7f9fb;
     transition: border-color 0.3s;
 }
 
-input:focus, textarea:focus {
-    border-color: #f59e0b; /* Accent couleur KafoFond */
+input:focus, 
+textarea:focus,
+.form-control:focus {
+    border-color: #f59e0b;
     outline: none;
     box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.2);
+}
+
+/* Styles améliorés pour le select */
+.form-control {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'><path fill='%230b4f63' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 12px;
+}
+
+/* Styles pour les options du select */
+select.form-control option[value="Validé"] {
+    color: #28a745;
+    font-weight: 600;
+}
+
+select.form-control option[value="Refusé"] {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+select.form-control option[value="En cours"] {
+    color: #ffc107;
+    font-weight: 600;
+}
+
+select.form-control option[value="Brouillon"] {
+    color: #6c757d;
+    font-weight: 600;
 }
 
 input[readonly] {
@@ -346,9 +377,8 @@ input[readonly] {
 /* --- Toggle Switch (Etat Actif/Inactif) --- */
 .toggle-group {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .toggle-control {
@@ -379,7 +409,7 @@ input[readonly] {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccc;
+    background-color: #dc3545;
     transition: 0.4s;
 }
 
@@ -395,7 +425,7 @@ input[readonly] {
 }
 
 input:checked + .slider {
-    background-color: #14B53A; /* Vert pour Actif */
+    background-color: #14B53A;
 }
 
 input:checked + .slider:before {
@@ -427,7 +457,7 @@ input:checked + .slider:before {
 }
 
 .btn-primary {
-    background-color: #f59e0b; /* Couleur orange d'action */
+    background-color: #f59e0b;
     color: #0b4f63;
 }
 
@@ -445,81 +475,25 @@ input:checked + .slider:before {
     background-color: #d2dae3;
 }
 
-/* --- Responsive pour les petits écrans --- */
-@media (max-width: 600px) {
-    .modal-content {
-        padding: 20px;
-    }
-    .form-row {
-        flex-direction: column;
-        gap: 0;
-    }
-    .form-group.half-width,
-    .form-group.third-width {
-        flex-basis: auto;
-    }
-    .form-actions {
-        flex-direction: column-reverse;
-        gap: 10px;
-    }
-    .btn {
-        width: 100%;
-        padding: 15px;
-    }
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
 }
 
-/*
-* --- Fin Fenêtre Modale ---
- */
-
-/* Media Queries pour le responasive */
-
-@media (max-width: 1200px) {
-    .content-toolbar {
-        margin-left: 0; 
-        justify-content: center; /* Centrage des boutons */
-    }
+.btn-danger:hover {
+    background-color: #c82333;
 }
 
-@media (max-width: 992px) {
-    .budget-table-container {
-        overflow-x: auto; 
-    }
-    .budget-table {
-        min-width: 900px;
-    }
-    .table-header {
-        display: none;
-    }
-    .table-row {
-        /* Simplification pour le mobile (à adapter si nécessaire) */
-        grid-template-columns: 1fr 1fr; 
-        gap: 15px;
-        padding: 15px;
-    }
-    
-    .table-row > div:nth-child(odd) {
-        font-weight: 600;
-        color: #0b4f63; /* --color-primary */
-    }
-    /* Les actions restent sur une ligne */
-    .actions-cell {
-        grid-column: 1 / span 2;
-        justify-content: center;
-    }
-}
-
-/* --- Modale de Détails (Inspirée du style KafoFond) --- */
-
+/* --- Modale de Détails --- */
 .detail-modal-content {
-    max-width: 650px; /* Taille plus compacte pour les détails */
-    padding: 0; /* On retire le padding global pour mieux gérer les sections */
+    max-width: 650px;
+    padding: 0;
 }
 
 .detail-header {
     border-bottom: none;
     padding: 20px 30px;
-    background-color: #f7f9fb; /* Fond clair pour l'en-tête */
+    background-color: #f7f9fb;
     border-radius: 12px 12px 0 0;
 }
 
@@ -553,8 +527,8 @@ input:checked + .slider:before {
 /* Organisation des champs en Grille */
 .grid-fields {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Deux colonnes */
-    gap: 20px 30px; /* Espacement entre les éléments */
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px 30px;
 }
 
 .full-width-fields {
@@ -571,40 +545,95 @@ input:checked + .slider:before {
 .detail-group label {
     font-size: 13px;
     font-weight: 500;
-    color: #0b4f63; /* Couleur primaire pour les labels */
+    color: #0b4f63;
     margin-bottom: 3px;
     text-transform: uppercase;
 }
 
 .detail-value {
-    background-color: #eef3f7; /* Couleur de fond pour simuler les champs en lecture seule */
+    background-color: #eef3f7;
     padding: 12px 15px;
     border-radius: 8px;
     font-size: 15px;
     color: #333;
     font-weight: 600;
     line-height: 1.4;
-    white-space: pre-wrap; /* Maintien de l'espace pour les descriptions */
+    white-space: pre-wrap;
 }
 
 .detail-value.description, .detail-value.comment {
-    font-weight: 400; /* Moins gras pour les longues descriptions */
+    font-weight: 400;
     min-height: 50px;
 }
 
 .detail-status-badge {
-    /* Réutilisation du style de badge de la table */
     border-radius: 40px;
     padding: 4px 12px;
     font-size: 13px;
     font-family: 'Inter', sans-serif;
     font-weight: 600;
     width: fit-content;
-    background-color: #dcffbe; /* Exemple 'Active' */
+    background-color: #dcffbe;
     color: #0c8f11;
 }
 
-/* Mobile responsive */
+/* --- Responsive --- */
+@media (max-width: 600px) {
+    .modal-content {
+        padding: 20px;
+    }
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    .form-group.half-width,
+    .form-group.third-width {
+        flex-basis: auto;
+    }
+    .form-actions {
+        flex-direction: column-reverse;
+        gap: 10px;
+    }
+    .btn {
+        width: 100%;
+        padding: 15px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .content-toolbar {
+        margin-left: 0; 
+        justify-content: center;
+    }
+}
+
+@media (max-width: 992px) {
+    .budget-table-container {
+        overflow-x: auto; 
+    }
+    .budget-table {
+        min-width: 900px;
+    }
+    .table-header {
+        display: none;
+    }
+    .table-row {
+        grid-template-columns: 1fr 1fr; 
+        gap: 15px;
+        padding: 15px;
+    }
+    
+    .table-row > div:nth-child(odd) {
+        font-weight: 600;
+        color: #0b4f63;
+    }
+    
+    .actions-cell {
+        grid-column: 1 / span 2;
+        justify-content: center;
+    }
+}
+
 @media (max-width: 650px) {
     .detail-modal-content {
         max-width: 95%;
@@ -616,7 +645,7 @@ input:checked + .slider:before {
         padding-right: 15px;
     }
     .grid-fields {
-        grid-template-columns: 1fr; /* Une seule colonne sur mobile */
+        grid-template-columns: 1fr;
     }
     .detail-footer {
         flex-direction: column-reverse;
