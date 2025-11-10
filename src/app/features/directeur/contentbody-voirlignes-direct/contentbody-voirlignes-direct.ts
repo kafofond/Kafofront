@@ -1,10 +1,16 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink, ActivatedRoute, Router } from "@angular/router"; // ✅ AJOUT Router
+import { RouterLink, ActivatedRoute, Router } from "@angular/router";
 import { Subscription } from 'rxjs';
 import { LigneBudget, mapApiLigneToLigneBudget } from '../../../models/ligne-budget.model';
-import { LigneCreditService, CreateLigneRequest, UpdateLigneRequest } from '../../../services/ligne-credit.service';
+import { 
+  LigneCreditService, 
+  CreateLigneRequest, 
+  UpdateLigneRequest,
+  LigneCredit,
+  Commentaire 
+} from '../../../services/ligne-credit.service';
 
 @Component({
   selector: 'app-contentbody-voirlignes-direct',
@@ -19,6 +25,8 @@ export class ContentbodyVoirlignesDirect implements OnInit, OnDestroy {
   showCreateLigneModal: boolean = false;
   showDetailLigneModal: boolean = false;
   showEditLigneModal: boolean = false;
+  showRejetLigneModal: boolean = false;
+  showDesactivationLigneModal: boolean = false;
   
   // Données
   lignes: LigneBudget[] = [];
@@ -28,19 +36,24 @@ export class ContentbodyVoirlignesDirect implements OnInit, OnDestroy {
   
   // Ligne sélectionnée
   selectedLigne: LigneBudget | null = null;
+  selectedLigneCredit: LigneCredit | null = null;
   
   // Formulaires
-  newLigneCredit: Partial<LigneBudget> = {
+  newLigneCredit: any = {
     intituleLigne: '',
     description: '',
     commentaire: '',
-    statut: 'En attente',
+    statut: 'En cours',
     etat: true,
     montantAlloue: undefined,
-    budgetId: 0
+    budgetId: 0,
+    dateDebut: '',
+    dateFin: ''
   };
 
   editLigneData: any = {};
+  rejetCommentaire: string = '';
+  desactivationCommentaire: string = '';
 
   private lignesSubscription?: Subscription;
   private routeSubscription?: Subscription;
@@ -48,13 +61,12 @@ export class ContentbodyVoirlignesDirect implements OnInit, OnDestroy {
   constructor(
     private ligneCreditService: LigneCreditService,
     private route: ActivatedRoute,
-    private router: Router // ✅ AJOUT Router
+    private router: Router
   ) { }
 
   ngOnInit(): void {
     console.log('🔍 Initialisation du composant lignes...');
     
-    // ✅ CORRECTION : Récupération depuis les paramètres d'URL avec gestion d'erreur
     this.routeSubscription = this.route.params.subscribe(params => {
       console.log('📋 Paramètres de route reçus:', params);
       
@@ -102,7 +114,131 @@ export class ContentbodyVoirlignesDirect implements OnInit, OnDestroy {
     });
   }
 
-  // ✅ NOUVELLE MÉTHODE : Gestion des erreurs de routing
+  // MÉTHODES POUR LES ACTIONS AUTOMATIQUES
+  onStatutChange(event: Event): void {
+    const newValue = (event.target as HTMLSelectElement).value;
+
+    if (!this.selectedLigne) return;
+
+    if (newValue === 'Validé') {
+      this.validerLigne();
+    }
+    else if (newValue === 'Refusé') {
+      this.openRejetLigneModal();
+    }
+  }
+
+  onEtatToggle(event: Event): void {
+    const isActive = (event.target as HTMLInputElement).checked;
+
+    if (!this.selectedLigne) return;
+
+    if (isActive) {
+      this.activerLigne();
+    } else {
+      this.openDesactivationLigneModal();
+    }
+  }
+
+  activerLigne(): void {
+    if (!this.selectedLigne) return;
+
+    this.ligneCreditService.activerLigne(this.selectedLigne.id).subscribe({
+      next: (response) => {
+        console.log('✅ Ligne activée:', response);
+        this.loadLignes();
+        this.closeEditLigneModal();
+      },
+      error: (error) => {
+        console.error('❌ Erreur activation ligne:', error);
+        alert('Erreur lors de l\'activation de la ligne');
+        this.editLigneData.etat = false;
+      }
+    });
+  }
+
+  confirmDesactiverLigne(): void {
+    if (!this.selectedLigne) return;
+
+    this.ligneCreditService.desactiverLigne(this.selectedLigne.id).subscribe({
+      next: (response) => {
+        console.log('✅ Ligne désactivée:', response);
+        this.loadLignes();
+        this.closeDesactivationLigneModal();
+        this.closeEditLigneModal();
+      },
+      error: (error) => {
+        console.error('❌ Erreur désactivation ligne:', error);
+        alert('Erreur lors de la désactivation de la ligne');
+        this.editLigneData.etat = true;
+      }
+    });
+  }
+
+  validerLigne(): void {
+    if (!this.selectedLigne) return;
+
+    this.ligneCreditService.validerLigne(this.selectedLigne.id).subscribe({
+      next: (response) => {
+        console.log('✅ Ligne validée:', response);
+        this.loadLignes();
+        this.closeEditLigneModal();
+      },
+      error: (error) => {
+        console.error('❌ Erreur validation ligne:', error);
+        alert('Erreur lors de la validation de la ligne');
+        this.editLigneData.statut = this.selectedLigne?.statut;
+      }
+    });
+  }
+
+  openRejetLigneModal(): void {
+    this.showRejetLigneModal = true;
+    this.rejetCommentaire = '';
+  }
+
+  closeRejetLigneModal(): void {
+    this.showRejetLigneModal = false;
+    this.rejetCommentaire = '';
+    if (this.selectedLigne) {
+      this.editLigneData.statut = this.selectedLigne.statut;
+    }
+  }
+
+  openDesactivationLigneModal(): void {
+    this.showDesactivationLigneModal = true;
+    this.desactivationCommentaire = '';
+  }
+
+  closeDesactivationLigneModal(): void {
+    this.showDesactivationLigneModal = false;
+    this.desactivationCommentaire = '';
+    if (this.selectedLigne) {
+      this.editLigneData.etat = true;
+    }
+  }
+
+  rejeterLigne(): void {
+    if (!this.selectedLigne || !this.rejetCommentaire.trim()) {
+      alert('Veuillez saisir un commentaire pour le rejet');
+      return;
+    }
+
+    this.ligneCreditService.rejeterLigne(this.selectedLigne.id, this.rejetCommentaire).subscribe({
+      next: (response) => {
+        console.log('✅ Ligne rejetée:', response);
+        this.loadLignes();
+        this.closeRejetLigneModal();
+        this.closeEditLigneModal();
+      },
+      error: (error) => {
+        console.error('❌ Erreur rejet ligne:', error);
+        alert('Erreur lors du rejet de la ligne');
+        this.editLigneData.statut = this.selectedLigne?.statut;
+      }
+    });
+  }
+
   private handleRoutingError(): void {
     this.errorMessage = 'Erreur de navigation: Budget introuvable';
     this.isLoading = false;
@@ -111,7 +247,6 @@ export class ContentbodyVoirlignesDirect implements OnInit, OnDestroy {
     console.error('- URL actuelle:', window.location.href);
     console.error('- Paramètres route:', this.route.snapshot.params);
     
-    // Redirection après 3 secondes
     setTimeout(() => {
       this.router.navigate(['/directeur/listbudget-directeur']);
     }, 3000);
@@ -123,10 +258,12 @@ export class ContentbodyVoirlignesDirect implements OnInit, OnDestroy {
       intituleLigne: '',
       description: '',
       commentaire: '',
-      statut: 'En attente',
+      statut: 'En cours',
       etat: true,
       montantAlloue: undefined,
-      budgetId: this.budgetId
+      budgetId: this.budgetId,
+      dateDebut: '',
+      dateFin: ''
     };
     this.showCreateLigneModal = true;
     document.body.classList.add('modal-open');
@@ -170,12 +307,25 @@ export class ContentbodyVoirlignesDirect implements OnInit, OnDestroy {
   // MODALE DE DÉTAIL
   openDetailLigneModal(ligne: LigneBudget): void {
     this.selectedLigne = ligne;
-    this.showDetailLigneModal = true;
-    document.body.classList.add('modal-open');
+    
+    // Charger les détails complets de la ligne
+    this.ligneCreditService.getLigneById(ligne.id).subscribe({
+      next: (ligneCredit) => {
+        this.selectedLigneCredit = ligneCredit;
+        this.showDetailLigneModal = true;
+        document.body.classList.add('modal-open');
+      },
+      error: (error) => {
+        console.error('❌ Erreur chargement détails ligne:', error);
+        this.showDetailLigneModal = true;
+        document.body.classList.add('modal-open');
+      }
+    });
   }
 
   closeDetailLigneModal(): void {
     this.selectedLigne = null;
+    this.selectedLigneCredit = null;
     this.showDetailLigneModal = false;
     document.body.classList.remove('modal-open');
   }
@@ -183,37 +333,77 @@ export class ContentbodyVoirlignesDirect implements OnInit, OnDestroy {
   // MODALE DE MODIFICATION
   openEditLigneModal(ligne: LigneBudget): void {
     this.selectedLigne = ligne;
-    this.editLigneData = {
-      intituleLigne: ligne.intituleLigne,
-      description: ligne.description,
-      montantAlloue: ligne.montantAlloue,
-      statut: ligne.statut,
-      etat: ligne.etat,
-      commentaire: ligne.commentaire
-    };
-    this.showEditLigneModal = true;
-    document.body.classList.add('modal-open');
+    
+    // Charger les données complètes de la ligne pour l'édition
+    this.ligneCreditService.getLigneById(ligne.id).subscribe({
+      next: (ligneCredit) => {
+        this.selectedLigneCredit = ligneCredit;
+        
+        this.editLigneData = {
+          intituleLigne: ligneCredit.intituleLigne,
+          description: ligneCredit.description,
+          montantAlloue: ligneCredit.montantAllouer,
+          statut: this.ligneCreditService.mapStatutToDisplay(ligneCredit.statut),
+          etat: ligneCredit.actif,
+          dateDebut: this.formatDateForInput(ligneCredit.dateDebut),
+          dateFin: this.formatDateForInput(ligneCredit.dateFin)
+        };
+
+        this.showEditLigneModal = true;
+        document.body.classList.add('modal-open');
+      },
+      error: (error) => {
+        console.error('❌ Erreur chargement données édition:', error);
+        // Fallback aux données basiques
+        this.editLigneData = {
+          intituleLigne: ligne.intituleLigne,
+          description: ligne.description,
+          montantAlloue: ligne.montantAlloue,
+          statut: ligne.statut,
+          etat: ligne.etat,
+          dateDebut: this.formatDateForInput(ligne.dateDebut.toString()),
+          dateFin: this.formatDateForInput(ligne.dateFin.toString())
+
+        };
+        this.showEditLigneModal = true;
+        document.body.classList.add('modal-open');
+      }
+    });
   }
 
   closeEditLigneModal(): void {
     this.selectedLigne = null;
+    this.selectedLigneCredit = null;
     this.showEditLigneModal = false;
     this.editLigneData = {};
     document.body.classList.remove('modal-open');
   }
 
   submitEditLigne(): void {
-    if (!this.selectedLigne) return;
+    if (!this.selectedLigne || !this.selectedLigneCredit) return;
 
+    // ✅ STRUCTURE EXACTE CONFORME À L'API
     const updateData: UpdateLigneRequest = {
+      code: this.selectedLigneCredit.code,
       intituleLigne: this.editLigneData.intituleLigne,
       description: this.editLigneData.description,
-      montantAllouer: this.editLigneData.montantAlloue,
+      montantAllouer: Number(this.editLigneData.montantAlloue),
+      montantEngager: this.selectedLigneCredit.montantEngager,
+      montantRestant: this.selectedLigneCredit.montantRestant,
+      dateCreation: this.selectedLigneCredit.dateCreation,
+      dateModification: new Date().toISOString().split('.')[0], // Format exact de l'API
+      dateDebut: this.editLigneData.dateDebut || null,
+      dateFin: this.editLigneData.dateFin || null,
       statut: this.mapDisplayStatutToApi(this.editLigneData.statut),
-      actif: this.editLigneData.etat
+      actif: Boolean(this.editLigneData.etat),
+      budgetId: this.selectedLigneCredit.budgetId,
+      createurNom: this.selectedLigneCredit.createurNom,
+      createurEmail: this.selectedLigneCredit.createurEmail,
+      entrepriseNom: this.selectedLigneCredit.entrepriseNom,
+      commentaires: this.selectedLigneCredit.commentaires
     };
 
-    console.log('📤 Mise à jour ligne de crédit:', updateData);
+    console.log('📤 Mise à jour ligne de crédit (structure API):', updateData);
 
     this.ligneCreditService.updateLigne(this.selectedLigne.id, updateData).subscribe({
       next: (response) => {
@@ -224,12 +414,18 @@ export class ContentbodyVoirlignesDirect implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('❌ Erreur mise à jour ligne de crédit:', error);
-        alert('Erreur lors de la modification de la ligne de crédit');
+        console.error('Détails erreur:', error.error);
+        alert('Erreur lors de la modification: ' + (error.error?.message || error.message));
       }
     });
   }
 
   // MÉTHODES UTILITAIRES
+  private formatDateForInput(date: string | null): string {
+    if (!date) return '';
+    return date.split('T')[0]; // Convertir "2025-10-22T00:00:00" en "2025-10-22"
+  }
+
   private mapDisplayStatutToApi(displayStatut: string): string {
     const reverseMap: { [key: string]: string } = {
       'Validé': 'VALIDE',
@@ -252,8 +448,12 @@ export class ContentbodyVoirlignesDirect implements OnInit, OnDestroy {
     return etat ? 'status-badge active' : 'status-badge rejected';
   }
 
-  // Méthode pour formater les nombres
   formatNumber(num: number): string {
     return new Intl.NumberFormat('fr-FR').format(num);
+  }
+
+  // Méthode pour afficher les commentaires
+  getCommentaires(): Commentaire[] {
+    return this.selectedLigneCredit?.commentaires || [];
   }
 }

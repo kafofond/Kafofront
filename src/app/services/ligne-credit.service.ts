@@ -13,13 +13,24 @@ export interface LigneCredit {
   montantRestant: number;
   dateCreation: string;
   dateModification: string;
+  dateDebut: string | null;
+  dateFin: string | null;
   statut: 'VALIDE' | 'EN_COURS' | 'REFUSE';
   actif: boolean;
-  budgetId: number;
+  budgetId: number | null;
   createurNom: string;
   createurEmail: string;
-  entrepriseNom: string;
-  commentaires: any[];
+  entrepriseNom: string | null;
+  commentaires: Commentaire[];
+}
+
+export interface Commentaire {
+  id: number;
+  contenu: string;
+  dateCreation: string;
+  dateCreationFormatee: string | null;
+  auteurNom: string;
+  auteurEmail: string;
 }
 
 export interface LignesResponse {
@@ -28,11 +39,23 @@ export interface LignesResponse {
 }
 
 export interface UpdateLigneRequest {
+  code: string;
   intituleLigne: string;
   description: string;
   montantAllouer: number;
+  montantEngager: number;
+  montantRestant: number;
+  dateCreation: string;
+  dateModification: string;
+  dateDebut: string | null;
+  dateFin: string | null;
   statut: string;
   actif: boolean;
+  budgetId: number | null;
+  createurNom: string;
+  createurEmail: string;
+  entrepriseNom: string | null;
+  commentaires: Commentaire[];
 }
 
 export interface CreateLigneRequest {
@@ -41,6 +64,10 @@ export interface CreateLigneRequest {
   montantAllouer: number;
   budgetId: number;
   commentaire?: string;
+}
+
+export interface RejetLigneRequest {
+  commentaire: string;
 }
 
 @Injectable({
@@ -74,7 +101,7 @@ export class LigneCreditService {
     );
   }
 
-  // Mettre à jour une ligne de crédit
+  // Mettre à jour une ligne de crédit - STRUCTURE EXACTE DE L'API
   updateLigne(id: number, ligneData: UpdateLigneRequest): Observable<any> {
     return this.http.put(`${this.baseUrl}/${id}`, ligneData).pipe(
       tap(response => console.log(`✅ Ligne ${id} mise à jour:`, response)),
@@ -96,6 +123,48 @@ export class LigneCreditService {
     );
   }
 
+  // Actions spécifiques
+  validerLigne(id: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/${id}/valider`, {}).pipe(
+      tap(response => console.log(`✅ Ligne ${id} validée:`, response)),
+      catchError(error => {
+        console.error(`❌ Erreur lors de la validation de la ligne ${id}:`, error);
+        throw error;
+      })
+    );
+  }
+
+  rejeterLigne(id: number, commentaire: string): Observable<any> {
+    const rejetRequest: RejetLigneRequest = { commentaire };
+    return this.http.post(`${this.baseUrl}/${id}/rejeter`, rejetRequest).pipe(
+      tap(response => console.log(`✅ Ligne ${id} rejetée:`, response)),
+      catchError(error => {
+        console.error(`❌ Erreur lors du rejet de la ligne ${id}:`, error);
+        throw error;
+      })
+    );
+  }
+
+  activerLigne(id: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/${id}/activer`, {}).pipe(
+      tap(response => console.log(`✅ Ligne ${id} activée:`, response)),
+      catchError(error => {
+        console.error(`❌ Erreur lors de l'activation de la ligne ${id}:`, error);
+        throw error;
+      })
+    );
+  }
+
+  desactiverLigne(id: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/${id}/desactiver`, {}).pipe(
+      tap(response => console.log(`✅ Ligne ${id} désactivée:`, response)),
+      catchError(error => {
+        console.error(`❌ Erreur lors de la désactivation de la ligne ${id}:`, error);
+        throw error;
+      })
+    );
+  }
+
   // Méthodes de mapping pour l'affichage
   mapStatutToDisplay(statut: string): string {
     const statutMap: { [key: string]: string } = {
@@ -108,5 +177,10 @@ export class LigneCreditService {
 
   mapActifToDisplay(actif: boolean): string {
     return actif ? 'Actif' : 'Inactif';
+  }
+
+  // Formater la date pour l'API
+  formatDateForApi(date: Date): string {
+    return date.toISOString().split('.')[0]; // Format: "2025-11-10T15:27:49"
   }
 }
