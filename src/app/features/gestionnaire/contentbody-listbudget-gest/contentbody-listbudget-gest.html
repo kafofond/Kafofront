@@ -1,8 +1,113 @@
-<div class="content-toolbar">
-  <button class="filter-btn">
-    <img src="assets/417_213.svg" alt="">
-    <span>Filtrer</span>
+<!-- <div class="content-toolbar">
+  <button class="filter-btn" (click)="refreshBudgets()" [disabled]="isLoading">
+    <img src="assets/417_213.svg" alt="Rafraîchir">
+    <span>{{ isLoading ? 'Chargement...' : 'Rafraîchir' }}</span>
   </button>
+</div>-->
+
+<!-- Message d'erreur -->
+ <!--
+<div *ngIf="errorMessage" class="error-message">
+  {{ errorMessage }}
+</div>-->
+
+<!-- Loading state -->
+ <!--
+<div *ngIf="isLoading" class="loading-state">
+  <div class="spinner"></div>
+  Chargement des budgets...
+</div>
+
+<div class="budget-table-container" *ngIf="!isLoading">
+  <div class="budget-table">
+    <div class="table-header">
+      <div>Intitulé</div>
+      <div>Description</div>
+      <div>Date de création</div>
+      <div>Statut</div>
+      <div>Montant Alloué</div>
+      <div>Actions</div>
+    </div>
+
+    <div class="table-body">-->
+      <!-- Affichage des budgets -->
+       <!--
+      <div *ngIf="budgets && budgets.length > 0; else noData">
+        <div *ngFor="let budget of budgets" class="table-row" [class.inactive]="!isBudgetActive(budget)">
+          <div class="budget-title">{{ budget?.intituleBudget || 'N/A' }}</div>
+          <div class="budget-description">{{ budget?.description || 'Aucune description' }}</div>
+          <div class="budget-creation-date">{{ formatDate(budget?.dateCreation) }}</div>
+          <div class="budget-status">
+            <span class="status-badge" [ngClass]="getStatusClass(budget?.statut)">
+              {{ budget?.statut || 'INCONNU' }}
+            </span>
+            <span *ngIf="!isBudgetActive(budget)" class="inactive-badge">Inactif</span>
+          </div>
+          <div class="budget-amount">{{ formatAmount(budget.montantBudget) }} FCFA</div>
+          <div class="actions-cell">
+            <a [routerLink]="['/listbudget-gest/listlignesbudget-gest', budget?.id]" 
+               class="action-link"
+               [class.disabled]="!isBudgetActive(budget)">
+              Voir lignes
+            </a>
+            
+            <div class="creator-info" *ngIf="budget?.createurNom">
+              <small>Créé par: {{ budget.createurNom }}</small>
+            </div>
+            
+            <button class="action-icon-btn" [title]="'Détails de ' + (budget?.intituleBudget || 'budget')">
+              <img src="assets/417_144.svg" alt="View Details">
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noData>
+        <div class="empty-state">
+          <img src="assets/empty-state.svg" alt="Aucun budget" class="empty-icon">
+          <h3>Aucun budget trouvé</h3>
+          <p>Aucun budget n'a été créé pour le moment.</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div> -->
+<!-- contentbody-listbudget-gest.html -->
+
+
+
+<!-- Du bon code -->
+
+
+<!-- <div class="content-toolbar">
+  <div class="filter-dropdown-container">
+    <button class="filter-btn" (click)="toggleFilterDropdown($event)">
+      <img src="assets/417_213.svg" alt="Filtrer" />
+      <span>Filtrer</span>
+      <span *ngIf="activeFilter !== 'Aucun'" class="active-filter-label">
+        ({{ activeFilter }})
+      </span>
+    </button>
+
+    <div *ngIf="showFilterDropdown" class="filter-dropdown" (click)="$event.stopPropagation()">
+      <div class="dropdown-header">Filtrer par période</div>
+
+      <button
+        *ngFor="let filter of filterOptions"
+        class="dropdown-item"
+        [class.active]="activeFilter === filter"
+        (click)="applyFilter(filter)"
+      >
+        {{ filter }}
+        <span *ngIf="activeFilter === filter" class="check-icon">✓</span>
+      </button>
+
+      <div class="dropdown-divider"></div>
+      <button class="dropdown-item reset" (click)="applyFilter('Aucun')">
+        Réinitialiser le filtre
+      </button>
+    </div>
+  </div>
 </div>
 
 <div class="budget-table-container">
@@ -17,27 +122,226 @@
     </div>
 
     <div class="table-body">
-      <div *ngFor="let budget of budgets" class="table-row">
+      <div
+        class="table-row"
+        *ngFor="let budget of budgets"
+        [class.inactive]="!budget.etat"
+      >
         <div>{{ budget.intituleBudget }}</div>
         <div>{{ budget.description }}</div>
         <div>{{ budget.dateCreation | date: 'dd/MM/yyyy' }}</div>
         <div>
-          <span class="status-badge" [ngClass]="budget.statut?.toLowerCase()">
-            {{ budget.statut }}
+          <span class="status-badge" [ngClass]="getStatusClass(budget.statut)">
+            {{ budget.statut || 'INCONNU' }}
           </span>
         </div>
         <div>{{ budget.montantBudget | number }} FCFA</div>
         <div class="actions-cell">
-          <a [routerLink]="['/listbudget-gest/listlignesbudget-gest', budget.id]" class="action-link">Voir lignes</a>
-          <button class="action-icon-btn">
-            <img src="assets/417_144.svg" alt="View Details">
+          <a
+            [routerLink]="['/listbudget-gest/listlignesbudget-gest', budget.id]"
+            class="action-link"
+          >
+            Voir lignes
+          </a>
+          <button class="action-icon-btn" (click)="openDetailBudgetModal(budget)">
+            <img src="assets/417_144.svg" alt="Détails" />
           </button>
         </div>
       </div>
-
-      <div *ngIf="budgets.length === 0" class="empty-state">
-        Aucun budget trouvé.
-      </div>
     </div>
   </div>
+</div> -->
+
+<!-- Modal détails budget -->
+<!-- <div *ngIf="selectedBudget" class="modal-overlay" (click)="closeDetailBudgetModal()">
+  <div class="modal-content detail-modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header detail-header">
+      <h2 class="modal-title">
+        Budget : {{ selectedBudget.code || 'N/A' }}
+      </h2>
+      <button class="close-btn" (click)="closeDetailBudgetModal()">
+        <img src="assets/mdi_cancel-bold.svg" alt="Fermer" class="close-icon" />
+      </button>
+    </div>
+
+    <div class="detail-body">
+      <section class="detail-section full-width-fields">
+        <div class="detail-group">
+          <label>Intitulé</label>
+          <p class="detail-value">{{ selectedBudget.intituleBudget }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Description</label>
+          <p class="detail-value description">{{ selectedBudget.description }}</p>
+        </div>
+      </section>
+
+      <section class="detail-section grid-fields">
+        <div class="detail-group">
+          <label>Montant Alloué</label>
+          <p class="detail-value">{{ selectedBudget.montantBudget | number: '1.0-0' }} FCFA</p>
+        </div>
+        <div class="detail-group">
+          <label>Statut</label>
+          <span class="detail-status-badge">{{ selectedBudget.statut }}</span>
+        </div>
+        <div class="detail-group">
+          <label>Date de création</label>
+          <p class="detail-value">{{ selectedBudget.dateCreation | date: 'dd/MM/yyyy' }}</p>
+        </div>
+        <div class="detail-group">
+          <label>État</label>
+          <p class="detail-value">{{ selectedBudget.etat ? 'Actif' : 'Inactif' }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Période</label>
+          <p class="detail-value">
+            {{ selectedBudget.dateDebut | date: 'dd/MM/yyyy' }} -
+            {{ selectedBudget.dateFin | date: 'dd/MM/yyyy' }}
+          </p>
+        </div>
+      </section>
+
+      <section class="detail-section full-width-fields">
+        <div class="detail-group">
+          <label>Commentaire</label>
+          <p class="detail-value comment">{{ selectedBudget.createurNom }}</p>
+        </div>
+      </section>
+    </div>
+
+    <div class="modal-footer detail-footer">
+      <p class="creation-info">
+        Créé le : {{ selectedBudget.dateCreation | date: 'dd/MM/yyyy' }}
+      </p>
+      <button class="btn btn-primary" (click)="closeDetailBudgetModal()">Fermer</button>
+    </div>
+  </div>
+</div> -->
+
+
+
+<!-- Fin du bon code -->
+
+
+<div class="content-toolbar">
+    <div class="filter-dropdown-container">
+        <button class="filter-btn" (click)="toggleFilterDropdown($event)">
+            <img src="assets/417_213.svg" alt="Filtrer">
+            <span>Filtrer</span>
+            <span class="active-filter-label" *ngIf="activeFilter !== 'Aucun'">({{ activeFilter }})</span>
+        </button>
+
+        <div class="filter-dropdown" *ngIf="showFilterDropdown" (click)="$event.stopPropagation()">
+            <div class="dropdown-header">Filtrer par période</div>
+                <button class="dropdown-item" (click)="applyFilter('Ce mois')">
+                    Ce mois
+                    <span class="check-icon" *ngIf="activeFilter === 'Ce mois'">✓</span>
+                </button>
+                <button class="dropdown-item" (click)="applyFilter('Ce trimestre')">
+                    Ce trimestre
+                    <span class="check-icon" *ngIf="activeFilter === 'Ce trimestre'">✓</span>
+                </button>
+                <button class="dropdown-item" (click)="applyFilter('L\'année dernière')">
+                    L'année dernière
+                    <span class="check-icon" *ngIf="activeFilter === 'L\'année dernière'">✓</span>
+                </button>
+                <div class="dropdown-divider"></div>
+                <button class="dropdown-item reset" (click)="applyFilter('Aucun')">
+                    Réinitialiser le filtre
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+<div class="budget-table-container">
+    <div class="budget-table">
+        <div class="table-header">
+            <div>Intitulé</div>
+            <div>Description</div>
+            <div>Date de création</div>
+            <div>Statut</div>
+            <div>Montant Alloué</div>
+            <div>Actions</div>
+        </div>
+        <div class="table-body">
+            <div class="table-row" *ngFor="let budget of budgets">
+                <div>{{ budget.intituleBudget }}</div>
+                <div>{{ budget.description }}</div>
+                <div>{{ budget.dateCreation }}</div>
+                <div><span class="status-badge active">{{ budget.statut }}</span></div>
+                <div>{{ budget.montantBudget | number }} FCFA</div>
+                <div class="actions-cell">
+                    <a routerLink="/directeur/listbudget-directeur/listlignesbudget-directeur" class="action-link">Voir lignes</a>
+                    <button class="action-icon-btn" (click)="openDetailBudgetModal(budget)">
+                        <img src="assets/417_144.svg" alt="View Details">
+                    </button>
+                </div>
+            </div>
+            </div>
+    </div>
+</div>
+
+<!-- Popup de détails budget -->
+<div class="modal-overlay" *ngIf="selectedBudget" (click)="closeDetailBudgetModal()">
+    <div class="modal-content detail-modal-content" (click)="$event.stopPropagation()">
+        
+        <div class="modal-header detail-header">
+            <h2 class="modal-title">Budget : {{ selectedBudget.createurNom }}</h2>
+            <button class="close-btn" (click)="closeDetailBudgetModal()">
+                <img src="assets/mdi_cancel-bold.svg" alt="Fermer" class="close-icon">
+            </button>
+        </div>
+
+        <div class="detail-body">
+
+            <div class="detail-section full-width-fields">
+                <div class="detail-group">
+                    <label>Intitulé</label>
+                    <p class="detail-value">{{ selectedBudget.intituleBudget }}</p>
+                </div>
+                <div class="detail-group">
+                    <label>Description</label>
+                    <p class="detail-value description">{{ selectedBudget.description }}</p>
+                </div>
+            </div>
+
+            <div class="detail-section grid-fields">
+                <div class="detail-group">
+                    <label>Montant Alloué</label>
+                    <p class="detail-value">**{{ selectedBudget.montantBudget | number: '1.0-0' }} FCFA**</p>
+                </div>
+                <div class="detail-group">
+                    <label>Statut</label>
+                    <span class="detail-status-badge">{{ selectedBudget.statut }}</span>
+                </div>
+                <div class="detail-group">
+                    <label>Date de création</label>
+                    <p class="detail-value">{{ selectedBudget.createurEmail| date: 'dd/MM/yyyy' }}</p>
+                </div>
+                <div class="detail-group">
+                    <label>État (Actif/Inactif)</label>
+                    <p class="detail-value">{{ selectedBudget.etat }}</p>
+                </div>
+                <div class="detail-group">
+                    <label>Période</label>
+                    <p class="detail-value">{{ selectedBudget.createurEmail| date: 'dd/MM/yyyy' }} - {{ selectedBudget.createurEmail| date: 'dd/MM/yyyy' }}</p>
+                </div>
+            </div>
+
+            <div class="detail-section full-width-fields">
+                <div class="detail-group">
+                    <label>Commentaire</label>
+                    <p class="detail-value comment">{{ selectedBudget.dateCreation }}</p>
+                </div>
+            </div>
+            
+        </div>
+
+        <div class="modal-footer detail-footer">
+            <p class="creation-info">Créé le : {{ selectedBudget.createurEmail| date: 'dd/MM/yyyy' }}</p>
+            <button class="btn btn-primary" (click)="closeDetailBudgetModal()">Fermer</button>
+        </div>
+    </div>
 </div>
