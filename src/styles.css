@@ -1,15 +1,17 @@
-@import "tailwindcss";
+/* Tailwind directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* You can add global styles to this file, and also import other style files */
-*{
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+/* Global CSS perso */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 /* Variables CSS pour les thèmes */
 :root {
-  /* Thème clair (par défaut) */
   --bg-primary: #f8fafc;
   --bg-secondary: #ffffff;
   --text-primary: #0b4f63;
