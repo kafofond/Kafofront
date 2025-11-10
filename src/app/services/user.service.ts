@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { CreateUserRequest, UtilisateurResponse } from '../models/user.model';
+import { CreateUserRequest, UtilisateurResponse, Utilisateur } from '../models/user.model';
 
 export interface UserInfo {
   id: number;
@@ -51,6 +51,11 @@ export class UserService {
   // Créer un nouvel utilisateur
   createUtilisateur(utilisateur: CreateUserRequest): Observable<any> {
     return this.http.post(`${this.baseUrl}`, utilisateur);
+  }
+
+  // Modifier un utilisateur
+  updateUtilisateur(id: number, utilisateur: Utilisateur): Observable<any> {
+    return this.http.put(`${this.baseUrl}/${id}`, utilisateur);
   }
 
   // Désactiver un utilisateur

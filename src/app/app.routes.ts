@@ -40,7 +40,6 @@ import { ContentbodyUtilisateurDsi } from './features/dsi/contentbody-utilisateu
 import { ContentbodyHistoriqueActionDsi } from './features/dsi/contentbody-historique-action-dsi/contentbody-historique-action-dsi';
 
 export const routes: Routes = [
-
     {
         path: '',
         component: MainLayout,
@@ -54,7 +53,7 @@ export const routes: Routes = [
                 component: ContentbodyListbudgetGest
             },
             {
-                path: 'listbudget-gest/listlignesbudget-gest',
+                path: 'listbudget-gest/listlignesbudget-gest/:budgetId', // ✅ AJOUT :budgetId
                 component: ContentbodyVoirlignesGest
             },
             {
@@ -102,7 +101,7 @@ export const routes: Routes = [
                 component: ContentbodyListbudgetDirect
             },
             {
-                path: 'listbudget-directeur/listlignesbudget-directeur',
+                path: 'listbudget-directeur/listlignesbudget-directeur/:budgetId', // ✅ AJOUT :budgetId
                 component: ContentbodyVoirlignesDirect
             },
             {
@@ -140,7 +139,7 @@ export const routes: Routes = [
                 component: ContentbodyListbudgetRespo
             },
             {
-                path: 'listbudget-responsable/listlignesbudget-responsable',
+                path: 'listbudget-responsable/listlignesbudget-responsable/:budgetId', // ✅ AJOUT :budgetId
                 component: ContentbodyVoirlignesDirect
             },
             {
@@ -250,13 +249,13 @@ export const routes: Routes = [
         ]
     },
 
-        {
-  path: '',
-  redirectTo: 'seconnecter',
-  pathMatch: 'full'
-},
-{
-  path: '**',
-  redirectTo: 'seconnecter'
-},
+    {
+        path: '',
+        redirectTo: 'seconnecter',
+        pathMatch: 'full'
+    },
+    {
+        path: '**',
+        redirectTo: 'seconnecter'
+    },
 ];

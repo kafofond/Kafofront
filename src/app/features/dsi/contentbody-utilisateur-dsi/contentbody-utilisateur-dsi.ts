@@ -2,9 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../../services/user.service';
-import { EntrepriseService } from '../../../services/entreprise.service';
 import { Utilisateur, CreateUserRequest } from '../../../models/user.model';
-import { Entreprise } from '../../../models/entreprise.model';
 import { Role } from '../../../enums/role';
 
 @Component({
@@ -16,7 +14,6 @@ import { Role } from '../../../enums/role';
 export class ContentbodyUtilisateurDsi implements OnInit {
   filtreStatut: string = 'tous';
   utilisateurs: Utilisateur[] = [];
-  entreprises: Entreprise[] = [];
   loading: boolean = false;
   errorMessage: string = '';
 
@@ -27,6 +24,7 @@ export class ContentbodyUtilisateurDsi implements OnInit {
 
   // Variables pour les modales
   showCreateModal: boolean = false;
+  showEditModal: boolean = false;
   newUser: CreateUserRequest = {
     nom: '',
     prenom: '',
@@ -36,22 +34,31 @@ export class ContentbodyUtilisateurDsi implements OnInit {
     role: '' as Role,
     entrepriseId: 0
   };
+  editUser: Utilisateur | null = null;
+  confirmPassword: string = '';
 
   // Variables pour le popup de confirmation
   showConfirmModal: boolean = false;
   userToDeactivate: Utilisateur | null = null;
   confirmMessage: string = '';
 
-  roles = Object.values(Role);
+  // Rôles avec mapping français -> anglais
+  roles = [
+    { value: Role.ADMIN, label: 'Administrateur', backendValue: 'ADMIN' },
+    { value: Role.COMPTABLE, label: 'Comptable', backendValue: 'COMPTABLE' },
+    { value: Role.GESTIONNAIRE, label: 'Gestionnaire', backendValue: 'GESTIONNAIRE' },
+    { value: Role.RESPONSABLE, label: 'Responsable', backendValue: 'RESPONSABLE' },
+    { value: Role.DIRECTEUR, label: 'Directeur', backendValue: 'DIRECTEUR' },
+    { value: Role.TRESORERIE, label: 'Trésorier', backendValue: 'TRESORERIE' }
+    
+  ];
 
   constructor(
-    private userService: UserService,
-    private entrepriseService: EntrepriseService
+    private userService: UserService
   ) {}
 
   ngOnInit() {
     this.loadUtilisateurs();
-    this.loadEntreprises();
   }
 
   loadUtilisateurs(): void {
@@ -66,17 +73,6 @@ export class ContentbodyUtilisateurDsi implements OnInit {
         this.errorMessage = 'Erreur lors du chargement des utilisateurs';
         this.loading = false;
         console.error('Erreur API utilisateurs:', error);
-      }
-    });
-  }
-
-  loadEntreprises(): void {
-    this.entrepriseService.getEntreprises().subscribe({
-      next: (response) => {
-        this.entreprises = response.entreprises;
-      },
-      error: (error) => {
-        console.error('Erreur chargement entreprises:', error);
       }
     });
   }
@@ -136,6 +132,7 @@ export class ContentbodyUtilisateurDsi implements OnInit {
       role: '' as Role,
       entrepriseId: 0
     };
+    this.confirmPassword = '';
     this.showCreateModal = true;
   }
 
@@ -145,16 +142,73 @@ export class ContentbodyUtilisateurDsi implements OnInit {
 
   creerUtilisateur(): void {
     if (!this.isFormValid()) {
+      alert('Veuillez remplir tous les champs obligatoires');
       return;
     }
 
-    this.userService.createUtilisateur(this.newUser).subscribe({
+    if (this.newUser.motDePasse !== this.confirmPassword) {
+      alert('Les mots de passe ne correspondent pas');
+      return;
+    }
+
+    // Préparer les données pour le backend avec le rôle en majuscules
+    const userToCreate = {
+      ...this.newUser,
+      role: this.getBackendRoleValue(this.newUser.role)
+    };
+
+    console.log('Données envoyées au backend:', userToCreate);
+
+    this.userService.createUtilisateur(userToCreate).subscribe({
       next: (response) => {
+        alert('Utilisateur créé avec succès');
         this.closeCreateModal();
         this.loadUtilisateurs();
       },
       error: (error) => {
         console.error('Erreur lors de la création:', error);
+        alert('Erreur lors de la création de l\'utilisateur: ' + (error.error?.message || error.message));
+      }
+    });
+  }
+
+  modifierUtilisateur(utilisateur: Utilisateur): void {
+    this.editUser = { ...utilisateur };
+    this.showEditModal = true;
+  }
+
+  closeEditModal(): void {
+    this.showEditModal = false;
+    this.editUser = null;
+  }
+
+  updateUtilisateur(): void {
+    if (!this.editUser) return;
+
+    if (!this.editUser.nom?.trim() || !this.editUser.prenom?.trim() || 
+        !this.editUser.email?.trim() || !this.editUser.departement?.trim() || 
+        !this.editUser.role) {
+      alert('Veuillez remplir tous les champs obligatoires');
+      return;
+    }
+
+    // Préparer les données pour le backend avec le rôle en majuscules
+    const userToUpdate = {
+      ...this.editUser,
+      role: this.getBackendRoleValue(this.editUser.role)
+    };
+
+    console.log('Données de modification envoyées:', userToUpdate);
+
+    this.userService.updateUtilisateur(this.editUser.id, userToUpdate).subscribe({
+      next: (response) => {
+        alert('Utilisateur modifié avec succès');
+        this.closeEditModal();
+        this.loadUtilisateurs();
+      },
+      error: (error) => {
+        console.error('Erreur lors de la modification:', error);
+        alert('Erreur lors de la modification de l\'utilisateur: ' + (error.error?.message || error.message));
       }
     });
   }
@@ -165,27 +219,37 @@ export class ContentbodyUtilisateurDsi implements OnInit {
            !!this.newUser.email?.trim() && 
            !!this.newUser.motDePasse?.trim() && 
            !!this.newUser.departement?.trim() && 
-           this.newUser.entrepriseId > 0 &&
            !!this.newUser.role;
   }
 
-  activerUtilisateur(utilisateur: Utilisateur): void {
-    if (utilisateur.actif) return;
-
-    this.userService.reactiverUtilisateur(utilisateur.id).subscribe({
-      next: () => {
-        utilisateur.actif = true;
-        this.loadUtilisateurs();
-      },
-      error: (error) => {
-        console.error('Erreur lors de l\'activation:', error);
-      }
-    });
+  // Méthode pour obtenir la valeur backend du rôle
+  private getBackendRoleValue(role: Role | string): string {
+    const roleMapping: Record<string, string> = {
+      [Role.ADMIN]: 'ADMIN',
+      [Role.COMPTABLE]: 'COMPTABLE',
+      [Role.GESTIONNAIRE]: 'GESTIONNAIRE',
+      [Role.RESPONSABLE]: 'RESPONSABLE',
+      [Role.DIRECTEUR]: 'DIRECTEUR',
+      [Role.TRESORERIE]: 'TRESORERIE'
+    };
+    return roleMapping[role] || role;
   }
 
-  bloquerUtilisateur(utilisateur: Utilisateur): void {
-    if (!utilisateur.actif) return;
-    this.openConfirmModal(utilisateur);
+  toggleUtilisateurStatut(utilisateur: Utilisateur): void {
+    if (utilisateur.actif) {
+      this.openConfirmModal(utilisateur);
+    } else {
+      this.userService.reactiverUtilisateur(utilisateur.id).subscribe({
+        next: () => {
+          utilisateur.actif = true;
+          this.loadUtilisateurs();
+        },
+        error: (error) => {
+          console.error('Erreur lors de l\'activation:', error);
+          alert('Erreur lors de l\'activation: ' + (error.error?.message || error.message));
+        }
+      });
+    }
   }
 
   openConfirmModal(utilisateur: Utilisateur): void {
@@ -211,6 +275,7 @@ export class ContentbodyUtilisateurDsi implements OnInit {
       },
       error: (error) => {
         console.error('Erreur lors du blocage:', error);
+        alert('Erreur lors du blocage: ' + (error.error?.message || error.message));
         this.closeConfirmModal();
       }
     });
@@ -233,24 +298,27 @@ export class ContentbodyUtilisateurDsi implements OnInit {
     window.URL.revokeObjectURL(url);
   }
 
-  getEntrepriseNom(entrepriseId: number): string {
-    const entreprise = this.entreprises.find(e => e.id === entrepriseId);
-    return entreprise ? entreprise.nom : 'Non assigné';
+  getRoleLabel(role: Role | string): string {
+    const roleMapping: Record<string, string> = {
+      [Role.ADMIN]: 'administrateur',
+      [Role.COMPTABLE]: 'comptable',
+      [Role.GESTIONNAIRE]: 'gestionnaire',
+      [Role.RESPONSABLE]: 'responsable',
+      [Role.DIRECTEUR]: 'directeur',
+      [Role.TRESORERIE]: 'trésorier'
+    };
+    return roleMapping[role] || role.toLowerCase();
   }
 
-  getRoleLabel(role: Role | string): string {
-  const roles: Record<string, string> = {
-    [Role.ADMIN]: 'Administrateur',
-    [Role.COMPTABLE]: 'Comptable',
-    [Role.GESTIONNAIRE]: 'Gestionnaire',
-    [Role.RESPONSABLE]: 'Responsable',
-    [Role.DIRECTEUR]: 'Directeur',
-    [Role.TRESORERIE]: 'Trésorier'
-    // [Role.SUPERADMIN]: 'Super administrateur'
-  };
-
-  return roles[role] || role;
-}
-
-
+  getRoleBadgeClass(role: Role | string): string {
+    const roleClasses: Record<string, string> = {
+      [Role.ADMIN]: 'role-admin',
+      [Role.COMPTABLE]: 'role-comptable',
+      [Role.GESTIONNAIRE]: 'role-gestionnaire',
+      [Role.RESPONSABLE]: 'role-responsable',
+      [Role.DIRECTEUR]: 'role-directeur',
+      [Role.TRESORERIE]: 'role-tresorerie'
+    };
+    return roleClasses[role] || 'role-default';
+  }
 }
