@@ -18,47 +18,57 @@ export class ContentbodyBonsDeCommandeRespo {
 
   bonsDeCommande: BonDeCommande[] = [
     {
+      id: 1,
+      referenceDemande: "1234",
       code: 'BC001',
-      referenceDemande: 'RD001',
       fournisseur: 'Fournisseur A',
       description: 'Achat de matériel informatique',
       montantTotal: 15000,
       serviceBeneficiaire: 'Service IT',
-      dateExecution: new Date('2024-05-15'),
-      dateDeCreation: new Date('2024-04-20'),
+      modePaiement: 'Virement bancaire',
+      dateCreation: '2024-04-20',
+      delaiPaiement: '2024-06-15',
+      dateExecution: '2024-05-15',
       statut: Statut.VALIDE,
-      modeDePaiement: 'Virement bancaire',
-      delaiDePaiement: new Date('2024-06-15')
+      createurNom: 'John Doe',
+      createurEmail: 'john.doe@entreprise.com',
+      entrepriseNom: 'Entreprise ABC'
     },
     {
+      id: 2,
+      referenceDemande: "1234",
       code: 'BC002',
-      referenceDemande: 'RD002',
       fournisseur: 'Fournisseur B',
       description: 'Services de maintenance',
       montantTotal: 8000,
       serviceBeneficiaire: 'Service Maintenance',
-      dateExecution: new Date('2024-05-20'),
-      dateDeCreation: new Date('2024-04-25'),
+      modePaiement: 'Chèque',
+      dateCreation: '2024-04-25',
+      delaiPaiement: '2024-06-20',
+      dateExecution: '2024-05-20',
       statut: Statut.EN_ATTENTE,
-      modeDePaiement: 'Chèque',
-      delaiDePaiement: new Date('2024-06-20')
+      createurNom: 'Jane Smith',
+      createurEmail: 'jane.smith@entreprise.com',
+      entrepriseNom: 'Entreprise ABC'
     },
     {
+      id: 3,
+      referenceDemande: "1234",
       code: 'BC003',
-      referenceDemande: 'RD003',
       fournisseur: 'Fournisseur C',
       description: 'Consulting en gestion de projet',
       montantTotal: 12000,
       serviceBeneficiaire: 'Service Projets',
-      dateExecution: new Date('2024-05-25'),
-      dateDeCreation: new Date('2024-04-30'),
+      modePaiement: 'Carte bancaire',
+      dateCreation: '2024-04-30',
+      delaiPaiement: '2024-06-25',
+      dateExecution: '2024-05-25',
       statut: Statut.REJETE,
-      modeDePaiement: 'Carte bancaire',
-      delaiDePaiement: new Date('2024-06-25')
+      createurNom: 'Bob Johnson',
+      createurEmail: 'bob.johnson@entreprise.com',
+      entrepriseNom: 'Entreprise ABC'
     }
-
   ];
-
 
   // Filtrage dynamique des bons de commande
   get filteredBons(): BonDeCommande[] {
@@ -89,5 +99,4 @@ export class ContentbodyBonsDeCommandeRespo {
       this.statusDropdownOpen = false;
     }
   }
-
 }

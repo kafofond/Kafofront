@@ -1,20 +1,19 @@
 <section class="content-area">
   <!-- FILTRAGE -->
   <div class="filter-bar">
-
     <div class="filter-group">
-        <label>Statut :</label>
-        <div class="filter-select" (click)="toggleStatusDropdown()">
-          <span>{{ selectedStatus }}</span>
-          <img src="assets/87_539.svg" alt="dropdown arrow">
-        </div>
-        <ul class="dropdown-list" *ngIf="statusDropdownOpen">
-          <li *ngFor="let s of ['Tous', 'Validé', 'En attente', 'Rejeté']"
-              (click)="setStatus(s)"
-              [class.active]="selectedStatus === s">
-            {{ s }}
-          </li>
-        </ul>
+      <label>Statut :</label>
+      <div class="filter-select" (click)="toggleStatusDropdown()">
+        <span>{{ selectedStatus }}</span>
+        <!-- <img src="assets/87_539.svg" alt="dropdown arrow"> -->
+      </div>
+      <ul class="dropdown-list" *ngIf="statusDropdownOpen">
+        <li *ngFor="let s of ['Tous', 'Validé', 'En attente', 'Rejeté']"
+            (click)="setStatus(s)"
+            [class.active]="selectedStatus === s">
+          {{ s }}
+        </li>
+      </ul>
     </div>
     
     <button class="export-btn">
@@ -22,8 +21,19 @@
       <span>Exporter</span>
     </button>
   </div>
-  <!-- TABLEAU : DEMANDES D'ACHAT -->
-  <div class="data-card">
+
+  <!-- ÉTATS DE CHARGEMENT ET ERREUR -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div>Chargement des données...</div>
+  </div>
+
+  <div *ngIf="errorMessage && !isLoading" class="error-state">
+    <div>{{ errorMessage }}</div>
+  </div>
+
+  <!-- TABLEAUX -->
+  <div class="data-card" *ngIf="!isLoading && !errorMessage">
+    <!-- TABLEAU : DEMANDES D'ACHAT -->
     <div class="table-section">
       <h2 class="table-title">Demandes d'achat</h2>
       <div class="data-table">
@@ -35,33 +45,36 @@
           <div class="col col-5">Statut</div>
           <div class="col col-6">Actions</div>
         </div>
+        
+        <div *ngIf="filteredDemandes.length === 0" class="empty-state">
+          <div>Aucune demande d'achat trouvée</div>
+        </div>
+
         <div
           class="table-row"
           *ngFor="let demande of filteredDemandes"
         >
-          <div class="col col-1">{{ demande.code }}</div>
-          <div class="col col-2">{{ demande.description }}</div>
-          <div class="col col-3">{{ demande.fournisseur }}</div>
-          <div class="col col-4">{{ demande.montantTotal | number }} FCFA</div>
-          <div class="col col-5">
+          <div class="col col-1" data-label="Code">{{ demande.code }}</div>
+          <div class="col col-2" data-label="Description">{{ demande.description }}</div>
+          <div class="col col-3" data-label="Fournisseur">{{ demande.fournisseur }}</div>
+          <div class="col col-4" data-label="Montant">{{ demande.montantTotal | number }} FCFA</div>
+          <div class="col col-5" data-label="Statut">
             <span
               class="status-badge"
-              [ngClass]="{
-                'status-success': demande.statut === Statut.VALIDE,
-                'status-danger': demande.statut === Statut.REJETE
-              }"
+              [ngClass]="getStatusBadgeClass(demande.statut)"
             >
-              {{ demande.statut }}
+              {{ mapApiStatutToDisplay(demande.statut) }}
             </span>
           </div>
-          <div class="col col-6">
-            <button class="action-btn">
+          <div class="col col-6" data-label="Actions">
+            <button class="action-btn" title="Voir détails" (click)="openDetailDemandeModal(demande)">
               <img src="assets/417_144.svg" alt="Voir détails" />
             </button>
           </div>
         </div>
       </div>
     </div>
+
     <!-- TABLEAU : FICHES DE BESOIN -->
     <div class="table-section">
       <h2 class="table-title">Fiches de besoin</h2>
@@ -74,29 +87,37 @@
           <div class="col col-5">Statut</div>
           <div class="col col-6">Actions</div>
         </div>
+
+        <div *ngIf="filteredFiches.length === 0" class="empty-state">
+          <div>Aucune fiche de besoin trouvée</div>
+        </div>
+
         <div
           class="table-row"
           *ngFor="let fiche of filteredFiches"
         >
-          <div class="col col-1">{{ fiche.code }}</div>
-          <div class="col col-2">{{ fiche.objet }}</div>
-          <div class="col col-3">{{ fiche.serviceBeneficiaire }}</div>
-          <div class="col col-4">
-            <a href="assets/docs/{{ fiche.urlFichier }}" target="_blank">{{ fiche.urlFichier }}</a>
+          <div class="col col-1" data-label="Code">{{ fiche.code }}</div>
+          <div class="col col-2" data-label="Objet">{{ fiche.objet || 'Non spécifié' }}</div>
+          <div class="col col-3" data-label="Service">{{ fiche.serviceBeneficiaire || 'Non spécifié' }}</div>
+          <div class="col col-4" data-label="Fichier">
+            <a *ngIf="fiche.urlFichierJoint" 
+               [href]="fiche.urlFichierJoint" 
+               target="_blank"
+               class="file-link">
+              {{ getFileName(fiche.urlFichierJoint) }}
+            </a>
+            <span *ngIf="!fiche.urlFichierJoint" class="no-file">Aucun fichier</span>
           </div>
-          <div class="col col-5">
+          <div class="col col-5" data-label="Statut">
             <span
               class="status-badge"
-              [ngClass]="{
-                'status-success': fiche.statut === Statut.VALIDE,
-                'status-danger': fiche.statut === Statut.REJETE
-              }"
+              [ngClass]="getStatusBadgeClass(fiche.statut)"
             >
-              {{ fiche.statut }}
+              {{ mapApiStatutToDisplay(fiche.statut) }}
             </span>
           </div>
-          <div class="col col-6">
-            <button class="action-btn">
+          <div class="col col-6" data-label="Actions">
+            <button class="action-btn" title="Voir détails" (click)="openDetailFicheModal(fiche)">
               <img src="assets/417_144.svg" alt="Voir détails" />
             </button>
           </div>
@@ -105,3 +126,184 @@
     </div>
   </div>
 </section>
+
+<!-- MODALE DÉTAILS DEMANDE D'ACHAT -->
+<div class="modal-overlay" *ngIf="showDetailDemandeModal" (click)="closeDetailDemandeModal()">
+  <div class="modal-content detail-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">Détails de la demande d'achat</h2>
+      <button class="close-btn" (click)="closeDetailDemandeModal()">
+        <img src="assets/mdi_cancel-bold.svg" alt="Fermer" class="close-icon">
+      </button>
+    </div>
+
+    <div class="modal-body" *ngIf="selectedDemande">
+      <div class="detail-grid">
+        <div class="detail-group">
+          <label>Code</label>
+          <p class="detail-value">{{ selectedDemande.code }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Description</label>
+          <p class="detail-value">{{ selectedDemande.description }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Fournisseur</label>
+          <p class="detail-value">{{ selectedDemande.fournisseur }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Service Bénéficiaire</label>
+          <p class="detail-value">{{ selectedDemande.serviceBeneficiaire }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Montant Total</label>
+          <p class="detail-value amount">{{ selectedDemande.montantTotal | number }} FCFA</p>
+        </div>
+        <div class="detail-group">
+          <label>Statut</label>
+          <span class="status-badge" [ngClass]="getStatusBadgeClass(selectedDemande.statut)">
+            {{ mapApiStatutToDisplay(selectedDemande.statut) }}
+          </span>
+        </div>
+        <div class="detail-group">
+          <label>Date de création</label>
+          <p class="detail-value">{{ selectedDemande.dateCreation | date:'dd/MM/yyyy' }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Date attendue</label>
+          <p class="detail-value">{{ selectedDemande.dateAttendu | date:'dd/MM/yyyy' }}</p>
+        </div>
+        <div class="detail-group full-width">
+          <label>Fichier joint</label>
+          <div class="file-section">
+            <a *ngIf="selectedDemande.urlFichierJoint" 
+               [href]="selectedDemande.urlFichierJoint" 
+               target="_blank"
+               class="file-link">
+              📎 {{ getFileName(selectedDemande.urlFichierJoint) }}
+            </a>
+            <span *ngIf="!selectedDemande.urlFichierJoint" class="no-file">Aucun fichier joint</span>
+          </div>
+        </div>
+        <div class="detail-group full-width" *ngIf="selectedDemande.ficheBesoinCode">
+          <label>Fiche de besoin associée</label>
+          <p class="detail-value">{{ selectedDemande.ficheBesoinCode }}</p>
+        </div>
+      </div>
+
+      <!-- Commentaires -->
+      <div class="comments-section" *ngIf="selectedDemande.commentaires && selectedDemande.commentaires.length > 0">
+        <h3>Commentaires</h3>
+        <div class="comment-list">
+          <div class="comment-item" *ngFor="let comment of selectedDemande.commentaires">
+            <p class="comment-content">{{ comment.contenu }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-primary" (click)="closeDetailDemandeModal()">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODALE DÉTAILS FICHE DE BESOIN -->
+<div class="modal-overlay" *ngIf="showDetailFicheModal" (click)="closeDetailFicheModal()">
+  <div class="modal-content detail-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">Détails de la fiche de besoin</h2>
+      <button class="close-btn" (click)="closeDetailFicheModal()">
+        <img src="assets/mdi_cancel-bold.svg" alt="Fermer" class="close-icon">
+      </button>
+    </div>
+
+    <div class="modal-body" *ngIf="selectedFiche">
+      <div class="detail-grid">
+        <div class="detail-group">
+          <label>Code</label>
+          <p class="detail-value">{{ selectedFiche.code }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Service Bénéficiaire</label>
+          <p class="detail-value">{{ selectedFiche.serviceBeneficiaire || 'Non spécifié' }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Objet</label>
+          <p class="detail-value">{{ selectedFiche.objet || 'Non spécifié' }}</p>
+        </div>
+        <div class="detail-group full-width">
+          <label>Description</label>
+          <p class="detail-value description">{{ selectedFiche.description || 'Aucune description' }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Montant Estimé</label>
+          <p class="detail-value amount">{{ selectedFiche.montantEstime | number }} FCFA</p>
+        </div>
+        <div class="detail-group">
+          <label>Statut</label>
+          <span class="status-badge" [ngClass]="getStatusBadgeClass(selectedFiche.statut)">
+            {{ mapApiStatutToDisplay(selectedFiche.statut) }}
+          </span>
+        </div>
+        <div class="detail-group">
+          <label>Date de création</label>
+          <p class="detail-value">{{ selectedFiche.dateCreation | date:'dd/MM/yyyy' }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Date attendue</label>
+          <p class="detail-value">{{ selectedFiche.dateAttendu | date:'dd/MM/yyyy' }}</p>
+        </div>
+        <div class="detail-group full-width">
+          <label>Fichier joint</label>
+          <div class="file-section">
+            <a *ngIf="selectedFiche.urlFichierJoint" 
+               [href]="selectedFiche.urlFichierJoint" 
+               target="_blank"
+               class="file-link">
+              📎 {{ getFileName(selectedFiche.urlFichierJoint) }}
+            </a>
+            <span *ngIf="!selectedFiche.urlFichierJoint" class="no-file">Aucun fichier joint</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Désignations -->
+      <div class="designations-section" *ngIf="selectedFiche.designations && selectedFiche.designations.length > 0">
+        <h3>Désignations</h3>
+        <div class="designations-table">
+          <div class="table-header">
+            <div class="col">Produit</div>
+            <div class="col">Quantité</div>
+            <div class="col">Prix Unitaire</div>
+            <div class="col">Montant Total</div>
+          </div>
+          <div class="table-row" *ngFor="let designation of selectedFiche.designations">
+            <div class="col">{{ designation.produit }}</div>
+            <div class="col">{{ designation.quantite }}</div>
+            <div class="col">{{ designation.prixUnitaire | number }} FCFA</div>
+            <div class="col">{{ designation.montantTotal | number }} FCFA</div>
+          </div>
+          <div class="table-footer">
+            <div class="total-label">Total des désignations:</div>
+            <div class="total-amount">{{ getTotalDesignations(selectedFiche.designations) | number }} FCFA</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Commentaires -->
+      <div class="comments-section" *ngIf="selectedFiche.commentaires && selectedFiche.commentaires.length > 0">
+        <h3>Commentaires</h3>
+        <div class="comment-list">
+          <div class="comment-item" *ngFor="let comment of selectedFiche.commentaires">
+            <p class="comment-content">{{ comment.contenu }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-primary" (click)="closeDetailFicheModal()">Fermer</button>
+    </div>
+  </div>
+</div>

@@ -1,134 +1,195 @@
-import { Component, HostListener } from '@angular/core';
-import { BonDeCommande } from '../../../models/bon-de-commande';
-import { Statut } from '../../../enums/statut';
-import { AttestationServiceFait } from '../../../models/attestation-service-fait';
-import { FormsModule } from '@angular/forms';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { BonCommandeService } from '../../../services/bon-commande.service';
+import { AttestationServiceService } from '../../../services/attestation-service.service';
 
 @Component({
   selector: 'app-documents-execution',
-  imports: [FormsModule, CommonModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './documents-execution.html',
-  styleUrl: './documents-execution.css'
+  styleUrls: ['./documents-execution.css']
 })
-export class DocumentsExecution {
-
-  Statut = Statut;
+export class DocumentsExecution implements OnInit {
   selectedStatus: string = 'Tous';
   statusDropdownOpen: boolean = false;
+  isLoading: boolean = false;
+  errorMessage: string = '';
 
-  bonsDeCommande: BonDeCommande[] = [
-    {
-      code: 'BC001',
-      referenceDemande: 'RD001',
-      fournisseur: 'Fournisseur A',
-      description: 'Achat de matériel informatique',
-      montantTotal: 15000,
-      serviceBeneficiaire: 'Service IT',
-      dateExecution: new Date('2024-05-15'),
-      dateDeCreation: new Date('2024-04-20'),
-      statut: Statut.VALIDE,
-      modeDePaiement: 'Virement bancaire',
-      delaiDePaiement: new Date('2024-06-15')
-    },
-    {
-      code: 'BC002',
-      referenceDemande: 'RD002',
-      fournisseur: 'Fournisseur B',
-      description: 'Services de maintenance',
-      montantTotal: 8000,
-      serviceBeneficiaire: 'Service Maintenance',
-      dateExecution: new Date('2024-05-20'),
-      dateDeCreation: new Date('2024-04-25'),
-      statut: Statut.EN_ATTENTE,
-      modeDePaiement: 'Chèque',
-      delaiDePaiement: new Date('2024-06-20')
-    },
-    {
-      code: 'BC003',
-      referenceDemande: 'RD003',
-      fournisseur: 'Fournisseur C',
-      description: 'Consulting en gestion de projet',
-      montantTotal: 12000,
-      serviceBeneficiaire: 'Service Projets',
-      dateExecution: new Date('2024-05-25'),
-      dateDeCreation: new Date('2024-04-30'),
-      statut: Statut.REJETE,
-      modeDePaiement: 'Carte bancaire',
-      delaiDePaiement: new Date('2024-06-25')
-    }
+  // Données des APIs
+  bonsDeCommande: any[] = [];
+  attestations: any[] = [];
 
-  ];
+  // Données sélectionnées pour les modales
+  selectedBon: any = null;
+  selectedAttestation: any = null;
 
-  attestations: AttestationServiceFait[] = [
-    {
-      code: 'ASF001',
-      referenceBonCommande: 'BC001',
-      fournisseur: 'Fournisseur A',
-      titre: 'Attestation de service fait pour matériel informatique',
-      dateDeCreation: new Date('2024-05-16'),
-      dateDeLivraison: new Date('2024-05-30'),
-      constat: 'Livraison conforme aux spécifications',
-      preuve: 'bon-livraison-001.pdf',
-    },
-    {
-      code: 'ASF002',
-      referenceBonCommande: 'BC002',
-      fournisseur: 'Fournisseur B',
-      titre: 'Attestation de service fait pour maintenance',
-      dateDeCreation: new Date('2024-05-21'),
-      dateDeLivraison: new Date('2024-06-05'),
-      constat: 'Services rendus conformément au contrat',
-      preuve: 'rapport-maintenance-001.pdf',
-    },
-    {
-      code: 'ASF003',
-      referenceBonCommande: 'BC003',
-      fournisseur: 'Fournisseur C',
-      titre: 'Attestation de service fait pour consulting',
-      dateDeCreation: new Date('2024-05-26'),
-      dateDeLivraison: new Date('2024-06-10'),
-      constat: 'Consulting réalisé selon les attentes',
-      preuve: 'rapport-consulting-001.pdf',
-    }
-  ];
+  // États des modales
+  showBonModal: boolean = false;
+  showAttestationModal: boolean = false;
 
-  // Filtrage dynamique des bons de commande
-  get filteredBons(): BonDeCommande[] {
-    const filtered =
-      this.selectedStatus === 'Tous'
-        ? this.bonsDeCommande
-        : this.bonsDeCommande.filter(
-            (b) => b.statut.toLowerCase() === this.selectedStatus.toLowerCase()
-          );
-    return filtered.slice(0, 5); // max 5 lignes
+  constructor(
+    private bonCommandeService: BonCommandeService,
+    private attestationService: AttestationServiceService
+  ) {}
+
+  ngOnInit() {
+    this.loadData();
   }
 
-  // Filtrage dynamique des attestations de service fait
-  get filteredAttestations(): AttestationServiceFait[] {
-    const filtered =
-      this.selectedStatus === 'Tous'
-        ? this.attestations
-        : this.attestations.filter(
-            (a) =>
-              a.statut &&
-              a.statut.toLowerCase() === this.selectedStatus.toLowerCase()
-          );
+  loadData() {
+    this.isLoading = true;
+    this.errorMessage = '';
+    const entrepriseId = 2;
+
+    // Charger les bons de commande
+    this.bonCommandeService.getBonsCommandeByEntreprise(entrepriseId).subscribe({
+      next: (response) => {
+        console.log('✅ Bons de commande reçus:', response);
+        this.bonsDeCommande = response.bons.map((bon: any) => ({
+          ...bon,
+          id: bon.id, // S'assurer que l'ID est présent
+          statut: this.mapApiStatut(bon.statut)
+        }));
+        console.log('📊 Bons de commande mappés:', this.bonsDeCommande);
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('❌ Erreur bons de commande:', error);
+        this.errorMessage = 'Erreur lors du chargement des bons de commande';
+        this.isLoading = false;
+      }
+    });
+
+    // Charger les attestations
+    this.attestationService.getAttestationsByEntreprise(entrepriseId).subscribe({
+      next: (response) => {
+        console.log('✅ Attestations reçues:', response);
+        this.attestations = response.attestations.map((attestation: any) => ({
+          ...attestation,
+          id: attestation.id, // S'assurer que l'ID est présent
+          statut: 'Validé', // Valeur par défaut
+          // Utiliser dateLivraison directement depuis l'API
+          dateLivraison: attestation.dateLivraison
+        }));
+        console.log('📊 Attestations mappées:', this.attestations);
+      },
+      error: (error) => {
+        console.error('❌ Erreur attestations:', error);
+        this.errorMessage = 'Erreur lors du chargement des attestations';
+      }
+    });
+  }
+
+  // Filtrage dynamique des bons de commande
+  get filteredBons(): any[] {
+    if (!this.bonsDeCommande.length) return [];
+    
+    const filtered = this.selectedStatus === 'Tous' 
+      ? this.bonsDeCommande 
+      : this.bonsDeCommande.filter(b => b.statut === this.selectedStatus);
     return filtered.slice(0, 5);
   }
 
- 
+  // Filtrage dynamique des attestations
+  get filteredAttestations(): any[] {
+    if (!this.attestations.length) return [];
+    
+    const filtered = this.selectedStatus === 'Tous' 
+      ? this.attestations 
+      : this.attestations.filter(a => a.statut === this.selectedStatus);
+    return filtered.slice(0, 5);
+  }
 
+  // Mapping des statuts de l'API vers l'affichage
+  mapApiStatut(statut: string): string {
+    const statutMap: { [key: string]: string } = {
+      'VALIDE': 'Validé',
+      'EN_ATTENTE': 'En attente',
+      'REJETE': 'Rejeté',
+      'VALIDÉ': 'Validé',
+      'EN ATTENTE': 'En attente',
+      'REJETÉ': 'Rejeté'
+    };
+    return statutMap[statut] || statut;
+  }
+
+  // Gestion du dropdown
   toggleStatusDropdown() {
     this.statusDropdownOpen = !this.statusDropdownOpen;
   }
 
   setStatus(status: string) {
     this.selectedStatus = status;
-    this.statusDropdownOpen = false; // fermer dropdown après sélection
+    this.statusDropdownOpen = false;
   }
 
-  // Fermer dropdown si clic en dehors
+  // Ouvrir modale bon de commande - CORRIGÉ
+  openBonModal(bon: any) {
+    console.log('🔄 Ouverture modale bon de commande:', bon);
+    
+    if (!bon || !bon.id) {
+      console.error('❌ ID du bon de commande manquant');
+      this.errorMessage = 'ID du bon de commande manquant';
+      return;
+    }
+
+    this.isLoading = true;
+    this.bonCommandeService.getBonCommandeById(bon.id).subscribe({
+      next: (detail) => {
+        console.log('✅ Détails bon de commande:', detail);
+        this.selectedBon = detail;
+        this.showBonModal = true;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('❌ Erreur détails bon:', error);
+        this.errorMessage = 'Erreur lors du chargement des détails';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  // Fermer modale bon de commande
+  closeBonModal() {
+    this.showBonModal = false;
+    this.selectedBon = null;
+  }
+
+  // Ouvrir modale attestation - CORRIGÉ
+  openAttestationModal(attestation: any) {
+    console.log('🔄 Ouverture modale attestation:', attestation);
+    
+    if (!attestation || !attestation.id) {
+      console.error('❌ ID de l\'attestation manquant');
+      this.errorMessage = 'ID de l\'attestation manquant';
+      return;
+    }
+
+    this.isLoading = true;
+    this.attestationService.getAttestationById(attestation.id).subscribe({
+      next: (detail) => {
+        console.log('✅ Détails attestation:', detail);
+        this.selectedAttestation = detail;
+        this.showAttestationModal = true;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('❌ Erreur détails attestation:', error);
+        this.errorMessage = 'Erreur lors du chargement des détails';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  // Fermer modale attestation
+  closeAttestationModal() {
+    this.showAttestationModal = false;
+    this.selectedAttestation = null;
+  }
+
+  // Gestion des clics en dehors du dropdown
   @HostListener('document:click', ['$event'])
   onClickOutside(event: MouseEvent) {
     const target = event.target as HTMLElement;
@@ -138,5 +199,22 @@ export class DocumentsExecution {
     }
   }
 
+  // Formater les dates - CORRIGÉ
+  formatDate(dateString: string | null): string {
+    if (!dateString) return 'Non spécifié';
+    
+    try {
+      const date = new Date(dateString);
+      return isNaN(date.getTime()) ? 'Date invalide' : date.toLocaleDateString('fr-FR');
+    } catch (error) {
+      console.error('Erreur format date:', error);
+      return 'Date invalide';
+    }
+  }
 
+  // Obtenir le nom du fichier depuis l'URL
+  getFileName(url: string | null): string {
+    if (!url) return 'Aucun fichier';
+    return url.split('/').pop() || 'Fichier joint';
+  }
 }

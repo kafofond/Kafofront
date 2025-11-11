@@ -2,18 +2,18 @@
   <!-- Barre de filtre -->
   <div class="filter-bar">
     <div class="filter-group">
-        <label>Statut :</label>
-        <div class="filter-select" (click)="toggleStatusDropdown()">
-          <span>{{ selectedStatus }}</span>
-          <img src="assets/87_539.svg" alt="dropdown arrow">
-        </div>
-        <ul class="dropdown-list" *ngIf="statusDropdownOpen">
-          <li *ngFor="let s of ['Tous', 'Validé', 'En attente', 'Rejeté']"
-              (click)="setStatus(s)"
-              [class.active]="selectedStatus === s">
-            {{ s }}
-          </li>
-        </ul>
+      <label>Statut :</label>
+      <div class="filter-select" (click)="toggleStatusDropdown()">
+        <span>{{ selectedStatus }}</span>
+        <!-- <img src="assets/87_539.svg" alt="dropdown arrow"> -->
+      </div>
+      <ul class="dropdown-list" *ngIf="statusDropdownOpen">
+        <li *ngFor="let s of ['Tous', 'Validé', 'En attente', 'Rejeté']"
+            (click)="setStatus(s)"
+            [class.active]="selectedStatus === s">
+          {{ s }}
+        </li>
+      </ul>
     </div>
 
     <button class="export-btn">
@@ -22,40 +22,57 @@
     </button>
   </div>
 
-  <div class="data-card">
+  <!-- États de chargement et erreur -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div>Chargement des données...</div>
+  </div>
+
+  <div *ngIf="errorMessage && !isLoading" class="error-state">
+    <div>{{ errorMessage }}</div>
+    <button (click)="loadData()" class="btn-retry">Réessayer</button>
+  </div>
+
+  <!-- Tableaux -->
+  <div class="data-card" *ngIf="!isLoading && !errorMessage">
     <!-- Tableau 1 : Bon de Commande -->
     <div class="table-section">
       <h2 class="table-title">Bons de Commande</h2>
       <div class="data-table">
         <div class="table-header">
           <div class="col col-1">Code</div>
-          <div class="col col-2">Réf. Demande</div>
-          <div class="col col-3">Fournisseur</div>
+          <div class="col col-2">Fournisseur</div>
+          <div class="col col-3">Description</div>
           <div class="col col-4">Montant Total</div>
           <div class="col col-5">Statut</div>
           <div class="col col-6">Actions</div>
         </div>
 
-        <!-- Exemple de ligne -->
-        <div class="table-row" *ngFor="let bon of filteredBons">
-          <div class="col col-1">{{ bon.code }}</div>
-          <div class="col col-2">{{ bon.referenceDemande }}</div>
-          <div class="col col-3">{{ bon.fournisseur }}</div>
-          <div class="col col-4">{{ bon.montantTotal | currency:'XOF':'symbol':'1.0-0' }}</div>
-          <div class="col col-5">
-            <span
-              class="status-badge"
-              [ngClass]="{
-                'status-success': bon.statut === 'Validé',
-                'status-danger': bon.statut === 'Rejeté',
-                'status-pending': bon.statut === 'En attente'
-              }"
-            >
+        <div *ngIf="filteredBons.length === 0" class="empty-state">
+          <div>Aucun bon de commande trouvé</div>
+        </div>
+
+        <div class="table-row" *ngFor="let bon of filteredBons; let i = index">
+          <div class="col col-1" data-label="Code">{{ bon.code }}</div>
+          <div class="col col-2" data-label="Fournisseur">{{ bon.fournisseur }}</div>
+          <div class="col col-3" data-label="Description">{{ bon.description }}</div>
+          <div class="col col-4" data-label="Montant">{{ bon.montantTotal | number }} FCFA</div>
+          <div class="col col-5" data-label="Statut">
+            <span class="status-badge"
+                  [ngClass]="{
+                    'status-success': bon.statut === 'Validé',
+                    'status-danger': bon.statut === 'Rejeté',
+                    'status-pending': bon.statut === 'En attente'
+                  }">
               {{ bon.statut }}
             </span>
           </div>
-          <div class="col col-6">
-            <button class="action-btn"><img src="assets/87_501.svg" alt="details" /></button>
+          <div class="col col-6" data-label="Actions">
+            <button class="action-btn" 
+                    (click)="openBonModal(bon)" 
+                    title="Voir détails"
+                    [attr.data-id]="bon.id">
+              <img src="assets/87_501.svg" alt="details" />
+            </button>
           </div>
         </div>
       </div>
@@ -67,25 +84,192 @@
       <div class="data-table">
         <div class="table-header">
           <div class="col col-1">Code</div>
-          <div class="col col-2">Réf. Bon de Commande</div>
-          <div class="col col-3">Fournisseur</div>
-          <div class="col col-4">Titre</div>
-          <div class="col col-5">Date Livraison</div>
+          <div class="col col-2">Fournisseur</div>
+          <div class="col col-3">Titre</div>
+          <div class="col col-4">Date Livraison</div>
+          <div class="col col-5">Constat</div>
           <div class="col col-6">Actions</div>
         </div>
 
-        <!-- Exemple de ligne -->
-        <div class="table-row" *ngFor="let attestation of filteredAttestations">
-          <div class="col col-1">{{ attestation.code }}</div>
-          <div class="col col-2">{{ attestation.referenceBonCommande }}</div>
-          <div class="col col-3">{{ attestation.fournisseur }}</div>
-          <div class="col col-4">{{ attestation.titre }}</div>
-          <div class="col col-5">{{ attestation.dateDeLivraison | date:'dd/MM/yyyy' }}</div>
-          <div class="col col-6">
-            <button class="action-btn"><img src="assets/87_501.svg" alt="details" /></button>
+        <div *ngIf="filteredAttestations.length === 0" class="empty-state">
+          <div>Aucune attestation trouvée</div>
+        </div>
+
+        <div class="table-row" *ngFor="let attestation of filteredAttestations; let i = index">
+          <div class="col col-1" data-label="Code">{{ attestation.code || 'N/A' }}</div>
+          <div class="col col-2" data-label="Fournisseur">{{ attestation.fournisseur }}</div>
+          <div class="col col-3" data-label="Titre">{{ attestation.titre }}</div>
+          <div class="col col-4" data-label="Date Livraison">{{ formatDate(attestation.dateLivraison) }}</div>
+          <div class="col col-5" data-label="Constat">{{ attestation.constat }}</div>
+          <div class="col col-6" data-label="Actions">
+            <button class="action-btn" 
+                    (click)="openAttestationModal(attestation)" 
+                    title="Voir détails"
+                    [attr.data-id]="attestation.id">
+              <img src="assets/87_501.svg" alt="details" />
+            </button>
           </div>
         </div>
       </div>
     </div>
   </div>
 </section>
+
+<!-- Modale Détails Bon de Commande -->
+<div class="modal-overlay" *ngIf="showBonModal" (click)="closeBonModal()">
+  <div class="modal-content detail-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">Détails du Bon de Commande</h2>
+      <button class="close-btn" (click)="closeBonModal()">
+        <img src="assets/mdi_cancel-bold.svg" alt="Fermer" class="close-icon">
+      </button>
+    </div>
+
+    <div class="modal-body" *ngIf="selectedBon">
+      <div class="detail-grid">
+        <div class="detail-group">
+          <label>Code</label>
+          <p class="detail-value">{{ selectedBon.code }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Fournisseur</label>
+          <p class="detail-value">{{ selectedBon.fournisseur }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Service Bénéficiaire</label>
+          <p class="detail-value">{{ selectedBon.serviceBeneficiaire }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Mode de Paiement</label>
+          <p class="detail-value">{{ selectedBon.modePaiement }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Montant Total</label>
+          <p class="detail-value amount">{{ selectedBon.montantTotal | number }} FCFA</p>
+        </div>
+        <div class="detail-group">
+          <label>Statut</label>
+          <span class="status-badge"
+                [ngClass]="{
+                  'status-success': selectedBon.statut === 'VALIDE',
+                  'status-danger': selectedBon.statut === 'REJETE',
+                  'status-pending': selectedBon.statut === 'EN_ATTENTE'
+                }">
+            {{ mapApiStatut(selectedBon.statut) }}
+          </span>
+        </div>
+        <div class="detail-group">
+          <label>Date de Création</label>
+          <p class="detail-value">{{ formatDate(selectedBon.dateCreation) }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Date d'Exécution</label>
+          <p class="detail-value">{{ formatDate(selectedBon.dateExecution) }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Délai de Paiement</label>
+          <p class="detail-value">{{ formatDate(selectedBon.delaiPaiement) }}</p>
+        </div>
+        <div class="detail-group full-width">
+          <label>Description</label>
+          <p class="detail-value description">{{ selectedBon.description }}</p>
+        </div>
+        <div class="detail-group full-width">
+          <label>Fichier PDF</label>
+          <div class="file-section">
+            <a *ngIf="selectedBon.urlPdf" 
+               [href]="selectedBon.urlPdf" 
+               target="_blank"
+               class="file-link">
+              📎 {{ getFileName(selectedBon.urlPdf) }}
+            </a>
+            <span *ngIf="!selectedBon.urlPdf" class="no-file">Aucun fichier disponible</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Commentaires -->
+      <div class="comments-section" *ngIf="selectedBon.commentaires && selectedBon.commentaires.length > 0">
+        <h3>Commentaires</h3>
+        <div class="comment-list">
+          <div class="comment-item" *ngFor="let comment of selectedBon.commentaires">
+            <p class="comment-content">{{ comment.contenu }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-primary" (click)="closeBonModal()">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modale Détails Attestation de Service Fait -->
+<div class="modal-overlay" *ngIf="showAttestationModal" (click)="closeAttestationModal()">
+  <div class="modal-content detail-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">Détails de l'Attestation de Service Fait</h2>
+      <button class="close-btn" (click)="closeAttestationModal()">
+        <img src="assets/mdi_cancel-bold.svg" alt="Fermer" class="close-icon">
+      </button>
+    </div>
+
+    <div class="modal-body" *ngIf="selectedAttestation">
+      <div class="detail-grid">
+        <div class="detail-group">
+          <label>Code</label>
+          <p class="detail-value">{{ selectedAttestation.code || 'N/A' }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Référence Bon de Commande</label>
+          <p class="detail-value">{{ selectedAttestation.referenceBonCommande || 'N/A' }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Fournisseur</label>
+          <p class="detail-value">{{ selectedAttestation.fournisseur }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Date de Livraison</label>
+          <p class="detail-value">{{ formatDate(selectedAttestation.dateLivraison) }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Date de Création</label>
+          <p class="detail-value">{{ formatDate(selectedAttestation.dateCreation) }}</p>
+        </div>
+        <div class="detail-group full-width">
+          <label>Titre</label>
+          <p class="detail-value">{{ selectedAttestation.titre }}</p>
+        </div>
+        <div class="detail-group full-width">
+          <label>Constat</label>
+          <p class="detail-value description">{{ selectedAttestation.constat }}</p>
+        </div>
+        <div class="detail-group full-width">
+          <label>Fichier Joint</label>
+          <div class="file-section">
+            <a *ngIf="selectedAttestation.urlFichierJoint" 
+               [href]="selectedAttestation.urlFichierJoint" 
+               target="_blank"
+               class="file-link">
+              📎 {{ getFileName(selectedAttestation.urlFichierJoint) }}
+            </a>
+            <span *ngIf="!selectedAttestation.urlFichierJoint" class="no-file">Aucun fichier joint</span>
+          </div>
+        </div>
+        <div class="detail-group">
+          <label>Créateur</label>
+          <p class="detail-value">{{ selectedAttestation.createurNom }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Email du Créateur</label>
+          <p class="detail-value">{{ selectedAttestation.createurEmail }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-primary" (click)="closeAttestationModal()">Fermer</button>
+    </div>
+  </div>
+</div>
