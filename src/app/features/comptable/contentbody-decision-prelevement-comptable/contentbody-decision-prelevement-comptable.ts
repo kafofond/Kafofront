@@ -16,35 +16,56 @@ export class ContentbodyDecisionPrelevementComptable {
 
   decisionDePrelevements: DecisionPrelevement[] = [
     {
-      code: 'DP001',
-      referenceAttestationSF: 'ATTSF001',
-      montantAPrelever: 1500,
-      compteDestinataire: 'FR7612345678901234567890123',
-      compteOrigine: 'FR7612345678901234567890124',
-      motifDePrelevement: 'Paiement facture',
-      statut: Statut.VALIDE,
-      dateDeCreation: new Date('2024-01-15')
-    },
+  id: 1,
+  code: 'DP-001',
+  referenceAttestation: 'AT-001',
+  montant: 250000,
+  compteDestinataire: 'BF002-123456789012',
+  compteOrigine: 'CI001-254789632541',
+  motifPrelevement: 'Paiement facture',
+  statut: Statut.VALIDE,
+  dateCreation: '2025-11-12',
+  dateModification: '2025-11-12',
+  createurNom: 'Tresor',
+  createurEmail: 'tresor@entreprise.ml',
+  entrepriseNom: 'Entreprise Demo',
+  attestationId: 1
+}
+,
     {
-      code: 'DP002',
-      referenceAttestationSF: 'ATTSF002',
-      montantAPrelever: 2500,
-      compteDestinataire: 'FR7612345678901234567890125',
-      compteOrigine: 'FR7612345678901234567890126',
-      motifDePrelevement: 'Achat matériel',
-      statut: Statut.EN_ATTENTE,
-      dateDeCreation: new Date('2024-02-20')
-    },
+  id: 1,
+  code: 'DP-001',
+  referenceAttestation: 'AT-001',
+  montant: 250000,
+  compteDestinataire: 'BF002-123456789012',
+  compteOrigine: 'CI001-254789632541',
+  motifPrelevement: 'Paiement facture',
+  statut: Statut.VALIDE,
+  dateCreation: '2025-11-12',
+  dateModification: '2025-11-12',
+  createurNom: 'Tresor',
+  createurEmail: 'tresor@entreprise.ml',
+  entrepriseNom: 'Entreprise Demo',
+  attestationId: 1
+}
+,
     {
-      code: 'DP003',
-      referenceAttestationSF: 'ATTSF003',
-      montantAPrelever: 3500,
-      compteDestinataire: 'FR7612345678901234567890127',
-      compteOrigine: 'FR7612345678901234567890128',
-      motifDePrelevement: 'Services divers',
-      statut: Statut.REJETE,
-      dateDeCreation: new Date('2024-03-10')
-    }
+  id: 1,
+  code: 'DP-001',
+  referenceAttestation: 'AT-001',
+  montant: 250000,
+  compteDestinataire: 'BF002-123456789012',
+  compteOrigine: 'CI001-254789632541',
+  motifPrelevement: 'Paiement facture',
+  statut: Statut.VALIDE,
+  dateCreation: '2025-11-12',
+  dateModification: '2025-11-12',
+  createurNom: 'Tresor',
+  createurEmail: 'tresor@entreprise.ml',
+  entrepriseNom: 'Entreprise Demo',
+  attestationId: 1
+}
+
   ];
 
   // Dropdown status

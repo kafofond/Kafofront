@@ -41,8 +41,8 @@
 
     <div class="table-row" *ngFor="let dec of decisionDePrelevements">
       <div class="col col-1">{{ dec.code }}</div>
-      <div class="col col-2">{{ dec.referenceAttestationSF }}</div>
-      <div class="col col-3">{{ dec.montantAPrelever | currency:'XOF':'symbol':'1.0-0' }}</div>
+      <div class="col col-2">{{ dec.referenceAttestation }}</div>
+      <div class="col col-3">{{ dec.montant | currency:'XOF':'symbol':'1.0-0' }}</div>
       <div class="col col-4">{{ dec.compteDestinataire }}</div>
       <div class="col col-5">
         <span class="status-badge"
