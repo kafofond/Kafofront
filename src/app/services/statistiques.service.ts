@@ -51,7 +51,7 @@ export interface DsiChartData {
   };
 }
 
-// NOUVELLES INTERFACES POUR DIRECTEUR
+// INTERFACES POUR DIRECTEUR
 export interface DirecteurDashboardStats {
   totalBudget: number;
   totalLignesCredit: number;
@@ -70,6 +70,25 @@ export interface DirecteurChartData {
     budgets: number[];
     lignesCredit: number[];
     depenses: number[];
+  };
+}
+
+// INTERFACES POUR RESPONSABLE
+export interface ResponsableDashboardStats {
+  creditsAffectes: number;
+  creditsUtilises: number;
+  creditsRestants: number;
+  pourcentageUtilisation: number;
+  pourcentageRestant: number;
+  budgetTotal: number;
+}
+
+export interface ResponsableChartData {
+  labels: string[];
+  datasets: {
+    creditsAffectes: number[];
+    creditsUtilises: number[];
+    creditsRestants: number[];
   };
 }
 
@@ -143,7 +162,6 @@ export class StatistiquesService {
       map(data => this.normalizeDsiDashboardStats(data)),
       catchError((error): Observable<DsiDashboardStats> => {
         console.error('Erreur API DSI dashboard (entreprise):', error);
-        // Ne pas fallback sur les données globales pour DSI
         return of(this.getEmptyDsiStats());
       })
     );
@@ -165,7 +183,7 @@ export class StatistiquesService {
     );
   }
 
-  // NOUVELLES MÉTHODES DIRECTEUR - Données financières et budgétaires
+  // MÉTHODES DIRECTEUR - Données financières et budgétaires
   getDirecteurDashboardStats(): Observable<DirecteurDashboardStats> {
     const cacheKey = 'directeur-dashboard';
     
@@ -194,6 +212,39 @@ export class StatistiquesService {
       catchError((error) => {
         console.error(`Erreur API Directeur chart ${periode} (financier):`, error);
         return of(this.getEmptyDirecteurChartData(periode));
+      })
+    );
+  }
+
+  // MÉTHODES RESPONSABLE - Données crédits et budgets
+  getResponsableDashboardStats(): Observable<ResponsableDashboardStats> {
+    const cacheKey = 'responsable-dashboard';
+    
+    return this.getCachedOrFetch<ResponsableDashboardStats>(
+      cacheKey,
+      `${this.baseUrl}/responsable/dashboard`
+    ).pipe(
+      tap(data => console.log('💰 Données Responsable dashboard (crédits):', data)),
+      map(data => this.normalizeResponsableDashboardStats(data)),
+      catchError((error): Observable<ResponsableDashboardStats> => {
+        console.error('Erreur API Responsable dashboard (crédits):', error);
+        return of(this.getEmptyResponsableStats());
+      })
+    );
+  }
+
+  getResponsableChartData(periode: string = 'semaine'): Observable<ResponsableChartData> {
+    const cacheKey = `responsable-chart-${periode}`;
+    
+    return this.getCachedOrFetch<ResponsableChartData>(
+      cacheKey,
+      `${this.baseUrl}/responsable/chart?periode=${periode}`
+    ).pipe(
+      tap(data => console.log(`📊 Données Responsable chart ${periode} (crédits):`, data)),
+      map(data => this.normalizeResponsableChartData(data)),
+      catchError((error) => {
+        console.error(`Erreur API Responsable chart ${periode} (crédits):`, error);
+        return of(this.getEmptyResponsableChartData(periode));
       })
     );
   }
@@ -233,29 +284,6 @@ export class StatistiquesService {
     }
   }
 
-  // NORMALISATION DES DONNÉES DSI (entreprise spécifique)
-  private normalizeDsiDashboardStats(data: DsiDashboardStats): DsiDashboardStats {
-    return {
-      totalUsers: this.ensureNumber(data.totalUsers),
-      disabledUsers: this.ensureNumber(data.disabledUsers),
-      sharedDocuments: this.ensureNumber(data.sharedDocuments),
-      activeUsersPercentage: this.ensurePercentage(data.activeUsersPercentage),
-      disabledUsersPercentage: this.ensurePercentage(data.disabledUsersPercentage),
-      documentsPercentage: this.ensurePercentage(data.documentsPercentage)
-    };
-  }
-
-  private normalizeDsiChartData(data: DsiChartData): DsiChartData {
-    return {
-      labels: data?.labels || this.generateLabels('semaine'),
-      datasets: {
-        utilisateurs: this.ensurePositiveNumbers(data?.datasets?.utilisateurs),
-        documents: this.ensurePositiveNumbers(data?.datasets?.documents),
-        desactivations: this.ensurePositiveNumbers(data?.datasets?.desactivations)
-      }
-    };
-  }
-
   // NORMALISATION DES DONNÉES GLOBALES (SUPER_ADMIN)
   private normalizeDashboardStats(data: DashboardStats): DashboardStats {
     return {
@@ -293,6 +321,29 @@ export class StatistiquesService {
     };
   }
 
+  // NORMALISATION DES DONNÉES DSI (entreprise spécifique)
+  private normalizeDsiDashboardStats(data: DsiDashboardStats): DsiDashboardStats {
+    return {
+      totalUsers: this.ensureNumber(data.totalUsers),
+      disabledUsers: this.ensureNumber(data.disabledUsers),
+      sharedDocuments: this.ensureNumber(data.sharedDocuments),
+      activeUsersPercentage: this.ensurePercentage(data.activeUsersPercentage),
+      disabledUsersPercentage: this.ensurePercentage(data.disabledUsersPercentage),
+      documentsPercentage: this.ensurePercentage(data.documentsPercentage)
+    };
+  }
+
+  private normalizeDsiChartData(data: DsiChartData): DsiChartData {
+    return {
+      labels: data?.labels || this.generateLabels('semaine'),
+      datasets: {
+        utilisateurs: this.ensurePositiveNumbers(data?.datasets?.utilisateurs),
+        documents: this.ensurePositiveNumbers(data?.datasets?.documents),
+        desactivations: this.ensurePositiveNumbers(data?.datasets?.desactivations)
+      }
+    };
+  }
+
   // NORMALISATION DES DONNÉES DIRECTEUR
   private normalizeDirecteurDashboardStats(data: DirecteurDashboardStats): DirecteurDashboardStats {
     return {
@@ -315,6 +366,29 @@ export class StatistiquesService {
         budgets: this.ensurePositiveNumbers(data?.datasets?.budgets),
         lignesCredit: this.ensurePositiveNumbers(data?.datasets?.lignesCredit),
         depenses: this.ensurePositiveNumbers(data?.datasets?.depenses)
+      }
+    };
+  }
+
+  // NORMALISATION DES DONNÉES RESPONSABLE
+  private normalizeResponsableDashboardStats(data: ResponsableDashboardStats): ResponsableDashboardStats {
+    return {
+      creditsAffectes: this.ensureNumber(data.creditsAffectes),
+      creditsUtilises: this.ensureNumber(data.creditsUtilises),
+      creditsRestants: this.ensureNumber(data.creditsRestants),
+      pourcentageUtilisation: this.ensurePercentage(data.pourcentageUtilisation),
+      pourcentageRestant: this.ensurePercentage(data.pourcentageRestant),
+      budgetTotal: this.ensureNumber(data.budgetTotal)
+    };
+  }
+
+  private normalizeResponsableChartData(data: ResponsableChartData): ResponsableChartData {
+    return {
+      labels: data?.labels || this.generateLabels('semaine'),
+      datasets: {
+        creditsAffectes: this.ensurePositiveNumbers(data?.datasets?.creditsAffectes),
+        creditsUtilises: this.ensurePositiveNumbers(data?.datasets?.creditsUtilises),
+        creditsRestants: this.ensurePositiveNumbers(data?.datasets?.creditsRestants)
       }
     };
   }
@@ -375,6 +449,17 @@ export class StatistiquesService {
     };
   }
 
+  private getEmptyResponsableStats(): ResponsableDashboardStats {
+    return {
+      creditsAffectes: 0,
+      creditsUtilises: 0,
+      creditsRestants: 0,
+      pourcentageUtilisation: 0,
+      pourcentageRestant: 0,
+      budgetTotal: 0
+    };
+  }
+
   private getEmptyChartData(periode: string): ChartData {
     const labels = this.generateLabels(periode);
     return {
@@ -407,6 +492,18 @@ export class StatistiquesService {
         budgets: Array(labels.length).fill(0),
         lignesCredit: Array(labels.length).fill(0),
         depenses: Array(labels.length).fill(0)
+      }
+    };
+  }
+
+  private getEmptyResponsableChartData(periode: string): ResponsableChartData {
+    const labels = this.generateLabels(periode);
+    return {
+      labels,
+      datasets: {
+        creditsAffectes: Array(labels.length).fill(0),
+        creditsUtilises: Array(labels.length).fill(0),
+        creditsRestants: Array(labels.length).fill(0)
       }
     };
   }

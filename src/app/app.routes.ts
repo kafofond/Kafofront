@@ -20,6 +20,7 @@ import { ContentbodyDashbordRespo } from './features/responsable/contentbody-das
 import { ContentbodyListbudgetRespo } from './features/responsable/contentbody-listbudget-respo/contentbody-listbudget-respo';
 import { ContentbodyBonsDeCommandeRespo } from './features/responsable/contentbody-bons-de-commande-respo/contentbody-bons-de-commande-respo';
 import { ContentbodyAttestationDeServiceRespo } from './features/responsable/contentbody-attestation-de-service-respo/contentbody-attestation-de-service-respo';
+import { ContentbodyVoirlignesRespo } from './features/responsable/contentbody-voirlignes-respo/contentbody-voirlignes-respo';
 import { ChangerMotDePasse } from './shared/changer-mot-de-passe/changer-mot-de-passe';
 import { SeConnecter } from './shared/se-connecter/se-connecter';
 import { CreerCompte } from './shared/creer-compte/creer-compte';
@@ -140,7 +141,7 @@ export const routes: Routes = [
             },
             {
                 path: 'listbudget-responsable/listlignesbudget-responsable/:budgetId', // ✅ AJOUT :budgetId
-                component: ContentbodyVoirlignesDirect
+                component: ContentbodyVoirlignesRespo
             },
             {
                 path: 'depenses-responsable',

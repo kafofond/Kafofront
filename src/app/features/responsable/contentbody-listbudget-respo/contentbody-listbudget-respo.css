@@ -36,23 +36,7 @@ button {
     justify-content: flex-start;
 }
 
-/* Nouveau style pour le bouton "Créer budget" */
-.create-btn {
-    display: flex;
-    align-items: center;
-    gap: 13px;
-    padding: 12px 27px;
-    background-color: #0b4f63; /* Couleur principale */
-    border: none;
-    border-radius: 10px;
-    font-size: 15px;
-    font-weight: 700;
-    color: #ffffff;
-}
-.create-btn img {
-    /* Style pour les icônes sur fond sombre (si nécessaire) */
-    filter: brightness(0) invert(1);
-}
+/* Le bouton "Créer budget" a été remplacé par le même style que le directeur */
 
 
 /* --- Styles pour le bouton de Filtre et le Dropdown --- */
@@ -201,8 +185,23 @@ button {
 }
 
 .status-badge.active {
-    background-color: #dcffbe; /* --color-status-active-bg */
-    color: #0c8f11; /* --color-status-active-text */
+    background-color: #dcffbe;
+    color: #0c8f11;
+}
+
+.status-badge.warning {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-badge.draft {
+    background-color: #e2e3e5;
+    color: #383d41;
+}
+
+.status-badge.rejected {
+    background-color: #f8d7da;
+    color: #721c24;
 }
 
 .actions-cell {
@@ -336,21 +335,54 @@ label {
 input[type="text"], 
 input[type="number"], 
 input[type="date"], 
-textarea {
+textarea,
+.form-control {
     width: 100%;
     padding: 12px 15px;
     border: 1px solid #d9d9d9;
     border-radius: 8px;
     font-size: 16px;
     color: #333;
-    background-color: #f7f9fb; /* Léger fond pour l'input */
+    background-color: #f7f9fb;
     transition: border-color 0.3s;
 }
 
-input:focus, textarea:focus {
-    border-color: #f59e0b; /* Accent couleur KafoFond */
+input:focus, 
+textarea:focus,
+.form-control:focus {
+    border-color: #f59e0b;
     outline: none;
     box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.2);
+}
+
+/* Styles améliorés pour le select */
+.form-control {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'><path fill='%230b4f63' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 12px;
+}
+
+/* Styles pour les options du select */
+select.form-control option[value="Validé"] {
+    color: #28a745;
+    font-weight: 600;
+}
+
+select.form-control option[value="Refusé"] {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+select.form-control option[value="En cours"] {
+    color: #ffc107;
+    font-weight: 600;
+}
+
+select.form-control option[value="Brouillon"] {
+    color: #6c757d;
+    font-weight: 600;
 }
 
 input[readonly] {
@@ -459,6 +491,20 @@ input:checked + .slider:before {
 
 .btn-secondary:hover {
     background-color: #d2dae3;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+.btn-danger:disabled {
+    background-color: #dc354580;
+    cursor: not-allowed;
 }
 
 /* --- Responsive pour les petits écrans --- */
@@ -609,15 +655,12 @@ input:checked + .slider:before {
 }
 
 .detail-status-badge {
-    /* Réutilisation du style de badge de la table */
     border-radius: 40px;
     padding: 4px 12px;
     font-size: 13px;
     font-family: 'Inter', sans-serif;
     font-weight: 600;
     width: fit-content;
-    background-color: #dcffbe; /* Exemple 'Active' */
-    color: #0c8f11;
 }
 
 /* Mobile responsive */
