@@ -137,37 +137,53 @@ export class AuthService {
     return !!this.getToken();
   }
 
-  // ... autres méthodes existantes
+  // --- Méthode pour obtenir le rôle depuis le localStorage ---
+  getUserRole(): string | null {
+    return localStorage.getItem('user_role');
+  }
 
-// --- Méthode pour obtenir le rôle depuis le localStorage ---
-getUserRole(): string | null {
-  return localStorage.getItem('user_role');
-}
+  // --- Méthode pour obtenir l'email de l'utilisateur connecté ---
+  getUserEmail(): string | null {
+    return localStorage.getItem('user_email');
+  }
 
-// --- Méthode pour obtenir l'email de l'utilisateur connecté ---
-getUserEmail(): string | null {
-  return localStorage.getItem('user_email');
-}
+  // --- Méthode pour déconnecter l'utilisateur ---
+  logout(): void {
+    this.removeToken();
+    localStorage.removeItem('user_email');
+    localStorage.removeItem('user_role');
+  }
 
-// --- Méthode pour déconnecter l'utilisateur ---
-logout(): void {
-  this.removeToken();
-  localStorage.removeItem('user_email');
-  localStorage.removeItem('user_role');
-}
+  // --- Méthode pour vérifier si l'utilisateur a un rôle spécifique ---
+  hasRole(role: string): boolean {
+    const userRole = this.getUserRole();
+    return userRole === role;
+  }
 
-// --- Méthode pour vérifier si l'utilisateur a un rôle spécifique ---
-hasRole(role: string): boolean {
-  const userRole = this.getUserRole();
-  return userRole === role;
-}
+  // --- Méthode pour obtenir les informations utilisateur complètes ---
+  getUserInfo(): { email: string | null, role: string | null } {
+    return {
+      email: this.getUserEmail(),
+      role: this.getUserRole()
+    };
+  }
 
-// --- Méthode pour obtenir les informations utilisateur complètes ---
-getUserInfo(): { email: string | null, role: string | null } {
-  return {
-    email: this.getUserEmail(),
-    role: this.getUserRole()
-  };
-}
+  // --- Méthode pour décoder le token JWT et extraire l'entrepriseId ---
+  getEntrepriseIdFromToken(): number | null {
+    const token = this.getToken();
+    if (!token) return null;
 
+    try {
+      // Décoder le token JWT (partie payload)
+      const payload = token.split('.')[1];
+      const decodedPayload = atob(payload);
+      const tokenData = JSON.parse(decodedPayload);
+      
+      // Retourner l'entrepriseId s'il existe
+      return tokenData.entrepriseId ? Number(tokenData.entrepriseId) : null;
+    } catch (error) {
+      console.error('Erreur lors du décodage du token:', error);
+      return null;
+    }
+  }
 }

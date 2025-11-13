@@ -6,7 +6,7 @@ import { Utilisateur, CreateUserRequest } from '../../../models/user.model';
 import { Role } from '../../../enums/role';
 
 @Component({
-  selector: 'app-contentbody-utilisateur-dsi',
+  selector: 'app-role-et-utilisateur',
   imports: [FormsModule, CommonModule],
   templateUrl: './role-et-utilisateur.html',
   styleUrl: './role-et-utilisateur.css'

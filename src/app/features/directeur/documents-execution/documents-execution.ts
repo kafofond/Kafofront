@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BonCommandeService } from '../../../services/bon-commande.service';
 import { AttestationServiceService } from '../../../services/attestation-service.service';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-documents-execution',
@@ -31,7 +32,8 @@ export class DocumentsExecution implements OnInit {
 
   constructor(
     private bonCommandeService: BonCommandeService,
-    private attestationService: AttestationServiceService
+    private attestationService: AttestationServiceService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -41,7 +43,16 @@ export class DocumentsExecution implements OnInit {
   loadData() {
     this.isLoading = true;
     this.errorMessage = '';
-    const entrepriseId = 2;
+
+    // Récupérer l'ID de l'entreprise depuis le token
+    const entrepriseId = this.authService.getEntrepriseIdFromToken();
+    
+    if (!entrepriseId) {
+      console.error('Impossible de récupérer l\'ID de l\'entreprise');
+      this.errorMessage = 'Impossible de récupérer les informations de l\'entreprise';
+      this.isLoading = false;
+      return;
+    }
 
     // Charger les bons de commande
     this.bonCommandeService.getBonsCommandeByEntreprise(entrepriseId).subscribe({

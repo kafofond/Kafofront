@@ -10,7 +10,7 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-contentbody-listbudget-direct',
   standalone: true,
-  imports: [RouterLink, CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './contentbody-listbudget-direct.html',
   styleUrls: ['./contentbody-listbudget-direct.css']
 })

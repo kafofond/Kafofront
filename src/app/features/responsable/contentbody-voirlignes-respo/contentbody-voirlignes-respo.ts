@@ -1,180 +1,459 @@
-import { Component } from '@angular/core';
-import { LigneBudget } from '../../../models/ligne-budget.model';
-import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { RouterLink, ActivatedRoute, Router } from "@angular/router";
+import { Subscription } from 'rxjs';
+import { LigneBudget, mapApiLigneToLigneBudget } from '../../../models/ligne-budget.model';
+import { 
+  LigneCreditService, 
+  CreateLigneRequest, 
+  UpdateLigneRequest,
+  LigneCredit,
+  Commentaire 
+} from '../../../services/ligne-credit.service';
 
 @Component({
   selector: 'app-contentbody-voirlignes-respo',
-  imports: [FormsModule, RouterLink, CommonModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './contentbody-voirlignes-respo.html',
-  styleUrl: './contentbody-voirlignes-respo.css'
+  styleUrls: ['./contentbody-voirlignes-respo.css']
 })
-export class ContentbodyVoirlignesRespo {
+export class ContentbodyVoirlignesRespo implements OnInit, OnDestroy {
 
+  // États des modales
   showCreateLigneModal: boolean = false;
+  showDetailLigneModal: boolean = false;
+  showEditLigneModal: boolean = false;
+  showRejetLigneModal: boolean = false;
+  showDesactivationLigneModal: boolean = false;
   
-    newLigneCredit: Partial<LigneBudget> = {
+  // Données
+  lignes: LigneBudget[] = [];
+  isLoading: boolean = true;
+  errorMessage: string = '';
+  budgetId: number = 0;
+  
+  // Ligne sélectionnée
+  selectedLigne: LigneBudget | null = null;
+  selectedLigneCredit: LigneCredit | null = null;
+  
+  // Formulaires
+  newLigneCredit: any = {
+    intituleLigne: '',
+    description: '',
+    commentaire: '',
+    statut: 'En cours',
+    etat: true,
+    montantAlloue: undefined,
+    budgetId: 0,
+    dateDebut: '',
+    dateFin: ''
+  };
+
+  editLigneData: any = {};
+  rejetCommentaire: string = '';
+  desactivationCommentaire: string = '';
+
+  private lignesSubscription?: Subscription;
+  private routeSubscription?: Subscription;
+
+  constructor(
+    private ligneCreditService: LigneCreditService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) { }
+
+  ngOnInit(): void {
+    console.log('🔍 Initialisation du composant lignes...');
+    
+    this.routeSubscription = this.route.params.subscribe(params => {
+      console.log('📋 Paramètres de route reçus:', params);
+      
+      this.budgetId = +params['budgetId'];
+      console.log('🔢 Budget ID converti:', this.budgetId);
+      
+      if (this.budgetId && !isNaN(this.budgetId)) {
+        console.log('✅ Budget ID valide, chargement des lignes...');
+        this.loadLignes();
+      } else {
+        console.error('❌ Budget ID invalide:', this.budgetId);
+        this.handleRoutingError();
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.lignesSubscription) {
+      this.lignesSubscription.unsubscribe();
+    }
+    if (this.routeSubscription) {
+      this.routeSubscription.unsubscribe();
+    }
+  }
+
+  loadLignes(): void {
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    console.log(`🔎 Chargement API des lignes pour le budget ${this.budgetId}...`);
+
+    this.lignesSubscription = this.ligneCreditService.getLignesByBudget(this.budgetId).subscribe({
+      next: (response) => {
+        console.log('✅ Lignes chargées pour le budget:', this.budgetId, response);
+        this.lignes = response.lignes.map(apiLigne => 
+          mapApiLigneToLigneBudget(apiLigne)
+        );
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('❌ Erreur chargement lignes de crédit:', error);
+        this.errorMessage = 'Erreur lors du chargement des lignes de crédit';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  // MÉTHODES POUR LES ACTIONS AUTOMATIQUES
+  onStatutChange(event: Event): void {
+    const newValue = (event.target as HTMLSelectElement).value;
+
+    if (!this.selectedLigne) return;
+
+    if (newValue === 'Validé') {
+      this.validerLigne();
+    }
+    else if (newValue === 'Refusé') {
+      this.openRejetLigneModal();
+    }
+  }
+
+  onEtatToggle(event: Event): void {
+    const isActive = (event.target as HTMLInputElement).checked;
+
+    if (!this.selectedLigne) return;
+
+    if (isActive) {
+      this.activerLigne();
+    } else {
+      this.openDesactivationLigneModal();
+    }
+  }
+
+  activerLigne(): void {
+    if (!this.selectedLigne) return;
+
+    this.ligneCreditService.activerLigne(this.selectedLigne.id).subscribe({
+      next: (response) => {
+        console.log('✅ Ligne activée:', response);
+        this.loadLignes();
+        this.closeEditLigneModal();
+      },
+      error: (error) => {
+        console.error('❌ Erreur activation ligne:', error);
+        alert('Erreur lors de l\'activation de la ligne');
+        this.editLigneData.etat = false;
+      }
+    });
+  }
+
+  confirmDesactiverLigne(): void {
+    if (!this.selectedLigne) return;
+
+    this.ligneCreditService.desactiverLigne(this.selectedLigne.id).subscribe({
+      next: (response) => {
+        console.log('✅ Ligne désactivée:', response);
+        this.loadLignes();
+        this.closeDesactivationLigneModal();
+        this.closeEditLigneModal();
+      },
+      error: (error) => {
+        console.error('❌ Erreur désactivation ligne:', error);
+        alert('Erreur lors de la désactivation de la ligne');
+        this.editLigneData.etat = true;
+      }
+    });
+  }
+
+  validerLigne(): void {
+    if (!this.selectedLigne) return;
+
+    this.ligneCreditService.validerLigne(this.selectedLigne.id).subscribe({
+      next: (response) => {
+        console.log('✅ Ligne validée:', response);
+        this.loadLignes();
+        this.closeEditLigneModal();
+      },
+      error: (error) => {
+        console.error('❌ Erreur validation ligne:', error);
+        alert('Erreur lors de la validation de la ligne');
+        this.editLigneData.statut = this.selectedLigne?.statut;
+      }
+    });
+  }
+
+  openRejetLigneModal(): void {
+    this.showRejetLigneModal = true;
+    this.rejetCommentaire = '';
+  }
+
+  closeRejetLigneModal(): void {
+    this.showRejetLigneModal = false;
+    this.rejetCommentaire = '';
+    if (this.selectedLigne) {
+      this.editLigneData.statut = this.selectedLigne.statut;
+    }
+  }
+
+  openDesactivationLigneModal(): void {
+    this.showDesactivationLigneModal = true;
+    this.desactivationCommentaire = '';
+  }
+
+  closeDesactivationLigneModal(): void {
+    this.showDesactivationLigneModal = false;
+    this.desactivationCommentaire = '';
+    if (this.selectedLigne) {
+      this.editLigneData.etat = true;
+    }
+  }
+
+  rejeterLigne(): void {
+    if (!this.selectedLigne || !this.rejetCommentaire.trim()) {
+      alert('Veuillez saisir un commentaire pour le rejet');
+      return;
+    }
+
+    this.ligneCreditService.rejeterLigne(this.selectedLigne.id, this.rejetCommentaire).subscribe({
+      next: (response) => {
+        console.log('✅ Ligne rejetée:', response);
+        this.loadLignes();
+        this.closeRejetLigneModal();
+        this.closeEditLigneModal();
+      },
+      error: (error) => {
+        console.error('❌ Erreur rejet ligne:', error);
+        alert('Erreur lors du rejet de la ligne');
+        this.editLigneData.statut = this.selectedLigne?.statut;
+      }
+    });
+  }
+
+  private handleRoutingError(): void {
+    this.errorMessage = 'Erreur de navigation: Budget introuvable';
+    this.isLoading = false;
+    
+    console.error('Détails de l\'erreur de routing:');
+    console.error('- URL actuelle:', window.location.href);
+    console.error('- Paramètres route:', this.route.snapshot.params);
+    
+    setTimeout(() => {
+      this.router.navigate(['/responsable/listbudget-responsable']);
+    }, 3000);
+  }
+
+  // MODALE DE CRÉATION
+  openCreateLigneModal(): void {
+    this.newLigneCredit = {
       intituleLigne: '',
       description: '',
       commentaire: '',
-      statut: 'En attente',
+      statut: 'En cours',
       etat: true,
-      dateDebut: undefined,
-      dateFin: undefined,
       montantAlloue: undefined,
-      // Les champs suivants sont calculés/mis à jour par le backend
-      montantEngage: 0,
-      montantRestant: 0
+      budgetId: this.budgetId,
+      dateDebut: '',
+      dateFin: ''
     };
-  
-    lignes: LigneBudget[] = [
-  { 
-    id: 1,
-    code: 'LN-001',
-    budgetId: 101,
-    intituleLigne: 'Formation du personnel',
-    description: 'Programme de renforcement des compétences pour les employés du département RH',
-    dateDeCreation: new Date('2025-01-15'),
-    commentaire: 'Formation prévue pour le premier trimestre',
-    statut: 'En cours',
-    etat: true,
-    dateDebut: new Date('2025-02-01'),
-    dateFin: new Date('2025-03-15'),
-    montantAlloue: 5000000,
-    montantEngage: 3000000,
-    montantRestant: 2000000,
-    tauxUtilisation: 60,
-    createurNom: 'Hamza Sanmo',
-    createurEmail: 'hamza.sanmo@entreprise.com'
-  },
-  {
-    id: 2,
-    code: 'LN-002',
-    budgetId: 101,
-    intituleLigne: 'Achat de matériel informatique',
-    description: 'Acquisition de nouveaux ordinateurs portables et imprimantes pour le service IT',
-    dateDeCreation: new Date('2025-02-10'),
-    commentaire: 'Commande en attente de livraison',
-    statut: 'Validé',
-    etat: true,
-    dateDebut: new Date('2025-02-15'),
-    dateFin: new Date('2025-04-01'),
-    montantAlloue: 15000000,
-    montantEngage: 12000000,
-    montantRestant: 3000000,
-    tauxUtilisation: 80,
-    createurNom: 'Hamza Sanmo',
-    createurEmail: 'hamza.sanmo@entreprise.com'
-  },
-  {
-    id: 3,
-    code: 'LN-003',
-    budgetId: 101,
-    intituleLigne: 'Campagne marketing',
-    description: 'Campagne digitale de promotion des nouveaux produits 2025',
-    dateDeCreation: new Date('2025-03-05'),
-    commentaire: 'Campagne en phase de conception',
-    statut: 'En attente',
-    etat: false,
-    dateDebut: new Date('2025-04-01'),
-    dateFin: new Date('2025-05-30'),
-    montantAlloue: 8000000,
-    montantEngage: 2000000,
-    montantRestant: 6000000,
-    tauxUtilisation: 25,
-    createurNom: 'Hamza Sanmo',
-    createurEmail: 'hamza.sanmo@entreprise.com'
-  },
-  {
-    id: 4,
-    code: 'LN-004',
-    budgetId: 101,
-    intituleLigne: 'Maintenance des infrastructures',
-    description: 'Entretien et mise à jour du matériel réseau dans les bureaux régionaux',
-    dateDeCreation: new Date('2025-01-28'),
-    commentaire: 'Nécessite l’approbation du directeur financier',
-    statut: 'Soumis',
-    etat: false,
-    dateDebut: new Date('2025-02-10'),
-    dateFin: new Date('2025-03-20'),
-    montantAlloue: 6000000,
-    montantEngage: 1000000,
-    montantRestant: 5000000,
-    tauxUtilisation: 17,
-    createurNom: 'Hamza Sanmo',
-    createurEmail: 'hamza.sanmo@entreprise.com'
-  },
-  {
-    id: 5,
-    code: 'LN-005',
-    budgetId: 101,
-    intituleLigne: 'Organisation du séminaire annuel',
-    description: 'Préparation du séminaire annuel des cadres à Bamako',
-    dateDeCreation: new Date('2025-02-18'),
-    commentaire: 'Attente de validation du lieu et des prestataires',
-    statut: 'Refusé',
-    etat: false,
-    dateDebut: new Date('2025-03-10'),
-    dateFin: new Date('2025-03-12'),
-    montantAlloue: 4000000,
-    montantEngage: 0,
-    montantRestant: 4000000,
-    tauxUtilisation: 0,
-    createurNom: 'Hamza Sanmo',
-    createurEmail: 'hamza.sanmo@entreprise.com'
+    this.showCreateLigneModal = true;
+    document.body.classList.add('modal-open');
   }
-].map(ligne => ({
-      ...ligne,
-      tauxUtilisation: ligne.montantAlloue
-        ? parseFloat(((ligne.montantEngage / ligne.montantAlloue) * 100).toFixed(2))
-        : 0
-    }));
-  
-  
-    constructor() { }
-  
-    /**
-     * Ouvre la modale de création de ligne de crédit.
-     */
-  
-    openCreateLigneModal(): void {
-      // Reinitialisation du modèle à l'ouverture pour éviter les résidus de données
-      this.newLigneCredit = {
-        statut: 'En attente',
-        etat: true,
-        montantEngage: 0,
-        montantRestant: 0
-      };
-      // Logique pour ouvrir la modale
-      this.showCreateLigneModal = true;
-      document.body.classList.add('modal-open');
-    }
-  
-    /**
-     * Ferme la modale de création de ligne de crédit.
-     */
-  
-    closeCreateLigneModal(): void {
-      // Logique pour fermer la modale
-      this.showCreateLigneModal = false;
-      document.body.classList.remove('modal-open');
-    }
-  
-    /**
-     * Gère la soumission du formulaire de création de ligne de crédit.
-     */
-  
-    submitNewLigneCredit(): void {
-      // Logique pour traiter les données du formulaire
-      // Par exemple, envoyer les données au serveur ou les ajouter à une liste locale
-      console.log("Nouvelle ligne de crédit soumise:", this.lignes);
-  
-      // Fermer la modale après la soumission
-      this.closeCreateLigneModal();
-    }
-      
-  
-    ngOnInit(): void {}
 
+  closeCreateLigneModal(): void {
+    this.showCreateLigneModal = false;
+    document.body.classList.remove('modal-open');
+  }
+
+  submitNewLigneCredit(): void {
+    if (!this.newLigneCredit.intituleLigne || !this.newLigneCredit.montantAlloue) {
+      alert('Veuillez remplir tous les champs obligatoires');
+      return;
+    }
+
+    const createData: CreateLigneRequest = {
+      intituleLigne: this.newLigneCredit.intituleLigne!,
+      description: this.newLigneCredit.description || '',
+      montantAllouer: this.newLigneCredit.montantAlloue!,
+      budgetId: this.budgetId,
+      commentaire: this.newLigneCredit.commentaire
+    };
+
+    console.log('📤 Création ligne de crédit:', createData);
+
+    this.ligneCreditService.createLigne(createData).subscribe({
+      next: (response) => {
+        console.log('✅ Ligne de crédit créée:', response);
+        this.loadLignes();
+        this.closeCreateLigneModal();
+        alert('Ligne de crédit créée avec succès!');
+      },
+      error: (error) => {
+        console.error('❌ Erreur création ligne de crédit:', error);
+        alert('Erreur lors de la création de la ligne de crédit');
+      }
+    });
+  }
+
+  // MODALE DE DÉTAIL
+  openDetailLigneModal(ligne: LigneBudget): void {
+    this.selectedLigne = ligne;
+    
+    // Charger les détails complets de la ligne
+    this.ligneCreditService.getLigneById(ligne.id).subscribe({
+      next: (ligneCredit) => {
+        this.selectedLigneCredit = ligneCredit;
+        this.showDetailLigneModal = true;
+        document.body.classList.add('modal-open');
+      },
+      error: (error) => {
+        console.error('❌ Erreur chargement détails ligne:', error);
+        this.showDetailLigneModal = true;
+        document.body.classList.add('modal-open');
+      }
+    });
+  }
+
+  closeDetailLigneModal(): void {
+    this.selectedLigne = null;
+    this.selectedLigneCredit = null;
+    this.showDetailLigneModal = false;
+    document.body.classList.remove('modal-open');
+  }
+
+  // MODALE DE MODIFICATION
+  openEditLigneModal(ligne: LigneBudget): void {
+    this.selectedLigne = ligne;
+    
+    // Charger les données complètes de la ligne pour l'édition
+    this.ligneCreditService.getLigneById(ligne.id).subscribe({
+      next: (ligneCredit) => {
+        this.selectedLigneCredit = ligneCredit;
+        
+        this.editLigneData = {
+          intituleLigne: ligneCredit.intituleLigne,
+          description: ligneCredit.description,
+          montantAlloue: ligneCredit.montantAllouer,
+          statut: this.ligneCreditService.mapStatutToDisplay(ligneCredit.statut),
+          etat: ligneCredit.actif,
+          dateDebut: this.formatDateForInput(ligneCredit.dateDebut),
+          dateFin: this.formatDateForInput(ligneCredit.dateFin)
+        };
+
+        this.showEditLigneModal = true;
+        document.body.classList.add('modal-open');
+      },
+      error: (error) => {
+        console.error('❌ Erreur chargement données édition:', error);
+        // Fallback aux données basiques
+        this.editLigneData = {
+          intituleLigne: ligne.intituleLigne,
+          description: ligne.description,
+          montantAlloue: ligne.montantAlloue,
+          statut: ligne.statut,
+          etat: ligne.etat,
+          dateDebut: this.formatDateForInput(ligne.dateDebut.toString()),
+          dateFin: this.formatDateForInput(ligne.dateFin.toString())
+
+        };
+        this.showEditLigneModal = true;
+        document.body.classList.add('modal-open');
+      }
+    });
+  }
+
+  closeEditLigneModal(): void {
+    this.selectedLigne = null;
+    this.selectedLigneCredit = null;
+    this.showEditLigneModal = false;
+    this.editLigneData = {};
+    document.body.classList.remove('modal-open');
+  }
+
+  submitEditLigne(): void {
+    if (!this.selectedLigne || !this.selectedLigneCredit) return;
+
+    // ✅ STRUCTURE EXACTE CONFORME À L'API
+    const updateData: UpdateLigneRequest = {
+      code: this.selectedLigneCredit.code,
+      intituleLigne: this.editLigneData.intituleLigne,
+      description: this.editLigneData.description,
+      montantAllouer: Number(this.editLigneData.montantAlloue),
+      montantEngager: this.selectedLigneCredit.montantEngager,
+      montantRestant: this.selectedLigneCredit.montantRestant,
+      dateCreation: this.selectedLigneCredit.dateCreation,
+      dateModification: new Date().toISOString().split('.')[0], // Format exact de l'API
+      dateDebut: this.editLigneData.dateDebut || null,
+      dateFin: this.editLigneData.dateFin || null,
+      statut: this.mapDisplayStatutToApi(this.editLigneData.statut),
+      actif: Boolean(this.editLigneData.etat),
+      budgetId: this.selectedLigneCredit.budgetId,
+      createurNom: this.selectedLigneCredit.createurNom,
+      createurEmail: this.selectedLigneCredit.createurEmail,
+      entrepriseNom: this.selectedLigneCredit.entrepriseNom,
+      commentaires: this.selectedLigneCredit.commentaires
+    };
+
+    console.log('📤 Mise à jour ligne de crédit (structure API):', updateData);
+
+    this.ligneCreditService.updateLigne(this.selectedLigne.id, updateData).subscribe({
+      next: (response) => {
+        console.log('✅ Ligne de crédit mise à jour:', response);
+        this.loadLignes();
+        this.closeEditLigneModal();
+        alert('Ligne de crédit modifiée avec succès!');
+      },
+      error: (error) => {
+        console.error('❌ Erreur mise à jour ligne de crédit:', error);
+        console.error('Détails erreur:', error.error);
+        alert('Erreur lors de la modification: ' + (error.error?.message || error.message));
+      }
+    });
+  }
+
+  // MÉTHODES UTILITAIRES
+  private formatDateForInput(date: string | null): string {
+    if (!date) return '';
+    return date.split('T')[0]; // Convertir "2025-10-22T00:00:00" en "2025-10-22"
+  }
+
+  private mapDisplayStatutToApi(displayStatut: string): string {
+    const reverseMap: { [key: string]: string } = {
+      'Validé': 'VALIDE',
+      'En cours': 'EN_COURS',
+      'Refusé': 'REFUSE'
+    };
+    return reverseMap[displayStatut] || 'EN_COURS';
+  }
+
+  getStatusBadgeClass(statut: string): string {
+    const classMap: { [key: string]: string } = {
+      'Validé': 'status-badge active',
+      'En cours': 'status-badge warning',
+      'Refusé': 'status-badge rejected'
+    };
+    return classMap[statut] || 'status-badge draft';
+  }
+
+  getEtatBadgeClass(etat: boolean): string {
+    return etat ? 'status-badge active' : 'status-badge rejected';
+  }
+
+  formatNumber(num: number): string {
+    return new Intl.NumberFormat('fr-FR').format(num);
+  }
+
+  // Méthode pour afficher les commentaires
+  getCommentaires(): Commentaire[] {
+    return this.selectedLigneCredit?.commentaires || [];
+  }
 }

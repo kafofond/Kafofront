@@ -5,7 +5,6 @@
       <label>Statut :</label>
       <div class="filter-select" (click)="toggleStatusDropdown()">
         <span>{{ selectedStatus }}</span>
-        <img src="assets/87_539.svg" alt="dropdown arrow" />
       </div>
       <ul class="dropdown-list" *ngIf="statusDropdownOpen">
         <li *ngFor="let s of ['Tous', 'Validé', 'En attente', 'Rejeté']"
@@ -24,8 +23,17 @@
 
   <!-- Tableau des Bons de Commande -->
   <div class="data-card">
-    <h2 class="table-title">Bons de Commande</h2>
-    <div class="data-table">
+    
+    <!-- États de chargement et d'erreur -->
+    <div *ngIf="isLoading" class="loading-state">
+      <p>Chargement des bons de commande...</p>
+    </div>
+    
+    <div *ngIf="errorMessage && !isLoading" class="error-state">
+      <p>{{ errorMessage }}</p>
+    </div>
+    
+    <div *ngIf="!isLoading && !errorMessage" class="data-table">
       <div class="table-header">
         <div class="col col-1">Code</div>
         <div class="col col-2">Réf. Demande</div>
@@ -53,11 +61,149 @@
           </span>
         </div>
         <div class="col col-6 action-icons">
-          <button class="action-btn"><img src="assets/87_501.svg" alt="details" /></button>
-          <button class="action-btn"><img src="assets/Frame icon approuver.svg" alt="valider" /></button>
-          <button class="action-btn"><img src="assets/Frame icon refuser.svg" alt="refuser" /></button>
+          <button class="action-btn" (click)="openDetailModal(bon)"><img src="assets/87_501.svg" alt="details" /></button>
+          <button class="action-btn" (click)="openApprobationModal(bon)"><img src="assets/Frame icon approuver.svg" alt="valider" /></button>
+          <button class="action-btn" (click)="openRejetModal(bon)"><img src="assets/Frame icon refuser.svg" alt="refuser" /></button>
         </div>
+      </div>
+      
+      <!-- Message si aucun bon de commande -->
+      <div *ngIf="filteredBons.length === 0" class="empty-state">
+        <p>Aucun bon de commande trouvé</p>
       </div>
     </div>
   </div>
 </section>
+
+<!-- Modal de détails -->
+<div class="modal-overlay" *ngIf="showDetailModal" (click)="closeDetailModal()">
+  <div class="modal-content detail-modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header detail-header">
+      <h2 class="modal-title">Détails du Bon de Commande</h2>
+      <button class="close-btn" (click)="closeDetailModal()">
+        <img src="assets/mdi_cancel-bold.svg" alt="Fermer" class="close-icon">
+      </button>
+    </div>
+
+    <div class="detail-body" *ngIf="selectedBon">
+      <div class="detail-section full-width-fields">
+        <div class="detail-group">
+          <label>Code</label>
+          <p class="detail-value">{{ selectedBon.code }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Référence Demande</label>
+          <p class="detail-value">{{ selectedBon.referenceDemande }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Fournisseur</label>
+          <p class="detail-value">{{ selectedBon.fournisseur }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Description</label>
+          <p class="detail-value description">{{ selectedBon.description }}</p>
+        </div>
+      </div>
+
+      <div class="detail-section grid-fields">
+        <div class="detail-group">
+          <label>Montant Total</label>
+          <p class="detail-value">{{ selectedBon.montantTotal | currency:'XOF':'symbol':'1.0-0' }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Service Bénéficiaire</label>
+          <p class="detail-value">{{ selectedBon.serviceBeneficiaire }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Mode de Paiement</label>
+          <p class="detail-value">{{ selectedBon.modePaiement }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Date de Création</label>
+          <p class="detail-value">{{ selectedBon.dateCreation }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Délai de Paiement</label>
+          <p class="detail-value">{{ selectedBon.delaiPaiement }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Date d'Exécution</label>
+          <p class="detail-value">{{ selectedBon.dateExecution }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Statut</label>
+          <span
+            class="status-badge"
+            [ngClass]="{
+              'status-success': selectedBon.statut === 'Validé',
+              'status-danger': selectedBon.statut === 'Rejeté',
+              'status-pending': selectedBon.statut === 'En attente'
+            }"
+          >
+            {{ selectedBon.statut }}
+          </span>
+        </div>
+      </div>
+
+      <div class="detail-section full-width-fields">
+        <div class="detail-group">
+          <label>Créer Par</label>
+          <p class="detail-value">{{ selectedBon.createurNom }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal d'approbation -->
+<div class="modal-overlay" *ngIf="showApprobationModal" (click)="closeApprobationModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">Approuver le Bon de Commande</h2>
+      <button class="close-btn" (click)="closeApprobationModal()">
+        <img src="assets/mdi_cancel-bold.svg" alt="Fermer" class="close-icon">
+      </button>
+    </div>
+
+    <div class="modal-body" *ngIf="selectedBon">
+      <p class="confirmation-text">
+        Êtes-vous sûr de vouloir approuver le bon de commande <strong>{{ selectedBon.code }}</strong> ?
+      </p>
+      
+      <div class="form-actions">
+        <button class="btn btn-secondary" (click)="closeApprobationModal()">Annuler</button>
+        <button class="btn btn-primary" (click)="approuverBon()">Approuver</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de rejet -->
+<div class="modal-overlay" *ngIf="showRejetModal" (click)="closeRejetModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">Rejeter le Bon de Commande</h2>
+      <button class="close-btn" (click)="closeRejetModal()">
+        <img src="assets/mdi_cancel-bold.svg" alt="Fermer" class="close-icon">
+      </button>
+    </div>
+
+    <div class="modal-body" *ngIf="selectedBon">
+      <div class="form-group">
+        <label for="rejetCommentaire">Commentaire de rejet *</label>
+        <textarea 
+          id="rejetCommentaire" 
+          [(ngModel)]="rejetCommentaire" 
+          placeholder="Veuillez expliquer la raison du rejet..."
+          rows="4"
+          required
+        ></textarea>
+      </div>
+      
+      <div class="form-actions">
+        <button class="btn btn-secondary" (click)="closeRejetModal()">Annuler</button>
+        <button class="btn btn-danger" (click)="rejeterBon()" [disabled]="!rejetCommentaire.trim()">Rejeter</button>
+      </div>
+    </div>
+  </div>
+</div>
