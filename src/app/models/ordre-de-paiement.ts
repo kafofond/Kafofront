@@ -1,13 +1,17 @@
-import { Statut } from "../enums/statut";
-
 export interface OrdreDePaiement {
-    code: string;
-    referenceDecionDePrelevement: string;
-    montantAPrelever: number;
-    compteOrigine: string;
-    compteDestinataire: string;
-    dateExecution: Date;
-    dateDeCreation: Date;
-    description: string;
-    statut: Statut;
+  id: number;
+  code: string;
+  referenceDecisionPrelevement: string | null;
+  montant: number;
+  description: string;
+  compteOrigine: string;
+  compteDestinataire: string;
+  dateExecution: string | null;
+  dateCreation: string;
+  dateModification: string;
+  statut: string;
+  createurNom: string;
+  createurEmail: string;
+  entrepriseNom: string;
+  decisionId: number | null;
 }

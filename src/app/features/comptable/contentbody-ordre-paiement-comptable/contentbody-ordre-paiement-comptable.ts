@@ -16,27 +16,42 @@ export class ContentbodyOrdrePaiementComptable {
 
   ordreDePaiements: OrdreDePaiement[] = [
     {
-      code: 'OP001',
-      referenceDecionDePrelevement: 'DP001',
-      montantAPrelever: 1500,
-      compteOrigine: 'FR7612345678901234567890124',
-      compteDestinataire: 'FR7612345678901234567890123',
-      dateExecution: new Date('2024-01-20'),
-      dateDeCreation: new Date('2024-01-16'),
-      description: 'Ordre de paiement pour DP001',
-      statut: Statut.VALIDE
-    },
+  id: 1,
+  code: 'OP002',
+  referenceDecisionPrelevement: 'DP002',
+  montant: 2500,
+  compteOrigine: 'FR7612345678901234567890126',
+  compteDestinataire: 'FR7612345678901234567890125',
+  dateExecution: '2024-02-25',
+  dateCreation: '2024-02-21',
+  dateModification: '2024-02-22',
+  description: 'Ordre de paiement pour DP002',
+  statut: Statut.EN_ATTENTE,
+  createurNom: 'Jean Dupont',
+  createurEmail: 'jean.dupont@example.com',
+  entrepriseNom: 'Ma Société SARL',
+  decisionId: 12 // 👈 ajouté pour corriger l’erreur
+}
+
+,
     {
-      code: 'OP002',
-      referenceDecionDePrelevement: 'DP002',
-      montantAPrelever: 2500,
-      compteOrigine: 'FR7612345678901234567890126',
-      compteDestinataire: 'FR7612345678901234567890125',
-      dateExecution: new Date('2024-02-25'),
-      dateDeCreation: new Date('2024-02-21'),
-      description: 'Ordre de paiement pour DP002',
-      statut: Statut.EN_ATTENTE
-    }
+  id: 1,
+  code: 'OP002',
+  referenceDecisionPrelevement: 'DP002',
+  montant: 2500,
+  compteOrigine: 'FR7612345678901234567890126',
+  compteDestinataire: 'FR7612345678901234567890125',
+  dateExecution: '2024-02-25',
+  dateCreation: '2024-02-21',
+  dateModification: '2024-02-22',
+  description: 'Ordre de paiement pour DP002',
+  statut: Statut.EN_ATTENTE,
+  createurNom: 'Jean Dupont',
+  createurEmail: 'jean.dupont@example.com',
+  entrepriseNom: 'Ma Société SARL',
+  decisionId: 12 // 👈 ajouté pour corriger l’erreur
+}
+
   ];
 
   // Dropdown status
