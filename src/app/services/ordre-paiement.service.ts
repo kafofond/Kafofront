@@ -106,6 +106,44 @@ export class OrdrePaiementService {
     );
   }
 
+  // Créer un ordre de paiement
+  createOrdre(ordreData: any): Observable<OrdreActionResponse> {
+    this.invalidateCache('ordres');
+    
+    const token = localStorage.getItem('auth_token');
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    };
+    
+    return this.http.post<OrdreActionResponse>(`${this.baseUrl}`, ordreData, { headers }).pipe(
+      tap(response => console.log(`✅ Ordre créé:`, response)),
+      catchError((error) => {
+        console.error(`❌ Erreur création ordre:`, error);
+        throw error;
+      })
+    );
+  }
+
+  // Modifier un ordre de paiement
+  updateOrdre(id: number, ordreData: any): Observable<OrdreActionResponse> {
+    this.invalidateCache('ordres');
+    
+    const token = localStorage.getItem('auth_token');
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    };
+    
+    return this.http.put<OrdreActionResponse>(`${this.baseUrl}/${id}`, ordreData, { headers }).pipe(
+      tap(response => console.log(`✅ Ordre ${id} modifié:`, response)),
+      catchError((error) => {
+        console.error(`❌ Erreur modification ordre ${id}:`, error);
+        throw error;
+      })
+    );
+  }
+
   // Méthode générique pour le cache
   private getCachedOrFetch<T>(cacheKey: string, url: string): Observable<T> {
     const cached = this.cache.get(cacheKey);

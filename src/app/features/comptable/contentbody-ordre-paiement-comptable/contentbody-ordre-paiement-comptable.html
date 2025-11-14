@@ -1,69 +1,233 @@
-<!-- Barre de filtre -->
-<div class="filter-bar">
-  <div class="filter-group">
-    <label>Statut :</label>
-    <div class="filter-select" (click)="toggleStatusDropdown()">
-      <span>{{ selectedStatus }}</span>
-      <img src="assets/87_539.svg" alt="dropdown arrow">
-    </div>
-    <ul class="dropdown-list" *ngIf="statusDropdownOpen">
-      <li *ngFor="let s of ['Tous', 'Validé', 'En attente', 'Rejeté']"
+<section class="content-area">
+  <!-- Barre de filtre -->
+  <div class="filter-bar">
+    <div class="filter-group">
+      <label>Statut :</label>
+      <div class="filter-select" (click)="toggleStatusDropdown()">
+        <span>{{ selectedStatus }}</span>
+      </div>
+      <ul class="dropdown-list" *ngIf="statusDropdownOpen">
+        <li *ngFor="let s of ['Tous', 'Validé', 'En cours', 'Approuvé', 'Rejeté']"
             (click)="setStatus(s)"
             [class.active]="selectedStatus === s">
           {{ s }}
-      </li>
-    </ul>
-  </div>
-
-  <button class="create-btn">
-        <img src="assets/foundation_plus.svg" alt="Créer">
-        <span>Créer OP</span>
-    </button>
-
-  <button class="export-btn">
-    <img src="assets/87_477.svg" alt="Export Icon">
-    <span>Exporter</span>
-  </button>
-</div>
-
-<div class="table-section">
-  <h2 class="table-title">Ordres de Paiement</h2>
-
-  <div class="data-table">
-    <div class="table-header">
-      <div class="col col-1">Code</div>
-      <div class="col col-2">Réf. Décision Prélèvement</div>
-      <div class="col col-3">Montant</div>
-      <div class="col col-4">Compte Destinataire</div>
-      <div class="col col-5">Statut</div>
-      <div class="col col-6">Actions</div>
+        </li>
+      </ul>
     </div>
 
-    <div class="table-row" *ngFor="let od of ordreDePaiements">
-      <div class="col col-1">{{ od.code }}</div>
-      <div class="col col-2">{{ od.referenceDecisionPrelevement }}</div>
-      <div class="col col-3">{{ od.montant| currency:'XOF':'symbol':'1.0-0' }}</div>
-      <div class="col col-4">{{ od.compteDestinataire }}</div>
-      <div class="col col-5">
-        <span class="status-badge"
-              [ngClass]="{
-                'status-success': od.statut === 'Validé',
-                'status-danger': od.statut === 'Rejeté',
-                'status-pending': od.statut === 'En attente'
-              }">
-          {{ od.statut }}
-        </span>
+    <div class="action-buttons">
+      <button class="export-btn">
+        <img src="assets/87_477.svg" alt="Export Icon" />
+        <span>Exporter</span>
+      </button>
+      <button class="create-btn" (click)="openCreationModal()">
+        <img src="assets/32_236.svg" alt="Créer Icon" />
+        <span>Créer</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Tableau des Ordres de Paiement -->
+  <div class="data-card">
+    <h2 class="table-title">Ordres de Paiement</h2>
+    
+    <!-- États de chargement et d'erreur -->
+    <div *ngIf="isLoading" class="loading-state">
+      <p>Chargement des ordres de paiement...</p>
+    </div>
+    
+    <div *ngIf="errorMessage && !isLoading" class="error-state">
+      <p>{{ errorMessage }}</p>
+    </div>
+    
+    <div *ngIf="!isLoading && !errorMessage" class="data-table">
+      <div class="table-header">
+        <div class="col col-1">Code</div>
+        <div class="col col-2">Réf. Décision</div>
+        <div class="col col-3">Montant</div>
+        <div class="col col-4">Compte Origine</div>
+        <div class="col col-5">Statut</div>
+        <div class="col col-6">Actions</div>
       </div>
 
-      <div class="col col-6">
-        <div class="action-icons">
-          <button class="action-btn">
-            <img src="assets/87_501.svg" alt="details" />
-          </button>
-          <button class="action-btn" (click)="validerDecision(od)">
-            <img src="assets/32_236.svg" alt="modifier" />
-          </button>
+      <div class="table-row" *ngFor="let ordre of filteredOrdres">
+        <div class="col col-1">{{ ordre.code }}</div>
+        <div class="col col-2">{{ ordre.referenceDecisionPrelevement || 'N/A' }}</div>
+        <div class="col col-3">{{ ordre.montant | currency:'XOF':'symbol':'1.0-0' }}</div>
+        <div class="col col-4">{{ ordre.compteOrigine }}</div>
+        <div class="col col-5">
+          <span [ngClass]="getStatusBadgeClass(ordre.statut)">
+            {{ mapStatut(ordre.statut) }}
+          </span>
         </div>
+        <div class="col col-6 action-icons">
+          <button class="action-btn" (click)="openDetailModal(ordre)"><img src="assets/87_501.svg" alt="details" /></button>
+          <button class="action-btn" (click)="modifierOrdre(ordre)"><img src="assets/32_236.svg" alt="Modifier"></button>
+        </div>
+      </div>
+      
+      <!-- Message si aucun ordre -->
+      <div *ngIf="filteredOrdres.length === 0" class="empty-state">
+        <p>Aucun ordre de paiement trouvé</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Modal de détails -->
+<div class="modal-overlay" *ngIf="showDetailModal" (click)="closeDetailModal()">
+  <div class="modal-content detail-modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header detail-header">
+      <h2 class="modal-title">Détails de l'Ordre de Paiement</h2>
+      <button class="close-btn" (click)="closeDetailModal()">
+        <img src="assets/mdi_cancel-bold.svg" alt="Fermer" class="close-icon">
+      </button>
+    </div>
+
+    <div class="detail-body" *ngIf="selectedOrdre">
+      <div class="detail-section full-width-fields">
+        <div class="detail-group">
+          <label>Code</label>
+          <p class="detail-value">{{ selectedOrdre.code }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Référence Décision de Prélèvement</label>
+          <p class="detail-value">{{ selectedOrdre.referenceDecisionPrelevement || 'N/A' }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Description</label>
+          <p class="detail-value">{{ selectedOrdre.description }}</p>
+        </div>
+      </div>
+
+      <div class="detail-section grid-fields">
+        <div class="detail-group">
+          <label>Montant</label>
+          <p class="detail-value">{{ selectedOrdre.montant | currency:'XOF':'symbol':'1.0-0' }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Compte Origine</label>
+          <p class="detail-value">{{ selectedOrdre.compteOrigine }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Compte Destinataire</label>
+          <p class="detail-value">{{ selectedOrdre.compteDestinataire }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Date de Création</label>
+          <p class="detail-value">{{ selectedOrdre.dateCreation }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Date de Modification</label>
+          <p class="detail-value">{{ selectedOrdre.dateModification }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Date d'Exécution</label>
+          <p class="detail-value">{{ selectedOrdre.dateExecution || 'Non exécuté' }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Statut</label>
+          <span [ngClass]="getStatusBadgeClass(selectedOrdre.statut)">
+            {{ mapStatut(selectedOrdre.statut) }}
+          </span>
+        </div>
+      </div>
+
+      <div class="detail-section full-width-fields">
+        <div class="detail-group">
+          <label>Créateur</label>
+          <p class="detail-value">{{ selectedOrdre.createurNom }} ({{ selectedOrdre.createurEmail }})</p>
+        </div>
+        <div class="detail-group">
+          <label>Entreprise</label>
+          <p class="detail-value">{{ selectedOrdre.entrepriseNom }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de création -->
+<div class="modal-overlay" *ngIf="showCreationModal" (click)="closeCreationModal()">
+  <div class="modal-content creation-modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header creation-header">
+      <h2 class="modal-title">Créer un Ordre de Paiement</h2>
+      <button class="close-btn" (click)="closeCreationModal()">
+        <img src="assets/mdi_cancel-bold.svg" alt="Fermer" class="close-icon">
+      </button>
+    </div>
+
+    <div class="creation-body">
+      <div class="creation-section full-width-fields">
+        <div class="form-group">
+          <label for="creationDescription">Description *</label>
+          <textarea id="creationDescription" [(ngModel)]="creationData.description" class="form-control" rows="3" placeholder="Saisir la description"></textarea>
+        </div>
+      </div>
+
+      <div class="creation-section grid-fields">
+        <div class="form-group">
+          <label for="creationMontant">Montant *</label>
+          <input type="number" id="creationMontant" [(ngModel)]="creationData.montant" class="form-control" placeholder="Saisir le montant">
+        </div>
+        <div class="form-group">
+          <label for="creationCompteOrigine">Compte Origine *</label>
+          <input type="text" id="creationCompteOrigine" [(ngModel)]="creationData.compteOrigine" class="form-control" placeholder="Saisir le compte origine">
+        </div>
+        <div class="form-group">
+          <label for="creationCompteDestinataire">Compte Destinataire *</label>
+          <input type="text" id="creationCompteDestinataire" [(ngModel)]="creationData.compteDestinataire" class="form-control" placeholder="Saisir le compte destinataire">
+        </div>
+        <div class="form-group">
+          <label for="creationDecisionId">ID Décision *</label>
+          <input type="number" id="creationDecisionId" [(ngModel)]="creationData.decisionId" class="form-control" placeholder="Saisir l'ID de la décision">
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-secondary" (click)="closeCreationModal()">Annuler</button>
+        <button class="btn btn-primary" (click)="creerOrdre()" [disabled]="!isCreationFormValid()">Créer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de modification -->
+<div class="modal-overlay" *ngIf="showModificationModal" (click)="closeModificationModal()">
+  <div class="modal-content modification-modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header modification-header">
+      <h2 class="modal-title">Modifier l'Ordre de Paiement</h2>
+      <button class="close-btn" (click)="closeModificationModal()">
+        <img src="assets/mdi_cancel-bold.svg" alt="Fermer" class="close-icon">
+      </button>
+    </div>
+
+    <div class="modification-body" *ngIf="selectedOrdre && modificationData">
+      <div class="modification-section full-width-fields">
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea id="description" [(ngModel)]="modificationData.description" class="form-control" rows="3"></textarea>
+        </div>
+      </div>
+
+      <div class="modification-section grid-fields">
+        <div class="form-group">
+          <label for="montant">Montant</label>
+          <input type="number" id="montant" [(ngModel)]="modificationData.montant" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="compteOrigine">Compte Origine</label>
+          <input type="text" id="compteOrigine" [(ngModel)]="modificationData.compteOrigine" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="compteDestinataire">Compte Destinataire</label>
+          <input type="text" id="compteDestinataire" [(ngModel)]="modificationData.compteDestinataire" class="form-control">
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-secondary" (click)="closeModificationModal()">Annuler</button>
+        <button class="btn btn-primary" (click)="enregistrerModification()">Enregistrer</button>
       </div>
     </div>
   </div>

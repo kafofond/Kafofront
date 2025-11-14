@@ -2,70 +2,123 @@
     <div class="controls-bar">
         <div class="filter-group">
             <label for="status-filter">Statut :</label>
-            <div class="filter-dropdown">
+            <div class="filter-dropdown" (click)="showFilterDropdown = !showFilterDropdown">
                 <span>Tous les Statuts</span>
-                <img src="assets/87_539.svg" alt="Filter icon">
+                <!-- Remplacement de l'icône manquante par une icône standard -->
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            
+            <!-- Dropdown de filtre -->
+            <div class="filter-dropdown-container" *ngIf="showFilterDropdown">
+                <div class="filter-dropdown-menu">
+                    <div class="dropdown-item" (click)="showFilterDropdown = false">
+                        Tous les Statuts
+                    </div>
+                </div>
             </div>
         </div>
         <button class="export-button">
-            <img src="assets/87_477.svg" alt="Export icon">
+            <!-- Remplacement de l'icône manquante par une icône standard -->
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
             <span>Exporter</span>
         </button>
     </div>
 
     <div class="data-table-container">
         <h2 class="table-title">Attestations de service fait</h2>
-        <div class="data-table">
+        
+        <!-- Loading State -->
+        <div *ngIf="isLoading" class="loading-state">
+            <p>Chargement des attestations...</p>
+        </div>
+        
+        <!-- Error State -->
+        <div *ngIf="errorMessage && !isLoading" class="error-state">
+            <p>{{ errorMessage }}</p>
+        </div>
+        
+        <!-- Data Table -->
+        <div class="data-table" *ngIf="!isLoading && !errorMessage">
             <div class="table-header">
                 <div class="table-cell">Référence bon de commande</div>
                 <div class="table-cell">Fournisseur</div>
                 <div class="table-cell">Titre</div>
                 <div class="table-cell">Date d'envoi</div>
-                <div class="table-cell">Statut</div>
                 <div class="table-cell">Actions</div>
             </div>
-            <div class="table-row">
-                <div class="table-cell" data-label="Référence bon de commande">BC-2025-0145</div>
-                <div class="table-cell" data-label="Fournisseur">Tech Innov SARL</div>
-                <div class="table-cell" data-label="Titre">Installation serveur</div>
-                <div class="table-cell" data-label="Date d'envoi">20/10/2025</div>
-                <div class="table-cell" data-label="Statut"><span class="status-badge status-en-attente">En attente</span></div>
-                <div class="table-cell" data-label="Actions">
-                    <div class="action-buttons">
-                        <button class="action-btn"><img src="assets/87_501.svg" alt="Details"></button>
-                        <button class="action-btn"><img src="assets/94_13.svg" alt="Approve"></button>
-                        <button class="action-btn"><img src="assets/94_11.svg" alt="Cancel"></button>
+            
+            <div class="table-body">
+                <div class="table-row" *ngFor="let attestation of filteredAttestations">
+                    <div class="table-cell" data-label="Référence bon de commande">{{ attestation.referenceBonCommande }}</div>
+                    <div class="table-cell" data-label="Fournisseur">{{ attestation.fournisseur }}</div>
+                    <div class="table-cell" data-label="Titre">{{ attestation.titre }}</div>
+                    <div class="table-cell" data-label="Date d'envoi">{{ attestation.dateCreation | date:'dd/MM/yyyy' }}</div>
+                    <div class="table-cell" data-label="Actions">
+                        <div class="action-buttons">
+                            <button class="action-btn" (click)="viewDetails(attestation)" title="Voir détails">
+                                <!-- Remplacement de l'icône manquante -->
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                  <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="table-row">
-                <div class="table-cell" data-label="Référence bon de commande">BC-2025-0142</div>
-                <div class="table-cell" data-label="Fournisseur">La Référence Média</div>
-                <div class="table-cell" data-label="Titre">Campagne Q3</div>
-                <div class="table-cell" data-label="Date d'envoi">15/09/2025</div>
-                <div class="table-cell" data-label="Statut"><span class="status-badge status-valide">Validé</span></div>
-                <div class="table-cell" data-label="Actions">
-                    <div class="action-buttons">
-                        <button class="action-btn"><img src="assets/94_39.svg" alt="Details"></button>
-                        <button class="action-btn"><img src="assets/400_13.svg" alt="Approve"></button>
-                        <button class="action-btn"><img src="assets/400_16.svg" alt="Cancel"></button>
-                    </div>
-                </div>
-            </div>
-            <div class="table-row">
-                <div class="table-cell" data-label="Référence bon de commande">BC-2025-0140</div>
-                <div class="table-cell" data-label="Fournisseur">Alpha Consulting</div>
-                <div class="table-cell" data-label="Titre">Rapport audit</div>
-                <div class="table-cell" data-label="Date d'envoi">01/09/2025</div>
-                <div class="table-cell" data-label="Statut"><span class="status-badge status-en-attente">En attente</span></div>
-                <div class="table-cell" data-label="Actions">
-                    <div class="action-buttons">
-                        <button class="action-btn"><img src="assets/94_23.svg" alt="Details"></button>
-                        <button class="action-btn"><img src="assets/94_26.svg" alt="Approve"></button>
-                        <button class="action-btn"><img src="assets/94_29.svg" alt="Cancel"></button>
-                    </div>
-                </div>
+            
+            <!-- Empty State -->
+            <div *ngIf="filteredAttestations.length === 0 && !isLoading" class="empty-state">
+                <p>Aucune attestation de service fait trouvée</p>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Modal pour les détails de l'attestation -->
+<div class="modal-overlay" *ngIf="showDetailsModal" (click)="closeDetailsModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2 class="modal-title">Détails de l'attestation de service fait</h2>
+            <button class="close-btn" (click)="closeDetailsModal()">
+                <!-- Remplacement de l'icône manquante -->
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+        
+        <div class="modal-body" *ngIf="selectedAttestation">
+            <div class="detail-section">
+                <h3>Informations générales</h3>
+                <div class="detail-row">
+                    <span class="label">Référence bon de commande:</span>
+                    <span class="value">{{ selectedAttestation.referenceBonCommande }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Fournisseur:</span>
+                    <span class="value">{{ selectedAttestation.fournisseur }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Titre:</span>
+                    <span class="value">{{ selectedAttestation.titre }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Date d'envoi:</span>
+                    <span class="value">{{ selectedAttestation.dateCreation | date:'dd/MM/yyyy' }}</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="closeDetailsModal()">Fermer</button>
+        </div>
+    </div>
+</div>

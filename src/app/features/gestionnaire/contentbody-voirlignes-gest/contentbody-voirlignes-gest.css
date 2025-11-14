@@ -32,6 +32,7 @@ a, button {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 34px;
+  padding: 0 35px;
 }
 
 .content-title {
@@ -42,31 +43,49 @@ a, button {
   margin: 0;
 }
 
-.content-actions {
+.header-left,
+.header-right {
   display: flex;
   align-items: center;
   gap: 15px;
 }
 
-.back-button, .filter-button {
+.action-btn {
   display: flex;
   align-items: center;
-  gap: 5px;
-  height: 40px;
-  border-radius: 10px;
-  background-color: #f59e0b; /* --color-accent */
-  font-weight: 700;
-  font-size: 15px;
-  color: rgba(0, 0, 0, 0.67); /* --color-text-secondary */
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s ease;
 }
- 
+
 .back-button {
-  font-size: 13px;
-  padding: 0 24px 0 11px;
+  background-color: #f59e0b; /* --color-accent */
+  color: #000000;
+}
+
+.back-button:hover {
+  background-color: #e69500;
 }
 
 .filter-button {
-  padding: 0 20px;
+  background-color: #f59e0b; /* --color-accent */
+  color: #000000;
+}
+
+.filter-button:hover {
+  background-color: #e69500;
+}
+
+.credit-button {
+  background-color: #0b4f63; /* --color-primary */
+  color: #ffffff;
+}
+
+.credit-button:hover {
+  background-color: #094050;
 }
 
 /* --- Budget Table (Lignes de Budget) --- */
@@ -75,23 +94,35 @@ a, button {
   border: 1px solid #e2e8f0; /* --color-border-light */
   border-radius: 15px;
   padding: 25px 0;
+  margin: 0 35px 35px 35px;
 }
 
-.table-header, .table-row {
+.table-header,
+.table-row {
   display: grid;
   /* 7 colonnes: Intitulé(2.5) | Alloué(1.5) | Engagé(1.5) | Restant(1.5) | Taux(1.8) | Statut(1.2) | Actions(1) */
   grid-template-columns: 2.5fr 1.5fr 1.5fr 1.5fr 1.8fr 1.2fr 1fr;
-  gap: 16px;
   align-items: center;
-  padding: 0 24px;
+  padding: 20px 24px;
 }
 
 .table-header {
   font-family: 'Poppins', sans-serif;
   font-size: 13px;
   font-weight: 600;
-  color: rgba(0, 0, 0, 0.67); /* --color-text-secondary */
-  padding-bottom: 25px;
+  color: rgba(0, 0, 0, 0.67); /* --color-text-muted */
+  background-color: #e2e8f0; /* --color-background */
+  border-radius: 15px;
+}
+
+.table-row {
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.table-body .table-row:first-child {
+  border-top: none;
 }
 
 .table-body {
@@ -150,8 +181,9 @@ a, button {
   display: inline-block;
   padding: 3px 20px;
   border-radius: 40px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
+  width: fit-content;
 }
 
 .status-badge.active {
@@ -159,21 +191,351 @@ a, button {
   color: #0c8f11; /* --color-status-active-text */
 }
 
-.col-actions {
-  justify-self: center;
+.status-badge.warning {
+  background-color: #fef3c7;
+  color: #92400e;
 }
 
-.action-button {
-  width: 40px;
-  height: 40px;
-  border-radius: 15px;
+.status-badge.rejected {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.status-badge.draft {
+  background-color: #e5e7eb;
+  color: #4b5563;
+}
+
+.actions-cell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+.action-icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
   background-color: #e2e8f0; /* --color-background */
   display: grid;
   place-items: center;
 }
 
+.action-icon-btn:hover {
+  background-color: #cbd5e1;
+}
+
+/* --- Modals --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #000000;
+  margin: 0;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.close-icon {
+  width: 24px;
+  height: 24px;
+}
+
+/* Form Styles */
+.budget-form {
+  padding: 20px;
+}
+
+.form-section {
+  margin-bottom: 20px;
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group.full-width {
+  width: 100%;
+}
+
+.form-group.half-width {
+  flex: 1;
+}
+
+.form-group.third-width {
+  flex: 1;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 5px;
+}
+
+.form-control,
+.form-group input,
+.form-group textarea,
+.form-group select {
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.btn {
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s ease;
+}
+
+.btn-primary {
+  background-color: #0b4f63;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #094050;
+}
+
+.btn-secondary {
+  background-color: #6b7280;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #4b5563;
+}
+
+.btn-danger {
+  background-color: #ef4444;
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #dc2626;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Detail Modal */
+.detail-modal-content {
+  max-width: 700px;
+}
+
+.detail-body {
+  padding: 20px;
+}
+
+.detail-section {
+  margin-bottom: 20px;
+}
+
+.detail-section.full-width-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.detail-section.grid-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.detail-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 4px;
+}
+
+.detail-value {
+  font-size: 14px;
+  color: #000000;
+  margin: 0;
+}
+
+.detail-value.description {
+  white-space: pre-wrap;
+  line-height: 1.5;
+}
+
+.detail-value.comment {
+  background-color: #f8fafc;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  min-height: 60px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 15px 20px;
+  border-top: 1px solid #e2e8f0;
+}
+
+/* Toggle Switch */
+.toggle-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #0b4f63;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+/* Loading and Error States */
+.loading-state,
+.error-state,
+.empty-state {
+  padding: 40px 20px;
+  text-align: center;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.error-state {
+  color: #ef4444;
+}
+
 /* --- Responsive (Mobile) --- */
+@media (max-width: 1200px) {
+  .content-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  
+  .header-left,
+  .header-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
 @media (max-width: 992px) {
+  .content-header {
+    padding: 0 20px;
+  }
+  
+  .budget-table-container {
+    margin: 0 20px 20px 20px;
+  }
+  
   /* Réduit la complexité du tableau sur mobile */
   .table-header, .table-row {
     /* 4 colonnes: Intitulé(2) | Alloué(1) | Engagé(1) | Restant(1) */
@@ -191,5 +553,33 @@ a, button {
   .table-header div:nth-child(7)  /* Actions (en-tête) */
   { 
     display: none; 
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .detail-section.grid-fields {
+    grid-template-columns: 1fr;
+  }
+  
+  .modal-content {
+    width: 95%;
+    margin: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .content-title {
+    font-size: 20px;
+  }
+  
+  .action-btn span {
+    display: none;
+  }
+  
+  .action-btn img {
+    margin-right: 0;
   }
 }

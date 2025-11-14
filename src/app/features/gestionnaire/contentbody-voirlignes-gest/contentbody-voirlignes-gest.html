@@ -1,90 +1,150 @@
 <div class="content-header">
-  <h3 class="content-title">Budget BD-001-01-24</h3>
-  <div class="content-actions">
-    <button class="back-button" routerLink="/listbudget-gest">
-      <img src="assets/505_322.svg" alt="Back arrow">
+  <div class="header-left">
+    <button class="action-btn back-button" routerLink="/listbudget-gest">
+      <img src="assets/tabler_arrow-left.svg" alt="Retour" />
       <span>Retour</span>
     </button>
-    <button class="filter-button">
-      <img src="assets/417_428.svg" alt="Filter icon">
+  </div>
+
+  <h3 class="content-title">Lignes de crédit - Budget #{{ budgetId }}</h3>
+
+  <div class="header-right">
+    <button class="action-btn filter-button">
+      <img src="assets/417_213.svg" alt="Filtrer" />
       <span>Filtrer</span>
     </button>
   </div>
 </div>
 
 <div class="budget-table-container">
-  <div class="table-header">
-    <div class="col-intitule">Intitulé</div>
-    <div>Montant Alloué</div>
-    <div>Montant Engagé</div>
-    <div>Montant Restant</div>
-    <div class="col-taux">Taux utilisation</div>
-    <div>Statut</div>
-    <div class="col-actions">Actions</div>
+  <div class="budget-table">
+    <div class="table-header">
+      <div>Intitulé</div>
+      <div>Montant Alloué</div>
+      <div>Montant Engagé</div>
+      <div>Montant Restant</div>
+      <div>Taux d'utilisation</div>
+      <div>Statut</div>
+      <div>Actions</div>
+    </div>
+
+    <div class="table-body">
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="loading-state">
+        <div>Chargement des lignes de crédit...</div>
+      </div>
+
+      <!-- Error State -->
+      <div *ngIf="errorMessage && !isLoading" class="error-state">
+        <div>{{ errorMessage }}</div>
+      </div>
+
+      <!-- Data -->
+      <div class="table-row" *ngFor="let ligne of lignes">
+        <div class="col-intitule">
+          <span class="item-title">{{ ligne.intituleLigne }}</span>
+        </div>
+        <div>{{ ligne.montantAlloue | number }} FCFA</div>
+        <div>{{ ligne.montantEngage | number }} FCFA</div>
+        <div>{{ ligne.montantRestant | number }} FCFA</div>
+        <div class="col-taux">
+          <div class="progress-bar">
+            <div class="progress-bar-inner" [style.width.%]="ligne.tauxUtilisation"></div>
+          </div>
+          <span class="progress-percent">{{ ligne.tauxUtilisation }}%</span>
+        </div>
+        <div>
+          <span [class]="getStatusBadgeClass(ligne.statut)">{{ ligne.statut }}</span>
+        </div>
+        <div class="actions-cell">
+          <button class="action-icon-btn" title="Voir détails" (click)="openDetailLigneModal(ligne)">
+            <img src="assets/417_144.svg" alt="Détails" />
+          </button>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="lignes.length === 0 && !isLoading && !errorMessage" class="empty-state">
+        <div>Aucune ligne de crédit trouvée pour ce budget</div>
+      </div>
+    </div>
   </div>
-  <div class="table-body">
-    <div class="table-row">
-      <div class="col-intitule">
-        <span class="item-title">Équipement TI</span>
-        <span class="item-subtitle">Departement informatique</span>
-      </div>
-      <div>15.3 M FCFA</div>
-      <div>13.3 M FCFA</div>
-      <div>10.3 M FCFA</div>
-      <div class="col-taux">
-        <div class="progress-bar">
-          <div class="progress-bar-inner" style="width: 95%;"></div>
+</div>
+
+<!-- Modal pour les détails d'une ligne de crédit AVEC DATES -->
+<div class="modal-overlay" *ngIf="showDetailLigneModal" (click)="closeDetailLigneModal()">
+  <div class="modal-content detail-modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header detail-header">
+      <h2 class="modal-title">Détails de la ligne : {{ selectedLigne?.code }}</h2>
+      <button class="close-btn" (click)="closeDetailLigneModal()">
+        <img src="assets/mdi_cancel-bold.svg" alt="Fermer" class="close-icon">
+      </button>
+    </div>
+
+    <div class="detail-body" *ngIf="selectedLigne">
+      <div class="detail-section full-width-fields">
+        <div class="detail-group">
+          <label>Intitulé</label>
+          <p class="detail-value">{{ selectedLigne.intituleLigne }}</p>
         </div>
-        <span class="progress-percent">95 %</span>
+        <div class="detail-group">
+          <label>Description</label>
+          <p class="detail-value description">{{ selectedLigne.description }}</p>
+        </div>
       </div>
-      <div><span class="status-badge active">Active</span></div>
-      <div class="col-actions">
-        <button class="action-button">
-          <img src="assets/417_386.svg" alt="Details">
-        </button>
+
+      <div class="detail-section grid-fields">
+        <div class="detail-group">
+          <label>Montant Alloué</label>
+          <p class="detail-value">{{ selectedLigne.montantAlloue | number:'1.0-0' }} FCFA</p>
+        </div>
+        <div class="detail-group">
+          <label>Montant Engagé</label>
+          <p class="detail-value">{{ selectedLigne.montantEngage | number:'1.0-0' }} FCFA</p>
+        </div>
+        <div class="detail-group">
+          <label>Montant Restant</label>
+          <p class="detail-value">{{ selectedLigne.montantRestant | number:'1.0-0' }} FCFA</p>
+        </div>
+        <div class="detail-group">
+          <label>Taux d'utilisation</label>
+          <p class="detail-value">{{ selectedLigne.tauxUtilisation }}%</p>
+        </div>
+        <div class="detail-group">
+          <label>Statut</label>
+          <span [class]="getStatusBadgeClass(selectedLigne.statut)">{{ selectedLigne.statut }}</span>
+        </div>
+        <div class="detail-group">
+          <label>État</label>
+          <span [class]="getEtatBadgeClass(selectedLigne.etat)">{{ selectedLigne.etat ? 'Actif' : 'Inactif' }}</span>
+        </div>
+      </div>
+
+      <div class="detail-section grid-fields">
+        <div class="detail-group">
+          <label>Date de début</label>
+          <p class="detail-value">{{ selectedLigne.dateDebut | date:'dd/MM/yyyy' }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Date de fin</label>
+          <p class="detail-value">{{ selectedLigne.dateFin | date:'dd/MM/yyyy' }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Date de création</label>
+          <p class="detail-value">{{ selectedLigne.dateDeCreation | date:'dd/MM/yyyy' }}</p>
+        </div>
+      </div>
+
+      <div class="detail-section full-width-fields">
+        <div class="detail-group">
+          <label>Commentaire</label>
+          <p class="detail-value comment">{{ selectedLigne.commentaire || 'Aucun commentaire.' }}</p>
+        </div>
       </div>
     </div>
-    <div class="table-row">
-      <div class="col-intitule">
-        <span class="item-title">Marketing Digital</span>
-        <span class="item-subtitle">Departement Marketing</span>
-      </div>
-      <div>15.3 M FCFA</div>
-      <div>13.3 M FCFA</div>
-      <div>10.3 M FCFA</div>
-      <div class="col-taux">
-        <div class="progress-bar">
-          <div class="progress-bar-inner" style="width: 50%;"></div>
-        </div>
-        <span class="progress-percent">50 %</span>
-      </div>
-      <div><span class="status-badge active">Active</span></div>
-      <div class="col-actions">
-        <button class="action-button">
-          <img src="assets/417_401.svg" alt="Details">
-        </button>
-      </div>
-    </div>
-    <div class="table-row">
-      <div class="col-intitule">
-        <span class="item-title">Formation personnel</span>
-        <span class="item-subtitle">Ressources humaines</span>
-      </div>
-      <div>15.3 M FCFA</div>
-      <div>13.3 M FCFA</div>
-      <div>10.3 M FCFA</div>
-      <div class="col-taux">
-        <div class="progress-bar">
-          <div class="progress-bar-inner" style="width: 95%;"></div>
-        </div>
-        <span class="progress-percent">95 %</span>
-      </div>
-      <div><span class="status-badge active">Active</span></div>
-      <div class="col-actions">
-        <button class="action-button">
-          <img src="assets/417_416.svg" alt="Details">
-        </button>
-      </div>
+
+    <div class="modal-footer detail-footer">
+      <button class="btn btn-primary" (click)="closeDetailLigneModal()">Fermer</button>
     </div>
   </div>
 </div>

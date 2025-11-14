@@ -77,6 +77,23 @@ export class DemandeAchatService {
     );
   }
 
+  // Valider une demande d'achat
+  validerDemande(id: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/${id}/valider`, {}).pipe(
+      tap(response => console.log(`✅ Demande ${id} validée:`, response)),
+      catchError(this.handleError)
+    );
+  }
+
+  // Rejeter une demande d'achat
+  rejeterDemande(id: number, commentaire: string): Observable<any> {
+    const body = { commentaire: commentaire };
+    return this.http.post(`${this.baseUrl}/${id}/rejeter`, body).pipe(
+      tap(response => console.log(`✅ Demande ${id} rejetée:`, response)),
+      catchError(this.handleError)
+    );
+  }
+
   // Méthodes de mapping pour l'affichage
   mapStatutToDisplay(statut: string): string {
     const statutMap: { [key: string]: string } = {

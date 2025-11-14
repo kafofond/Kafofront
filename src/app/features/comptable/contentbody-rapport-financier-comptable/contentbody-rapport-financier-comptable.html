@@ -9,6 +9,9 @@
     </div>
 
     <div style="display: flex; gap: 15px;">
+      <button class="export-btn" (click)="toggleCreateForm()">
+        <span>Créer Rapport</span>
+      </button>
       <button class="export-btn">
         <img src="assets/fa6-solid_file-excel.svg" alt="Export Excel" />
         <span>Exporter Excel</span>
@@ -18,6 +21,71 @@
         <span>Exporter PDF</span>
       </button>
     </div>
+  </div>
+
+  <!-- Formulaire de création de rapport -->
+  <div class="data-card" style="margin-bottom: 30px;" *ngIf="showCreateForm">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h3 style="margin: 0; color: #0b4f63;">Créer un nouveau rapport d'achat</h3>
+      <button class="export-btn" (click)="toggleCreateForm()" style="padding: 8px 12px;">
+        <span>Fermer</span>
+      </button>
+    </div>
+    <form #rapportForm="ngForm" (ngSubmit)="createRapport(nom.value, ficheBesoin.value, demandeAchat.value, bonCommande.value, attestationServiceFait.value, decisionPrelevement.value, ordrePaiement.value)" style="background-color: #f8f9fa; padding: 20px; border-radius: 10px;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 20px;">
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Nom du rapport</label>
+          <input #nom type="text" placeholder="Ex: Rapport Achat Informatique" required 
+                 style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 14px; transition: border-color 0.3s;"
+                 onfocus="this.style.borderColor='#0b4f63'" onblur="this.style.borderColor='#e2e8f0'">
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Fiche de besoin</label>
+          <input #ficheBesoin type="text" placeholder="Ex: FB-0001-11-2025" required 
+                 style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 14px; transition: border-color 0.3s;"
+                 onfocus="this.style.borderColor='#0b4f63'" onblur="this.style.borderColor='#e2e8f0'">
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Demande d'achat</label>
+          <input #demandeAchat type="text" placeholder="Ex: DA-0001-11-2025" required 
+                 style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 14px; transition: border-color 0.3s;"
+                 onfocus="this.style.borderColor='#0b4f63'" onblur="this.style.borderColor='#e2e8f0'">
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Bon de commande</label>
+          <input #bonCommande type="text" placeholder="Ex: BC-0001-11-2025" required 
+                 style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 14px; transition: border-color 0.3s;"
+                 onfocus="this.style.borderColor='#0b4f63'" onblur="this.style.borderColor='#e2e8f0'">
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Attestation de service fait</label>
+          <input #attestationServiceFait type="text" placeholder="Ex: ASF-0001-11-2025" required 
+                 style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 14px; transition: border-color 0.3s;"
+                 onfocus="this.style.borderColor='#0b4f63'" onblur="this.style.borderColor='#e2e8f0'">
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Décision de prélèvement</label>
+          <input #decisionPrelevement type="text" placeholder="Ex: DP-0001-11-2025" required 
+                 style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 14px; transition: border-color 0.3s;"
+                 onfocus="this.style.borderColor='#0b4f63'" onblur="this.style.borderColor='#e2e8f0'">
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Ordre de paiement</label>
+          <input #ordrePaiement type="text" placeholder="Ex: OP-0001-11-2025" required 
+                 style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 14px; transition: border-color 0.3s;"
+                 onfocus="this.style.borderColor='#0b4f63'" onblur="this.style.borderColor='#e2e8f0'">
+        </div>
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 15px;">
+        <button type="button" class="export-btn" (click)="toggleCreateForm()" style="padding: 12px 24px;">
+          <span>Annuler</span>
+        </button>
+        <button type="submit" class="export-btn" style="background-color: #0b4f63; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background-color 0.3s;"
+                onmouseover="this.style.backgroundColor='#083e4d'" onmouseout="this.style.backgroundColor='#0b4f63'">
+          <span>Créer le rapport</span>
+        </button>
+      </div>
+    </form>
   </div>
 
   <div class="data-card">
@@ -35,18 +103,18 @@
           <div class="col col-5">Statut</div>
         </div>
 
-        <div class="table-row" *ngFor="let ligne of lignesBudget">
+        <div class="table-row" *ngFor="let ligne of lignesCredit">
           <div class="col col-1">{{ ligne.intituleLigne }}</div>
-          <div class="col col-2">{{ ligne.montantAlloue | number }} FCFA</div>
-          <div class="col col-3">{{ ligne.montantEngage | number }} FCFA</div>
+          <div class="col col-2">{{ ligne.montantAllouer | number }} FCFA</div>
+          <div class="col col-3">{{ ligne.montantEngager | number }} FCFA</div>
           <div class="col col-4">{{ ligne.montantRestant | number }} FCFA</div>
           <div class="col col-5">
             <span
               class="status-badge"
               [ngClass]="{
-                'status-success': ligne.statut === 'Validé',
-                'status-danger': ligne.statut === 'Rejeté',
-                'status-pending': ligne.statut === 'En attente'
+                'status-success': ligne.statut === 'VALIDE',
+                'status-danger': ligne.statut === 'REFUSE',
+                'status-pending': ligne.statut === 'EN_COURS'
               }"
               >{{ ligne.statut }}</span
             >
@@ -71,10 +139,10 @@
 
         <div class="table-row" *ngFor="let rapport of rapportDachats">
           <div class="col col-1">{{ rapport.nom }}</div>
-          <div class="col col-2">{{ rapport.ficheDeBesoin }}</div>
+          <div class="col col-2">{{ rapport.ficheBesoin }}</div>
           <div class="col col-3">{{ rapport.demandeAchat }}</div>
-          <div class="col col-4">{{ rapport.bonDeCommande }}</div>
-          <div class="col col-5">{{ rapport.dateDeCreation | date: 'dd/MM/yyyy' }}</div>
+          <div class="col col-4">{{ rapport.bonCommande }}</div>
+          <div class="col col-5">{{ rapport.dateAjout | date: 'dd/MM/yyyy' }}</div>
           <div class="col col-6" style="display: flex; justify-content: center; gap: 12px;">
             <button class="action-btn" title="Voir détails">
               <img src="assets/fa6-solid_file-excel.svg" alt="Export Excel" />

@@ -1,9 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RapportDachat } from '../../../models/rapport-dachat';
 import { Statut } from '../../../enums/statut';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { LigneBudget } from '../../../models/ligne-budget.model';
+import { RapportDachatService } from '../../../services/rapport-dachat.service';
+import { LigneCreditService, LigneCredit } from '../../../services/ligne-credit.service';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-contentbody-rapport-financier-comptable',
@@ -11,101 +14,78 @@ import { LigneBudget } from '../../../models/ligne-budget.model';
   templateUrl: './contentbody-rapport-financier-comptable.html',
   styleUrl: './contentbody-rapport-financier-comptable.css'
 })
-export class ContentbodyRapportFinancierComptable {
+export class ContentbodyRapportFinancierComptable implements OnInit {
 
-  
   // --- Données Ligne de Crédit ---
-lignesBudget: LigneBudget[] = [
-  {
-    id: 1,
-    code: 'LB-001',
-    budgetId: 101,
-    intituleLigne: 'Achat matériel informatique',
-    description: 'Ordinateurs et accessoires',
-    dateDeCreation: new Date('2024-01-15'),
-    commentaire: 'Prioritaire pour le service IT',
-    statut: 'Validé',
-    etat: true,
-    dateDebut: new Date('2024-01-01'),
-    dateFin: new Date('2024-12-31'),
-    montantAlloue: 15000000,
-    montantEngage: 9000000,
-    montantRestant: 6000000,
-    tauxUtilisation: 60,
-    createurNom: 'Hamza Sanmo',
-    createurEmail: 'hamza.sanmo@entreprise.com'
-  },
-  {
-    id: 2,
-    code: 'LB-002',
-    budgetId: 102,
-    intituleLigne: 'Achat mobilier de bureau',
-    description: 'Chaises, bureaux, armoires',
-    dateDeCreation: new Date('2024-02-20'),
-    commentaire: 'Pour le service RH',
-    statut: 'En attente',
-    etat: true,
-    dateDebut: new Date('2024-02-01'),
-    dateFin: new Date('2024-11-30'),
-    montantAlloue: 10000000,
-    montantEngage: 4000000,
-    montantRestant: 6000000,
-    tauxUtilisation: 40,
-    createurNom: 'Hamza Sanmo',
-    createurEmail: 'hamza.sanmo@entreprise.com'
-  },
-  {
-    id: 3,
-    code: 'LB-003',
-    budgetId: 103,
-    intituleLigne: 'Maintenance équipements réseau',
-    description: 'Réseau interne et sécurité',
-    dateDeCreation: new Date('2024-03-05'),
-    commentaire: 'Renouvellement contrat',
-    statut: 'Rejeté',
-    etat: false,
-    dateDebut: new Date('2024-03-01'),
-    dateFin: new Date('2024-10-15'),
-    montantAlloue: 8000000,
-    montantEngage: 8000000,
-    montantRestant: 0,
-    tauxUtilisation: 100,
-    createurNom: 'Hamza Sanmo',
-    createurEmail: 'hamza.sanmo@entreprise.com'
+  lignesCredit: LigneCredit[] = [];
+  rapportDachats: RapportDachat[] = [];
+  showCreateForm: boolean = false;
+
+  constructor(
+    private rapportService: RapportDachatService,
+    private ligneCreditService: LigneCreditService,
+    private authService: AuthService
+  ) {}
+
+  ngOnInit(): void {
+    this.loadLignesCredit();
+    this.loadRapports();
   }
-];
 
-rapportDachats = [
-    {
-      nom: 'Rapport d’achat – Matériel Informatique',
-      ficheDeBesoin: 'FB-101',
-      demandeAchat: 'DA-001',
-      bonDeCommande: 'BC-001',
-      attestationDeServiceFait: 'ASF-001',
-      decisionDePrelevement: 'DP-001',
-      ordreDePrelevement: 'OP-001',
-      dateDeCreation: new Date('2024-07-20'),
-    },
-    {
-      nom: 'Rapport d’achat – Mobilier de Bureau',
-      ficheDeBesoin: 'FB-102',
-      demandeAchat: 'DA-002',
-      bonDeCommande: 'BC-002',
-      attestationDeServiceFait: 'ASF-002',
-      decisionDePrelevement: 'DP-002',
-      ordreDePrelevement: 'OP-002',
-      dateDeCreation: new Date('2024-08-15'),
-    },
-    {
-      nom: 'Rapport d’achat – Services de Maintenance',
-      ficheDeBesoin: 'FB-103',
-      demandeAchat: 'DA-003',
-      bonDeCommande: 'BC-003',
-      attestationDeServiceFait: 'ASF-003',
-      decisionDePrelevement: 'DP-003',
-      ordreDePrelevement: 'OP-003',
-      dateDeCreation: new Date('2024-09-05'),
+  loadLignesCredit(): void {
+    // Charger les lignes de crédit validées et actives de l'entreprise de l'utilisateur connecté
+    const entrepriseId = this.authService.getEntrepriseIdFromToken();
+    if (entrepriseId) {
+      this.ligneCreditService.getLignesValideesActivesByEntreprise(entrepriseId).subscribe(
+        (response: any) => {
+          this.lignesCredit = response.lignes;
+        },
+        (error: any) => {
+          console.error('Erreur lors du chargement des lignes de crédit validées et actives:', error);
+        }
+      );
+    } else {
+      console.error('Impossible de recuperer l\'ID de l\'entreprise depuis le token');
     }
-  ];
+  }
 
+  loadRapports(): void {
+    this.rapportService.getAllRapports().subscribe(
+      response => {
+        this.rapportDachats = response.rapports;
+      },
+      error => {
+        console.error('Erreur lors du chargement des rapports:', error);
+      }
+    );
+  }
+
+  toggleCreateForm(): void {
+    this.showCreateForm = !this.showCreateForm;
+  }
+
+  createRapport(nom: string, ficheBesoin: string, demandeAchat: string, bonCommande: string, attestationServiceFait: string, decisionPrelevement: string, ordrePaiement: string): void {
+    const newRapport = {
+      nom: nom,
+      ficheBesoin: ficheBesoin,
+      demandeAchat: demandeAchat,
+      bonCommande: bonCommande,
+      attestationServiceFait: attestationServiceFait,
+      decisionPrelevement: decisionPrelevement,
+      ordrePaiement: ordrePaiement
+    };
+
+    this.rapportService.createRapport(newRapport).subscribe(
+      (response: any) => {
+        console.log('Rapport créé avec succès:', response);
+        // Recharger la liste des rapports
+        this.loadRapports();
+        // Cacher le formulaire après création
+        this.showCreateForm = false;
+      },
+      (error: any) => {
+        console.error('Erreur lors de la création du rapport:', error);
+      }
+    );
+  }
 }
