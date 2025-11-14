@@ -1,69 +1,229 @@
-<!-- Barre de filtre -->
-<div class="filter-bar">
-  <div class="filter-group">
-    <label>Statut :</label>
-    <div class="filter-select" (click)="toggleStatusDropdown()">
-      <span>{{ selectedStatus }}</span>
-      <img src="assets/87_539.svg" alt="dropdown arrow">
-    </div>
-    <ul class="dropdown-list" *ngIf="statusDropdownOpen">
-      <li *ngFor="let s of ['Tous', 'Validé', 'En attente', 'Rejeté']"
+<section class="content-area">
+  <!-- Barre de filtre -->
+  <div class="filter-bar">
+    <div class="filter-group">
+      <label>Statut :</label>
+      <div class="filter-select" (click)="toggleStatusDropdown()">
+        <span>{{ selectedStatus }}</span>
+      </div>
+      <ul class="dropdown-list" *ngIf="statusDropdownOpen">
+        <li *ngFor="let s of ['Tous', 'Validé', 'En cours', 'Approuvé', 'Rejeté']"
             (click)="setStatus(s)"
             [class.active]="selectedStatus === s">
           {{ s }}
-      </li>
-    </ul>
-  </div>
-
-  <button class="create-btn">
-        <img src="assets/foundation_plus.svg" alt="Créer">
-        <span>Créer DP</span>
-    </button>
-
-  <button class="export-btn">
-    <img src="assets/87_477.svg" alt="Export Icon">
-    <span>Exporter</span>
-  </button>
-</div>
-
-<div class="table-section">
-  <h2 class="table-title">Décisions de Prélèvement</h2>
-
-  <div class="data-table">
-    <div class="table-header">
-      <div class="col col-1">Code</div>
-      <div class="col col-2">Réf. Attestation SF</div>
-      <div class="col col-3">Montant</div>
-      <div class="col col-4">Compte Destinataire</div>
-      <div class="col col-5">Statut</div>
-      <div class="col col-6">Actions</div>
+        </li>
+      </ul>
     </div>
 
-    <div class="table-row" *ngFor="let dec of decisionDePrelevements">
-      <div class="col col-1">{{ dec.code }}</div>
-      <div class="col col-2">{{ dec.referenceAttestation }}</div>
-      <div class="col col-3">{{ dec.montant | currency:'XOF':'symbol':'1.0-0' }}</div>
-      <div class="col col-4">{{ dec.compteDestinataire }}</div>
-      <div class="col col-5">
-        <span class="status-badge"
-              [ngClass]="{
-                'status-success': dec.statut === 'Validé',
-                'status-danger': dec.statut === 'Rejeté',
-                'status-pending': dec.statut === 'En attente'
-              }">
-          {{ dec.statut }}
-        </span>
+    <div class="action-buttons">
+      <button class="export-btn">
+        <img src="assets/87_477.svg" alt="Export Icon" />
+        <span>Exporter</span>
+      </button>
+      <button class="create-btn" (click)="openCreationModal()">
+        <img src="assets/32_236.svg" alt="Créer Icon" />
+        <span>Créer</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Tableau des Décisions de Prélèvement -->
+  <div class="data-card">
+    <h2 class="table-title">Décisions de Prélèvement</h2>
+    
+    <!-- États de chargement et d'erreur -->
+    <div *ngIf="isLoading" class="loading-state">
+      <p>Chargement des décisions de prélèvement...</p>
+    </div>
+    
+    <div *ngIf="errorMessage && !isLoading" class="error-state">
+      <p>{{ errorMessage }}</p>
+    </div>
+    
+    <div *ngIf="!isLoading && !errorMessage" class="data-table">
+      <div class="table-header">
+        <div class="col col-1">Code</div>
+        <div class="col col-2">Réf. Attestation</div>
+        <div class="col col-3">Montant</div>
+        <div class="col col-4">Compte Origine</div>
+        <div class="col col-5">Statut</div>
+        <div class="col col-6">Actions</div>
       </div>
 
-      <div class="col col-6">
-        <div class="action-icons">
-          <button class="action-btn">
-            <img src="assets/87_501.svg" alt="details"/>
-          </button>
-          <button class="action-btn" (click)="validerDecision(dec)">
-            <img src="assets/32_236.svg" alt="modifier"/>
-          </button>
+      <div class="table-row" *ngFor="let decision of filteredDecisions">
+        <div class="col col-1">{{ decision.code }}</div>
+        <div class="col col-2">{{ decision.referenceAttestation || 'N/A' }}</div>
+        <div class="col col-3">{{ decision.montant | currency:'XOF':'symbol':'1.0-0' }}</div>
+        <div class="col col-4">{{ decision.compteOrigine }}</div>
+        <div class="col col-5">
+          <span [ngClass]="getStatusBadgeClass(decision.statut)">
+            {{ mapStatut(decision.statut) }}
+          </span>
         </div>
+        <div class="col col-6 action-icons">
+          <button class="action-btn" (click)="openDetailModal(decision)"><img src="assets/87_501.svg" alt="details" /></button>
+          <button class="action-btn" (click)="modifierDecision(decision)"><img src="assets/32_236.svg" alt="Modifier"></button>
+        </div>
+      </div>
+      
+      <!-- Message si aucune décision -->
+      <div *ngIf="filteredDecisions.length === 0" class="empty-state">
+        <p>Aucune décision de prélèvement trouvée</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Modal de détails -->
+<div class="modal-overlay" *ngIf="showDetailModal" (click)="closeDetailModal()">
+  <div class="modal-content detail-modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header detail-header">
+      <h2 class="modal-title">Détails de la Décision de Prélèvement</h2>
+      <button class="close-btn" (click)="closeDetailModal()">
+        <img src="assets/mdi_cancel-bold.svg" alt="Fermer" class="close-icon">
+      </button>
+    </div>
+
+    <div class="detail-body" *ngIf="selectedDecision">
+      <div class="detail-section full-width-fields">
+        <div class="detail-group">
+          <label>Code</label>
+          <p class="detail-value">{{ selectedDecision.code }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Référence Attestation</label>
+          <p class="detail-value">{{ selectedDecision.referenceAttestation || 'N/A' }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Motif du Prélèvement</label>
+          <p class="detail-value">{{ selectedDecision.motifPrelevement }}</p>
+        </div>
+      </div>
+
+      <div class="detail-section grid-fields">
+        <div class="detail-group">
+          <label>Montant</label>
+          <p class="detail-value">{{ selectedDecision.montant | currency:'XOF':'symbol':'1.0-0' }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Compte Origine</label>
+          <p class="detail-value">{{ selectedDecision.compteOrigine }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Compte Destinataire</label>
+          <p class="detail-value">{{ selectedDecision.compteDestinataire }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Date de Création</label>
+          <p class="detail-value">{{ selectedDecision.dateCreation }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Date de Modification</label>
+          <p class="detail-value">{{ selectedDecision.dateModification }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Statut</label>
+          <span [ngClass]="getStatusBadgeClass(selectedDecision.statut)">
+            {{ mapStatut(selectedDecision.statut) }}
+          </span>
+        </div>
+      </div>
+
+      <div class="detail-section full-width-fields">
+        <div class="detail-group">
+          <label>Créateur</label>
+          <p class="detail-value">{{ selectedDecision.createurNom }} ({{ selectedDecision.createurEmail }})</p>
+        </div>
+        <div class="detail-group">
+          <label>Entreprise</label>
+          <p class="detail-value">{{ selectedDecision.entrepriseNom }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de création -->
+<div class="modal-overlay" *ngIf="showCreationModal" (click)="closeCreationModal()">
+  <div class="modal-content creation-modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header creation-header">
+      <h2 class="modal-title">Créer une Décision de Prélèvement</h2>
+      <button class="close-btn" (click)="closeCreationModal()">
+        <img src="assets/mdi_cancel-bold.svg" alt="Fermer" class="close-icon">
+      </button>
+    </div>
+
+    <div class="creation-body">
+      <div class="creation-section full-width-fields">
+        <div class="form-group">
+          <label for="creationMotifPrelevement">Motif du Prélèvement</label>
+          <textarea id="creationMotifPrelevement" [(ngModel)]="creationData.motifPrelevement" class="form-control" rows="3" placeholder="Saisir le motif du prélèvement"></textarea>
+        </div>
+      </div>
+
+      <div class="creation-section grid-fields">
+        <div class="form-group">
+          <label for="creationMontant">Montant *</label>
+          <input type="number" id="creationMontant" [(ngModel)]="creationData.montant" class="form-control" placeholder="Saisir le montant">
+        </div>
+        <div class="form-group">
+          <label for="creationCompteOrigine">Compte Origine *</label>
+          <input type="text" id="creationCompteOrigine" [(ngModel)]="creationData.compteOrigine" class="form-control" placeholder="Saisir le compte origine">
+        </div>
+        <div class="form-group">
+          <label for="creationCompteDestinataire">Compte Destinataire *</label>
+          <input type="text" id="creationCompteDestinataire" [(ngModel)]="creationData.compteDestinataire" class="form-control" placeholder="Saisir le compte destinataire">
+        </div>
+        <div class="form-group">
+          <label for="creationAttestationId">ID Attestation *</label>
+          <input type="number" id="creationAttestationId" [(ngModel)]="creationData.attestationId" class="form-control" placeholder="Saisir l'ID de l'attestation">
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-secondary" (click)="closeCreationModal()">Annuler</button>
+        <button class="btn btn-primary" (click)="creerDecision()" [disabled]="!isCreationFormValid()">Créer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de modification -->
+<div class="modal-overlay" *ngIf="showModificationModal" (click)="closeModificationModal()">
+  <div class="modal-content modification-modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header modification-header">
+      <h2 class="modal-title">Modifier la Décision de Prélèvement</h2>
+      <button class="close-btn" (click)="closeModificationModal()">
+        <img src="assets/mdi_cancel-bold.svg" alt="Fermer" class="close-icon">
+      </button>
+    </div>
+
+    <div class="modification-body" *ngIf="selectedDecision && modificationData">
+      <div class="modification-section full-width-fields">
+        <div class="form-group">
+          <label for="motifPrelevement">Motif du Prélèvement</label>
+          <textarea id="motifPrelevement" [(ngModel)]="modificationData.motifPrelevement" class="form-control" rows="3"></textarea>
+        </div>
+      </div>
+
+      <div class="modification-section grid-fields">
+        <div class="form-group">
+          <label for="montant">Montant</label>
+          <input type="number" id="montant" [(ngModel)]="modificationData.montant" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="compteOrigine">Compte Origine</label>
+          <input type="text" id="compteOrigine" [(ngModel)]="modificationData.compteOrigine" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="compteDestinataire">Compte Destinataire</label>
+          <input type="text" id="compteDestinataire" [(ngModel)]="modificationData.compteDestinataire" class="form-control">
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-secondary" (click)="closeModificationModal()">Annuler</button>
+        <button class="btn btn-primary" (click)="enregistrerModification()">Enregistrer</button>
       </div>
     </div>
   </div>

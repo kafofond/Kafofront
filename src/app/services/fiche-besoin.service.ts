@@ -94,8 +94,8 @@ export class FicheBesoinService {
   }
 
   // Rejeter une fiche de besoin
-  rejeterFiche(id: number, motif: string): Observable<any> {
-    const body = { motif: motif };
+  rejeterFiche(id: number, commentaire: string): Observable<any> {
+    const body = { commentaire: commentaire };
     return this.http.post(`${this.baseUrl}/${id}/rejeter`, body).pipe(
       tap(response => console.log(`✅ Fiche ${id} rejetée:`, response)),
       catchError(this.handleError)

@@ -1,70 +1,107 @@
 <main class="main-content">
-  <div class="stats-grid">
-    <div class="stat-card stat-card--green">
-      <div class="stat-card__header">
-        <div class="stat-card__icon-wrapper">
-          <img src="assets/41_5.svg" alt="">
-        </div>
-        <span class="stat-card__value">45</span>
-      </div>
-      <p class="stat-card__title">Demande d'Achat</p>
-      <div class="stat-card__footer">
-        <div class="progress-bar">
-          <div class="progress-bar__inner" style="width: 84.8%;"></div>
-        </div>
-        <span>Ce mois</span>
-      </div>
-    </div>
 
-    <div class="stat-card stat-card--orange">
-      <div class="stat-card__header">
-        <div class="stat-card__icon-wrapper">
-          <img src="assets/41_7.svg" alt="">
-        </div>
-        <span class="stat-card__value">23</span>
-      </div>
-      <p class="stat-card__title">Bon de commande</p>
-      <div class="stat-card__footer">
-        <div class="progress-bar">
-          <div class="progress-bar__inner" style="width: 84.8%;"></div>
-        </div>
-        <span>Ce mois</span>
-      </div>
-    </div>
-
-    <div class="stat-card stat-card--red">
-      <div class="stat-card__header">
-        <div class="stat-card__icon-wrapper">
-          <img src="assets/41_9.svg" alt="">
-        </div>
-        <span class="stat-card__value">16</span>
-      </div>
-      <p class="stat-card__title">Ordre de paiement</p>
-      <div class="stat-card__footer">
-        <div class="progress-bar">
-          <div class="progress-bar__inner" style="width: 84.8%;"></div>
-        </div>
-        <span>Ce mois</span>
-      </div>
-    </div>
+  <!-- Indicateur de chargement -->
+  <div *ngIf="isLoading" class="loading-indicator">
+    <div class="spinner"></div>
+    <p>Chargement des données financières...</p>
   </div>
 
-  <div class="chart-section">
-    <div class="chart-section__header">
-      <h3>Évolution mensuelle des paiements</h3>
-      <div class="chart-section__actions">
-        <button class="btn btn--secondary">
-          <img src="assets/87_188.svg" alt="">
-          Exporter
-        </button>
-        <button class="btn btn--primary">
-          <img src="assets/38_306.svg" alt="">
-          Filtrer
-        </button>
+  <!-- Message d'erreur -->
+  <div *ngIf="errorMessage" class="error-banner">
+    {{ errorMessage }}
+    <button class="retry-btn" (click)="loadDashboardData()">Réessayer</button>
+  </div>
+
+  <section id="stats" class="stats-cards" *ngIf="!isLoading && !errorMessage">
+    <!-- Carte Demandes d'Achat -->
+    <div class="stat-card-wrapper green">
+      <div class="stat-card">
+        <div class="card-header">
+          <div class="card-icon-container green-bg">
+            <img src="assets/41_5.svg" alt="Demande d'achat Icon">
+          </div>
+          <span class="card-value">{{ formatNumber(stats.totalDemandesAchat) }}</span>
+        </div>
+        <p class="card-title">Demandes d'Achat</p>
+        <div class="progress-bar">
+          <div class="progress-fill green" [style.width]="getDemandesWidth()"></div>
+        </div>
+        <div class="card-footer">
+          <span>{{ stats.demandesEnAttente }} en attente</span>
+          <span>{{ stats.pourcentageDemandesTraitees }} %</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Carte Bons de Commande -->
+    <div class="stat-card-wrapper orange">
+      <div class="stat-card">
+        <div class="card-header">
+          <div class="card-icon-container orange-bg">
+            <img src="assets/41_7.svg" alt="Bon de commande Icon">
+          </div>
+          <span class="card-value">{{ formatNumber(stats.totalBonsCommande) }}</span>
+        </div>
+        <p class="card-title">Bons de Commande</p>
+        <div class="progress-bar">
+          <div class="progress-fill orange" [style.width]="getBonsWidth()"></div>
+        </div>
+        <div class="card-footer">
+          <span>{{ stats.bonsEnAttente }} en attente</span>
+          <span>{{ stats.pourcentageBonsValides }} %</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Carte Ordres de Paiement -->
+    <div class="stat-card-wrapper red">
+      <div class="stat-card">
+        <div class="card-header">
+          <div class="card-icon-container blue-bg">
+            <img src="assets/41_9.svg" alt="Ordre de paiement Icon">
+          </div>
+          <span class="card-value">{{ formatNumber(stats.totalOrdresPaiement) }}</span>
+        </div>
+        <p class="card-title">Ordres de Paiement</p>
+        <div class="progress-bar">
+          <div class="progress-fill red" [style.width]="getOrdresWidth()"></div>
+        </div>
+        <div class="card-footer">
+          <span>{{ stats.ordresEnAttente }} en attente</span>
+          <span>{{ getOrdresPercentage() }} %</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="activity" class="activity-section" *ngIf="!isLoading && !errorMessage">
+    <div class="activity-header">
+      <h3>Évolution des validations par mois</h3>
+      <div class="activity-controls">
+        <select id="periodSelect" [value]="currentPeriode" (change)="onPeriodeChange($event)">
+          <option value="jour">Aujourd'hui</option>
+          <option value="semaine">Cette semaine</option>
+          <option value="mois">Ce mois</option>
+        </select>
+
+        <div class="activity-actions">
+          <button class="btn btn-secondary" (click)="exportChart()">
+            Exporter
+          </button>
+        </div>
       </div>
     </div>
     <div class="chart-container">
-      <img src="assets/5347c4799e2e58154af9b5fe355c91ec632c849d.png" alt="Evolution mensuelle des paiements chart">
+      <div *ngIf="chartLoading" class="chart-loading">
+        <div class="spinner"></div>
+        <p>Chargement du graphique...</p>
+      </div>
+      <canvas baseChart
+        [data]="lineChartData"
+        [options]="lineChartOptions"
+        [type]="'line'">
+      </canvas>
     </div>
-  </div>
+  </section>
+
 </main>

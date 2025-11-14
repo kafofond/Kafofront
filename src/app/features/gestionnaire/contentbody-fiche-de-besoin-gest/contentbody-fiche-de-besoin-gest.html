@@ -4,18 +4,38 @@
             <label for="status-filter">Statut :</label>
             <div class="filter-dropdown">
                 <span>Tous les Statuts</span>
-                <img src="assets/87_539.svg" alt="Filter icon">
+                <!-- Remplacement de l'icône manquante par une icône standard -->
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
             </div>
         </div>
         <button class="export-button">
-            <img src="assets/87_477.svg" alt="Export icon">
+            <!-- Remplacement de l'icône manquante par une icône standard -->
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
             <span>Exporter</span>
         </button>
     </div>
 
     <div class="data-table-container">
         <h2 class="table-title">Fiches des besoins</h2>
-        <div class="data-table">
+        
+        <!-- Loading State -->
+        <div *ngIf="isLoading" class="loading-state">
+            <p>Chargement des fiches de besoin...</p>
+        </div>
+        
+        <!-- Error State -->
+        <div *ngIf="errorMessage && !isLoading" class="error-state">
+            <p>{{ errorMessage }}</p>
+        </div>
+        
+        <!-- Data Table -->
+        <div class="data-table" *ngIf="!isLoading && !errorMessage">
             <div class="table-header">
                 <div class="table-cell">Auteur</div>
                 <div class="table-cell">Type de besoin</div>
@@ -24,48 +44,191 @@
                 <div class="table-cell">Statut</div>
                 <div class="table-cell">Actions</div>
             </div>
-            <div class="table-row">
-                <div class="table-cell" data-label="Auteur">Hamza SANMO</div>
-                <div class="table-cell" data-label="Type de besoin">Équipement informatique</div>
-                <div class="table-cell" data-label="Montant">15.3 M FCFA</div>
-                <div class="table-cell" data-label="Date">07/10/2025</div>
-                <div class="table-cell" data-label="Statut"><span class="status-badge status-en-attente">En attente</span></div>
+            
+            <div class="table-row" *ngFor="let fiche of fiches">
+                <div class="table-cell" data-label="Auteur">{{ fiche.createurNom }}</div>
+                <div class="table-cell" data-label="Type de besoin">{{ fiche.objet || 'Non spécifié' }}</div>
+                <div class="table-cell" data-label="Montant">{{ fiche.montantEstime | number }} FCFA</div>
+                <div class="table-cell" data-label="Date">{{ fiche.dateCreation | date:'dd/MM/yyyy' }}</div>
+                <div class="table-cell" data-label="Statut">
+                    <span class="status-badge" [ngClass]="getStatusClass(fiche.statut)">
+                        {{ getStatusLabel(fiche.statut) }}
+                    </span>
+                </div>
                 <div class="table-cell" data-label="Actions">
                     <div class="action-buttons">
-                        <button class="action-btn"><img src="assets/87_501.svg" alt="Details"></button>
-                        <button class="action-btn"><img src="assets/94_13.svg" alt="Approve"></button>
-                        <button class="action-btn"><img src="assets/94_11.svg" alt="Cancel"></button>
+                        <button class="action-btn" (click)="openDetailsModal(fiche)" title="Voir détails">
+                            <!-- Remplacement de l'icône manquante -->
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                              <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <button class="action-btn" (click)="openValidationConfirmation(fiche)" title="Valider" [disabled]="!canValidateFiche(fiche)">
+                            <!-- Remplacement de l'icône manquante -->
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M5 13L9 17L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <button class="action-btn" (click)="openRejetModal(fiche)" title="Rejeter">
+                            <!-- Remplacement de l'icône manquante -->
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                              <path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
                     </div>
                 </div>
             </div>
-            <div class="table-row">
-                <div class="table-cell" data-label="Auteur">Ibrahim BAH</div>
-                <div class="table-cell" data-label="Type de besoin">Campagne publicitaire</div>
-                <div class="table-cell" data-label="Montant">15.3 M FCFA</div>
-                <div class="table-cell" data-label="Date">05/10/2025</div>
-                <div class="table-cell" data-label="Statut"><span class="status-badge status-en-attente">En attente</span></div>
-                <div class="table-cell" data-label="Actions">
-                    <div class="action-buttons">
-                        <button class="action-btn"><img src="assets/94_23.svg" alt="Details"></button>
-                        <button class="action-btn"><img src="assets/94_26.svg" alt="Approve"></button>
-                        <button class="action-btn"><img src="assets/94_29.svg" alt="Cancel"></button>
-                    </div>
-                </div>
-            </div>
-            <div class="table-row">
-                <div class="table-cell" data-label="Auteur">Hamza SANMO</div>
-                <div class="table-cell" data-label="Type de besoin">Fournitures de bureau</div>
-                <div class="table-cell" data-label="Montant">15.3 M FCFA</div>
-                <div class="table-cell" data-label="Date">07/10/2025</div>
-                <div class="table-cell" data-label="Statut"><span class="status-badge status-valide">Validé</span></div>
-                <div class="table-cell" data-label="Actions">
-                    <div class="action-buttons">
-                        <button class="action-btn"><img src="assets/94_39.svg" alt="Details"></button>
-                        <button class="action-btn"><img src="assets/400_13.svg" alt="Approve"></button>
-                        <button class="action-btn"><img src="assets/400_16.svg" alt="Cancel"></button>
-                    </div>
-                </div>
+            
+            <!-- Empty State -->
+            <div *ngIf="fiches.length === 0 && !isLoading" class="empty-state">
+                <p>Aucune fiche de besoin trouvée</p>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Modal pour les détails de la fiche -->
+<div class="modal-overlay" *ngIf="showDetailsModal" (click)="closeDetailsModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2 class="modal-title">Détails de la fiche de besoin</h2>
+            <button class="close-btn" (click)="closeDetailsModal()">
+                <!-- Remplacement de l'icône manquante -->
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+        
+        <div class="modal-body" *ngIf="selectedFiche">
+            <div class="detail-section">
+                <h3>Informations générales</h3>
+                <div class="detail-row">
+                    <span class="label">Code:</span>
+                    <span class="value">{{ selectedFiche.code }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Auteur:</span>
+                    <span class="value">{{ selectedFiche.createurNom }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Service bénéficiaire:</span>
+                    <span class="value">{{ selectedFiche.serviceBeneficiaire || 'Non spécifié' }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Objet:</span>
+                    <span class="value">{{ selectedFiche.objet || 'Non spécifié' }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Description:</span>
+                    <span class="value">{{ selectedFiche.description || 'Aucune description' }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Montant estimé:</span>
+                    <span class="value">{{ selectedFiche.montantEstime | number }} FCFA</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Date attendue:</span>
+                    <span class="value">{{ selectedFiche.dateAttendu ? (selectedFiche.dateAttendu | date:'dd/MM/yyyy') : 'Non spécifiée' }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Date de création:</span>
+                    <span class="value">{{ selectedFiche.dateCreation | date:'dd/MM/yyyy' }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Statut:</span>
+                    <span class="value">
+                        <span class="status-badge" [ngClass]="getStatusClass(selectedFiche.statut)">
+                            {{ getStatusLabel(selectedFiche.statut) }}
+                        </span>
+                    </span>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <h3>Désignations</h3>
+                <div class="designations-table">
+                    <div class="table-header">
+                        <div>Produit</div>
+                        <div>Quantité</div>
+                        <div>Prix unitaire</div>
+                        <div>Montant total</div>
+                    </div>
+                    <div class="table-row" *ngFor="let designation of selectedFiche.designations">
+                        <div>{{ designation.produit }}</div>
+                        <div>{{ designation.quantite }}</div>
+                        <div>{{ designation.prixUnitaire | number }} FCFA</div>
+                        <div>{{ designation.montantTotal | number }} FCFA</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="closeDetailsModal()">Fermer</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal pour le rejet de la fiche -->
+<div class="modal-overlay" *ngIf="showRejetModal" (click)="closeRejetModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2 class="modal-title">Rejeter la fiche de besoin</h2>
+            <button class="close-btn" (click)="closeRejetModal()">
+                <!-- Remplacement de l'icône manquante -->
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+        
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="rejetMotif">Motif du rejet *</label>
+                <textarea 
+                    id="rejetMotif" 
+                    [(ngModel)]="rejetMotif" 
+                    placeholder="Veuillez expliquer la raison du rejet..."
+                    rows="4"
+                    required>
+                </textarea>
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="closeRejetModal()">Annuler</button>
+            <button class="btn btn-danger" (click)="submitRejet()" [disabled]="!rejetMotif || !rejetMotif.trim()">Rejeter</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmation pour la validation -->
+<div class="modal-overlay" *ngIf="showConfirmationModal" (click)="closeValidationConfirmation()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2 class="modal-title">Confirmer la validation</h2>
+            <button class="close-btn" (click)="closeValidationConfirmation()">
+                <!-- Remplacement de l'icône manquante -->
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+        
+        <div class="modal-body">
+            <p>Êtes-vous sûr de vouloir valider cette fiche de besoin ?</p>
+            <p><strong>{{ selectedFiche?.objet || 'Fiche de besoin' }}</strong></p>
+        </div>
+        
+        <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="closeValidationConfirmation()">Annuler</button>
+            <button class="btn btn-primary" (click)="confirmValidation()">Valider</button>
+        </div>
+    </div>
+</div>

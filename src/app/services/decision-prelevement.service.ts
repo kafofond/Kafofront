@@ -107,6 +107,63 @@ export class DecisionPrelevementService {
     );
   }
 
+  // Valider une décision de prélèvement (pour le comptable)
+  validerDecision(id: number): Observable<ActionResponse> {
+    this.invalidateCache('decisions');
+    
+    const token = localStorage.getItem('auth_token');
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    };
+    
+    return this.http.post<ActionResponse>(`${this.baseUrl}/${id}/valider`, {}, { headers }).pipe(
+      tap(response => console.log(`✅ Décision ${id} validée:`, response)),
+      catchError((error) => {
+        console.error(`❌ Erreur validation décision ${id}:`, error);
+        throw error;
+      })
+    );
+  }
+
+  // Modifier une décision de prélèvement
+  updateDecision(id: number, decisionData: any): Observable<ActionResponse> {
+    this.invalidateCache('decisions');
+    
+    const token = localStorage.getItem('auth_token');
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    };
+    
+    return this.http.put<ActionResponse>(`${this.baseUrl}/${id}`, decisionData, { headers }).pipe(
+      tap(response => console.log(`✅ Décision ${id} modifiée:`, response)),
+      catchError((error) => {
+        console.error(`❌ Erreur modification décision ${id}:`, error);
+        throw error;
+      })
+    );
+  }
+
+  // Créer une décision de prélèvement
+  createDecision(decisionData: any): Observable<ActionResponse> {
+    this.invalidateCache('decisions');
+    
+    const token = localStorage.getItem('auth_token');
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    };
+    
+    return this.http.post<ActionResponse>(`${this.baseUrl}`, decisionData, { headers }).pipe(
+      tap(response => console.log(`✅ Décision créée:`, response)),
+      catchError((error) => {
+        console.error(`❌ Erreur création décision:`, error);
+        throw error;
+      })
+    );
+  }
+
   // Méthode générique pour le cache
   private getCachedOrFetch<T>(cacheKey: string, url: string): Observable<T> {
     const cached = this.cache.get(cacheKey);

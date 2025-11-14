@@ -1,10 +1,12 @@
 export interface RapportDachat {
+    id: number;
     nom: string;
-    ficheDeBesoin: string;
+    ficheBesoin: string;
     demandeAchat: string;
-    bonDeCommande: string;
-    attestationDeServiceFait: string;
-    decisionDePrelevement: string;
-    ordreDePrelevement: string;
-    dateDeCreation: Date;
+    bonCommande: string;
+    attestationServiceFait: string;
+    decisionPrelevement: string;
+    ordrePaiement: string;
+    dateAjout: string;
+    entrepriseNom: string;
 }

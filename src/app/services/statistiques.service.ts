@@ -92,6 +92,48 @@ export interface ResponsableChartData {
   };
 }
 
+// INTERFACES POUR COMPTABLE
+export interface ComptableDashboardStats {
+  totalDemandesAchat: number;
+  totalBonsCommande: number;
+  totalOrdresPaiement: number;
+  demandesEnAttente: number;
+  bonsEnAttente: number;
+  ordresEnAttente: number;
+  pourcentageDemandesTraitees: number;
+  pourcentageBonsValides: number;
+}
+
+export interface ComptableChartData {
+  labels: string[];
+  datasets: {
+    demandesAchat: number[];
+    bonsCommande: number[];
+    ordresPaiement: number[];
+  };
+}
+
+// INTERFACES POUR GESTIONNAIRE
+export interface GestionnaireDashboardStats {
+  totalLignesCredit: number;
+  totalFichesBesoin: number;
+  totalDemandesAchat: number;
+  lignesCreditEnAttente: number;
+  fichesBesoinEnAttente: number;
+  demandesAchatEnAttente: number;
+  pourcentageLignesCreditTraitees: number;
+  pourcentageFichesBesoinTraitees: number;
+}
+
+export interface GestionnaireChartData {
+  labels: string[];
+  datasets: {
+    lignesCredit: number[];
+    fichesBesoin: number[];
+    demandesAchat: number[];
+  };
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -249,6 +291,72 @@ export class StatistiquesService {
     );
   }
 
+  // MÉTHODES COMPTABLE - Données financières et documents
+  getComptableDashboardStats(): Observable<ComptableDashboardStats> {
+    const cacheKey = 'comptable-dashboard';
+    
+    return this.getCachedOrFetch<ComptableDashboardStats>(
+      cacheKey,
+      `${this.baseUrl}/comptable/dashboard`
+    ).pipe(
+      tap(data => console.log('💰 Données Comptable dashboard:', data)),
+      map(data => this.normalizeComptableDashboardStats(data)),
+      catchError((error): Observable<ComptableDashboardStats> => {
+        console.error('Erreur API Comptable dashboard:', error);
+        return of(this.getEmptyComptableStats());
+      })
+    );
+  }
+
+  getComptableChartData(periode: string = 'semaine'): Observable<ComptableChartData> {
+    const cacheKey = `comptable-chart-${periode}`;
+    
+    return this.getCachedOrFetch<ComptableChartData>(
+      cacheKey,
+      `${this.baseUrl}/comptable/chart?periode=${periode}`
+    ).pipe(
+      tap(data => console.log(`📊 Données Comptable chart ${periode}:`, data)),
+      map(data => this.normalizeComptableChartData(data)),
+      catchError((error) => {
+        console.error(`Erreur API Comptable chart ${periode}:`, error);
+        return of(this.getEmptyComptableChartData(periode));
+      })
+    );
+  }
+
+  // MÉTHODES GESTIONNAIRE - Données des lignes de crédit, fiches de besoin et demandes d'achat
+  getGestionnaireDashboardStats(): Observable<GestionnaireDashboardStats> {
+    const cacheKey = 'gestionnaire-dashboard';
+    
+    return this.getCachedOrFetch<GestionnaireDashboardStats>(
+      cacheKey,
+      `${this.baseUrl}/gestionnaire/dashboard`
+    ).pipe(
+      tap(data => console.log('📊 Données Gestionnaire dashboard:', data)),
+      map(data => this.normalizeGestionnaireDashboardStats(data)),
+      catchError((error): Observable<GestionnaireDashboardStats> => {
+        console.error('Erreur API Gestionnaire dashboard:', error);
+        return of(this.getEmptyGestionnaireStats());
+      })
+    );
+  }
+
+  getGestionnaireChartData(periode: string = 'semaine'): Observable<GestionnaireChartData> {
+    const cacheKey = `gestionnaire-chart-${periode}`;
+    
+    return this.getCachedOrFetch<GestionnaireChartData>(
+      cacheKey,
+      `${this.baseUrl}/gestionnaire/chart?periode=${periode}`
+    ).pipe(
+      tap(data => console.log(`📊 Données Gestionnaire chart ${periode}:`, data)),
+      map(data => this.normalizeGestionnaireChartData(data)),
+      catchError((error) => {
+        console.error(`Erreur API Gestionnaire chart ${periode}:`, error);
+        return of(this.getEmptyGestionnaireChartData(periode));
+      })
+    );
+  }
+
   // Méthode générique pour le cache
   private getCachedOrFetch<T>(cacheKey: string, url: string): Observable<T> {
     const cached = this.cache.get(cacheKey);
@@ -393,6 +501,56 @@ export class StatistiquesService {
     };
   }
 
+  // NORMALISATION DES DONNÉES COMPTABLE
+  private normalizeComptableDashboardStats(data: ComptableDashboardStats): ComptableDashboardStats {
+    return {
+      totalDemandesAchat: this.ensureNumber(data.totalDemandesAchat),
+      totalBonsCommande: this.ensureNumber(data.totalBonsCommande),
+      totalOrdresPaiement: this.ensureNumber(data.totalOrdresPaiement),
+      demandesEnAttente: this.ensureNumber(data.demandesEnAttente),
+      bonsEnAttente: this.ensureNumber(data.bonsEnAttente),
+      ordresEnAttente: this.ensureNumber(data.ordresEnAttente),
+      pourcentageDemandesTraitees: this.ensurePercentage(data.pourcentageDemandesTraitees),
+      pourcentageBonsValides: this.ensurePercentage(data.pourcentageBonsValides)
+    };
+  }
+
+  private normalizeComptableChartData(data: ComptableChartData): ComptableChartData {
+    return {
+      labels: data?.labels || this.generateLabels('semaine'),
+      datasets: {
+        demandesAchat: this.ensurePositiveNumbers(data?.datasets?.demandesAchat),
+        bonsCommande: this.ensurePositiveNumbers(data?.datasets?.bonsCommande),
+        ordresPaiement: this.ensurePositiveNumbers(data?.datasets?.ordresPaiement)
+      }
+    };
+  }
+
+  // NORMALISATION DES DONNÉES GESTIONNAIRE
+  private normalizeGestionnaireDashboardStats(data: GestionnaireDashboardStats): GestionnaireDashboardStats {
+    return {
+      totalLignesCredit: this.ensureNumber(data.totalLignesCredit),
+      totalFichesBesoin: this.ensureNumber(data.totalFichesBesoin),
+      totalDemandesAchat: this.ensureNumber(data.totalDemandesAchat),
+      lignesCreditEnAttente: this.ensureNumber(data.lignesCreditEnAttente),
+      fichesBesoinEnAttente: this.ensureNumber(data.fichesBesoinEnAttente),
+      demandesAchatEnAttente: this.ensureNumber(data.demandesAchatEnAttente),
+      pourcentageLignesCreditTraitees: this.ensurePercentage(data.pourcentageLignesCreditTraitees),
+      pourcentageFichesBesoinTraitees: this.ensurePercentage(data.pourcentageFichesBesoinTraitees)
+    };
+  }
+
+  private normalizeGestionnaireChartData(data: GestionnaireChartData): GestionnaireChartData {
+    return {
+      labels: data?.labels || this.generateLabels('semaine'),
+      datasets: {
+        lignesCredit: this.ensurePositiveNumbers(data?.datasets?.lignesCredit),
+        fichesBesoin: this.ensurePositiveNumbers(data?.datasets?.fichesBesoin),
+        demandesAchat: this.ensurePositiveNumbers(data?.datasets?.demandesAchat)
+      }
+    };
+  }
+
   // FONCTIONS DE VALIDATION
   private ensureNumber(value: any): number {
     if (value === null || value === undefined) return 0;
@@ -504,6 +662,57 @@ export class StatistiquesService {
         creditsAffectes: Array(labels.length).fill(0),
         creditsUtilises: Array(labels.length).fill(0),
         creditsRestants: Array(labels.length).fill(0)
+      }
+    };
+  }
+
+  private getEmptyComptableStats(): ComptableDashboardStats {
+    return {
+      totalDemandesAchat: 0,
+      totalBonsCommande: 0,
+      totalOrdresPaiement: 0,
+      demandesEnAttente: 0,
+      bonsEnAttente: 0,
+      ordresEnAttente: 0,
+      pourcentageDemandesTraitees: 0,
+      pourcentageBonsValides: 0
+    };
+  }
+
+  private getEmptyComptableChartData(periode: string): ComptableChartData {
+    const labels = this.generateLabels(periode);
+    return {
+      labels,
+      datasets: {
+        demandesAchat: Array(labels.length).fill(0),
+        bonsCommande: Array(labels.length).fill(0),
+        ordresPaiement: Array(labels.length).fill(0)
+      }
+    };
+  }
+
+  // FONCTIONS POUR DONNÉES VIDE GESTIONNAIRE
+  private getEmptyGestionnaireStats(): GestionnaireDashboardStats {
+    return {
+      totalLignesCredit: 0,
+      totalFichesBesoin: 0,
+      totalDemandesAchat: 0,
+      lignesCreditEnAttente: 0,
+      fichesBesoinEnAttente: 0,
+      demandesAchatEnAttente: 0,
+      pourcentageLignesCreditTraitees: 0,
+      pourcentageFichesBesoinTraitees: 0
+    };
+  }
+
+  private getEmptyGestionnaireChartData(periode: string): GestionnaireChartData {
+    const labels = this.generateLabels(periode);
+    return {
+      labels,
+      datasets: {
+        lignesCredit: Array(labels.length).fill(0),
+        fichesBesoin: Array(labels.length).fill(0),
+        demandesAchat: Array(labels.length).fill(0)
       }
     };
   }

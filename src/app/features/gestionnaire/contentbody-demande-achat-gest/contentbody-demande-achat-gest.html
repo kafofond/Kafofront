@@ -1,69 +1,171 @@
-<div class="content-body">
-    <div class="content-actions">
+<section id="demandes-achat" class="content-body">
+    <div class="controls-bar">
         <div class="filter-group">
             <label for="status-filter">Statut :</label>
-            <div class="filter-dropdown">
-                <span>Tous les Statuts</span>
-                <img src="assets/120_297.svg" alt="Filter">
+            <div class="filter-dropdown" (click)="showFilterDropdown = !showFilterDropdown">
+                <span>{{ statutFilter === 'Tous' ? 'Tous les Statuts' : getStatusLabel(statutFilter) }}</span>
+                <!-- Remplacement de l'icône manquante par une icône standard -->
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            
+            <!-- Dropdown de filtre -->
+            <div class="filter-dropdown-container" *ngIf="showFilterDropdown">
+                <div class="filter-dropdown-menu">
+                    <div class="dropdown-item" (click)="onStatutFilterChange('Tous'); showFilterDropdown = false">
+                        Tous les Statuts
+                    </div>
+                    <div class="dropdown-item" (click)="onStatutFilterChange('EN_COURS'); showFilterDropdown = false">
+                        En cours
+                    </div>
+                    <div class="dropdown-item" (click)="onStatutFilterChange('APPROUVE'); showFilterDropdown = false">
+                        Approuvé
+                    </div>
+                    <div class="dropdown-item" (click)="onStatutFilterChange('VALIDE'); showFilterDropdown = false">
+                        Validé
+                    </div>
+                    <div class="dropdown-item" (click)="onStatutFilterChange('REJETE'); showFilterDropdown = false">
+                        Rejeté
+                    </div>
+                </div>
             </div>
         </div>
         <button class="export-button">
-            <img src="assets/120_236.svg" alt="Export">
+            <!-- Remplacement de l'icône manquante par une icône standard -->
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
             <span>Exporter</span>
         </button>
     </div>
 
-    <div class="requests-list">
-        <h2>Demande DA-001-01-24</h2>
-        <div class="table-container">
+    <div class="data-table-container">
+        <h2 class="table-title">Demandes d'achat</h2>
+        
+        <!-- Loading State -->
+        <div *ngIf="isLoading" class="loading-state">
+            <p>Chargement des demandes d'achat...</p>
+        </div>
+        
+        <!-- Error State -->
+        <div *ngIf="errorMessage && !isLoading" class="error-state">
+            <p>{{ errorMessage }}</p>
+        </div>
+        
+        <!-- Data Table -->
+        <div class="data-table" *ngIf="!isLoading && !errorMessage">
             <div class="table-header">
-                <div>Auteur</div>
-                <div>Objet</div>
-                <div>Montant</div>
-                <div>Fournisseur</div>
-                <div>Date</div>
-                <div>Statut</div>
-                <div>Actions</div>
+                <div class="table-cell">Auteur</div>
+                <div class="table-cell">Objet</div>
+                <div class="table-cell">Montant</div>
+                <div class="table-cell">Fournisseur</div>
+                <div class="table-cell">Date</div>
+                <div class="table-cell">Statut</div>
+                <div class="table-cell">Actions</div>
             </div>
-            <div class="table-row">
-                <div>Hamza SANMO</div>
-                <div>Équipement informatique</div>
-                <div>15.3 M FCFA</div>
-                <div>Tech All</div>
-                <div>07/10/2025</div>
-                <div><span class="status-badge status-en-attente">En attente</span></div>
-                <div class="action-buttons">
-                    <button class="action-btn"><img src="assets/117_218.svg" alt="Details"></button>
-                    <button class="action-btn"><img src="assets/117_221.svg" alt="Approve"></button>
-                    <button class="action-btn"><img src="assets/117_224.svg" alt="Cancel"></button>
+            
+            <div class="table-body">
+                <div class="table-row" *ngFor="let demande of filteredDemandes">
+                    <div class="table-cell" data-label="Auteur">
+                        <div class="author-info">
+                            <div class="author-name">{{ demande.createurNom || 'Non spécifié' }}</div>
+                        </div>
+                    </div>
+                    <div class="table-cell" data-label="Objet">
+                        <div class="objet-info">
+                            <div class="objet-code">{{ demande.code }}</div>
+                        </div>
+                    </div>
+                    <div class="table-cell" data-label="Montant">
+                        <div class="montant">{{ demande.montantTotal | number:'1.0-0' }} FCFA</div>
+                    </div>
+                    <div class="table-cell" data-label="Fournisseur">
+                        <div class="fournisseur">{{ demande.fournisseur || 'Non spécifié' }}</div>
+                    </div>
+                    <div class="table-cell" data-label="Date">
+                        <div class="date">{{ demande.dateCreation | date:'dd/MM/yyyy' }}</div>
+                    </div>
+                    <div class="table-cell" data-label="Statut">
+                        <span class="status-badge" [ngClass]="demande.statut.toLowerCase()">
+                            {{ getStatusLabel(demande.statut) }}
+                        </span>
+                    </div>
+                    <div class="table-cell" data-label="Actions">
+                        <div class="action-buttons">
+                            <button class="action-btn" (click)="viewDetails(demande)" title="Voir détails">
+                                <!-- Remplacement de l'icône manquante -->
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                  <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                            <button 
+                                class="action-btn" 
+                                [disabled]="!canValidateDemande(demande)"
+                                (click)="validateDemande(demande)"
+                                title="Valider">
+                                <!-- Remplacement de l'icône manquante -->
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M5 13L9 17L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                            <button 
+                                class="action-btn" 
+                                [disabled]="demande.statut === 'VALIDE'"
+                                (click)="openRejectModal(demande)"
+                                title="Rejeter">
+                                <!-- Remplacement de l'icône manquante -->
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                  <path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="table-row">
-                <div>Ibrahim BAH</div>
-                <div>Campagne publicitaire</div>
-                <div>15.3 M FCFA</div>
-                <div>La Réference</div>
-                <div>05/10/2025</div>
-                <div><span class="status-badge status-en-attente">En attente</span></div>
-                <div class="action-buttons">
-                    <button class="action-btn"><img src="assets/117_234.svg" alt="Details"></button>
-                    <button class="action-btn"><img src="assets/117_237.svg" alt="Approve"></button>
-                    <button class="action-btn"><img src="assets/117_240.svg" alt="Cancel"></button>
-                </div>
+            
+            <!-- Empty State -->
+            <div *ngIf="filteredDemandes.length === 0 && !isLoading" class="empty-state">
+                <p>Aucune demande d'achat trouvée</p>
             </div>
-            <div class="table-row">
-                <div>Hamza SANMO</div>
-                <div>Fournitures de bureau</div>
-                <div>15.3 M FCFA</div>
-                <div>La Réference</div>
-                <div>07/10/2025</div>
-                <div><span class="status-badge status-valide">Validé</span></div>
-                <div class="action-buttons">
-                    <button class="action-btn"><img src="assets/94_39.svg" alt="Details"></button>
-                    <button class="action-btn"><img src="assets/400_13.svg" alt="Approve"></button>
-                    <button class="action-btn"><img src="assets/400_16.svg" alt="Cancel"></button>
-                </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modale de rejet -->
+<div class="modal-overlay" *ngIf="showRejectModal" (click)="cancelReject()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2 class="modal-title">Rejeter la demande d'achat</h2>
+            <button class="close-btn" (click)="cancelReject()">
+                <!-- Remplacement de l'icône manquante -->
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+        
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="reject-comment">Motif du rejet *</label>
+                <textarea 
+                    id="reject-comment" 
+                    [(ngModel)]="rejectComment" 
+                    placeholder="Veuillez préciser le motif du rejet..."
+                    rows="4"
+                    required>
+                </textarea>
             </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="cancelReject()">Annuler</button>
+            <button class="btn btn-danger" [disabled]="!rejectComment.trim()" (click)="rejectDemande()">Rejeter</button>
         </div>
     </div>
 </div>

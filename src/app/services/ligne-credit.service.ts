@@ -179,6 +179,41 @@ export class LigneCreditService {
     return actif ? 'Actif' : 'Inactif';
   }
 
+  // Récupérer toutes les lignes de crédit
+  getAllLignes(): Observable<LignesResponse> {
+    return this.http.get<LignesResponse>(this.baseUrl).pipe(
+      tap(response => console.log('📄 Toutes les lignes de crédit reçues:', response)),
+      catchError(error => {
+        console.error('❌ Erreur lors du chargement de toutes les lignes de crédit:', error);
+        return of({ total: 0, lignes: [] });
+      })
+    );
+  }
+
+  // Récupérer les lignes de crédit validées et actives d'une entreprise spécifique
+  getLignesValideesActivesByEntreprise(entrepriseId: number): Observable<LignesResponse> {
+    const url = `${this.baseUrl}/entreprise/${entrepriseId}/validees-actives`;
+    return this.http.get<LignesResponse>(url).pipe(
+      tap(response => console.log(`📄 Lignes validées et actives de l'entreprise ${entrepriseId} reçues:`, response)),
+      catchError(error => {
+        console.error(`❌ Erreur lors du chargement des lignes validées et actives de l'entreprise ${entrepriseId}:`, error);
+        return of({ total: 0, lignes: [] });
+      })
+    );
+  }
+
+  // Récupérer toutes les lignes de crédit d'une entreprise spécifique
+  getLignesByEntreprise(entrepriseId: number): Observable<LignesResponse> {
+    const url = `${this.baseUrl}/entreprise/${entrepriseId}`;
+    return this.http.get<LignesResponse>(url).pipe(
+      tap(response => console.log(`📄 Toutes les lignes de l'entreprise ${entrepriseId} reçues:`, response)),
+      catchError(error => {
+        console.error(`❌ Erreur lors du chargement de toutes les lignes de l'entreprise ${entrepriseId}:`, error);
+        return of({ total: 0, lignes: [] });
+      })
+    );
+  }
+
   // Formater la date pour l'API
   formatDateForApi(date: Date): string {
     return date.toISOString().split('.')[0]; // Format: "2025-11-10T15:27:49"

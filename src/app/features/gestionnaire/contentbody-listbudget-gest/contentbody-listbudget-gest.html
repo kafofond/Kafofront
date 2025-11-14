@@ -1,85 +1,121 @@
 <div class="content-toolbar">
-  <button class="filter-btn">
-    <img src="assets/417_213.svg" alt="">
-    <span>Filtrer</span>
-  </button>
+  <div class="filter-dropdown-container">
+    <button class="filter-btn" (click)="toggleFilterDropdown($event)">
+      <img src="assets/417_213.svg" alt="Filtrer">
+      <span>Filtrer</span>
+      <span class="active-filter-label" *ngIf="activeFilter !== 'Aucun'">({{ activeFilter }})</span>
+    </button>
+
+    <div class="filter-dropdown" *ngIf="showFilterDropdown" (click)="$event.stopPropagation()">
+      <div class="dropdown-header">Filtrer par période</div>
+      <button class="dropdown-item" (click)="applyFilter('Ce mois')">
+        Ce mois
+        <span class="check-icon" *ngIf="activeFilter === 'Ce mois'">✓</span>
+      </button>
+      <button class="dropdown-item" (click)="applyFilter('Ce trimestre')">
+        Ce trimestre
+        <span class="check-icon" *ngIf="activeFilter === 'Ce trimestre'">✓</span>
+      </button>
+      <button class="dropdown-item" (click)="applyFilter('L\'année dernière')">
+        L'année dernière
+        <span class="check-icon" *ngIf="activeFilter === 'L\'année dernière'">✓</span>
+      </button>
+      <div class="dropdown-divider"></div>
+      <button class="dropdown-item reset" (click)="applyFilter('Aucun')">
+        Réinitialiser le filtre
+      </button>
+    </div>
+  </div>
 </div>
+
 <div class="budget-table-container">
   <div class="budget-table">
     <div class="table-header">
       <div>Intitulé</div>
       <div>Description</div>
-      <div>Date de création</div>
+      <div>État</div>
       <div>Statut</div>
       <div>Montant Alloué</div>
       <div>Actions</div>
     </div>
     <div class="table-body">
-      <div class="table-row">
-        <div>Budget Marketing</div>
-        <div>Campagne <br>publicitaire 2025</div>
-        <div>12/02/2025</div>
-        <div><span class="status-badge active">Active</span></div>
-        <div>10 000 000 FCFA</div>
-        <div class="actions-cell">
-          <a href="#" routerLink="/listbudget-gest/listlignesbudget-gest" class="action-link">Voir lignes</a>
-          <button class="action-icon-btn">
+      <div class="table-row" *ngFor="let budget of budgets">
+        <div>{{ budget.intituleBudget }}</div>
+        <div>{{ budget.description }}</div>
+        <div>
+          <span [class]="getEtatBadgeClass(budget.etat)">{{ budget.etat }}</span>
+        </div>
+        <div>
+          <span [class]="getStatusBadgeClass(budget.statut)">{{ budget.statut }}</span>
+        </div>
+        <div>{{ budget.montantBudget | number }} FCFA</div>
+        <div class="actions-cell"> 
+          <button class="action-link" (click)="loadLignesBudget(budget)">Voir lignes</button>
+          <button class="action-icon-btn" (click)="openDetailBudgetModal(budget)">
             <img src="assets/417_144.svg" alt="View Details">
           </button>
         </div>
       </div>
-      <div class="table-row">
-        <div>Budget Marketing</div>
-        <div>Campagne <br>publicitaire 2025</div>
-        <div>12/02/2025</div>
-        <div><span class="status-badge active">Active</span></div>
-        <div>10 000 000 FCFA</div>
-        <div class="actions-cell">
-          <a href="#" routerLink="/listbudget-gest/listlignesbudget-gest" class="action-link">Voir lignes</a>
-          <button class="action-icon-btn">
-            <img src="assets/417_158.svg" alt="View Details">
-          </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Détails Budget -->
+<div class="modal-overlay" *ngIf="selectedBudget" (click)="closeDetailBudgetModal()">
+  <div class="modal-content detail-modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header detail-header">
+      <h2 class="modal-title">Budget : {{ selectedBudget.codeBudget }}</h2>
+      <button class="close-btn" (click)="closeDetailBudgetModal()">
+        <img src="assets/mdi_cancel-bold.svg" alt="Fermer" class="close-icon">
+      </button>
+    </div>
+
+    <div class="detail-body">
+      <div class="detail-section full-width-fields">
+        <div class="detail-group">
+          <label>Intitulé</label>
+          <p class="detail-value">{{ selectedBudget.intituleBudget }}</p>
+        </div>
+        <div class="detail-group">
+          <label>Description</label>
+          <p class="detail-value description">{{ selectedBudget.description }}</p>
         </div>
       </div>
-      <div class="table-row">
-        <div>Budget Marketing</div>
-        <div>Campagne <br>publicitaire 2025</div>
-        <div>12/02/2025</div>
-        <div><span class="status-badge active">Active</span></div>
-        <div>10 000 000 FCFA</div>
-        <div class="actions-cell">
-          <a href="#" routerLink="/listbudget-gest/listlignesbudget-gest" class="action-link">Voir lignes</a>
-          <button class="action-icon-btn">
-            <img src="assets/417_172.svg" alt="View Details">
-          </button>
+
+      <div class="detail-section grid-fields">
+        <div class="detail-group">
+          <label>Montant Alloué</label>
+          <p class="detail-value">{{ selectedBudget.montantBudget | number:'1.0-0' }} FCFA</p>
+        </div>
+        <div class="detail-group">
+          <label>Statut</label>
+          <span [class]="getStatusBadgeClass(selectedBudget.statut)">{{ selectedBudget.statut }}</span>
+        </div>
+        <div class="detail-group">
+          <label>Date de création</label>
+          <p class="detail-value">{{ selectedBudget.dateDeCreation | date:'dd/MM/yyyy' }}</p>
+        </div>
+        <div class="detail-group">
+          <label>État</label>
+          <span [class]="getEtatBadgeClass(selectedBudget.etat)">{{ selectedBudget.etat }}</span>
+        </div>
+        <div class="detail-group">
+          <label>Période</label>
+          <p class="detail-value">{{ selectedBudget.dateDeDebut | date:'dd/MM/yyyy' }} - {{ selectedBudget.dateDeFin | date:'dd/MM/yyyy' }}</p>
         </div>
       </div>
-      <div class="table-row">
-        <div>Budget Marketing</div>
-        <div>Campagne <br>publicitaire 2025</div>
-        <div>12/02/2025</div>
-        <div><span class="status-badge active">Active</span></div>
-        <div>10 000 000 FCFA</div>
-        <div class="actions-cell">
-          <a href="#" routerLink="/listbudget-gest/listlignesbudget-gest" class="action-link">Voir lignes</a>
-          <button class="action-icon-btn">
-            <img src="assets/417_185.svg" alt="View Details">
-          </button>
+
+      <div class="detail-section full-width-fields">
+        <div class="detail-group">
+          <label>Commentaire</label>
+          <p class="detail-value comment">{{ selectedBudget.commentaire || 'Aucun commentaire.' }}</p>
         </div>
       </div>
-      <div class="table-row">
-        <div>Budget Marketing</div>
-        <div>Campagne <br>publicitaire 2025</div>
-        <div>12/02/2025</div>
-        <div><span class="status-badge active">Active</span></div>
-        <div>10 000 000 FCFA</div>
-        <div class="actions-cell">
-          <a href="#" routerLink="/listbudget-gest/listlignesbudget-gest" class="action-link">Voir lignes</a>
-          <button class="action-icon-btn">
-            <img src="assets/417_199.svg" alt="View Details">
-          </button>
-        </div>
-      </div>
+    </div>
+
+    <div class="modal-footer detail-footer">
+      <p class="creation-info">Créé le : {{ selectedBudget.dateDeCreation | date:'dd/MM/yyyy' }}</p>
+      <button class="btn btn-primary" (click)="closeDetailBudgetModal()">Fermer</button>
     </div>
   </div>
 </div>
