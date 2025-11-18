@@ -107,8 +107,8 @@ button {
 }
 
 .status-badge.active {
-  background-color: #dcffbe; /* --color-status-active-bg */
-  color: #0c8f11; /* --color-status-active-text */
+  background-color: #dcffbe; 
+  color: #0c8f11; 
 }
 
 .status-badge.warning {
@@ -134,11 +134,11 @@ button {
 }
 
 .action-link {
-  background-color: #0b4f63; /* --color-primary */
-  color: #ffffff; /* --color-white */
+  background-color: #0b4f63; 
+  color: #ffffff; 
   border-radius: 8px;
   padding: 6px 12px;
-  font-size: 12px;
+  font-size: 10px;
   font-family: 'Poppins', sans-serif;
   font-weight: 500;
   text-decoration: none;

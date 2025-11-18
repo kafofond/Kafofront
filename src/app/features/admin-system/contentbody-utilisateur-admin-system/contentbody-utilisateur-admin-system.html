@@ -36,7 +36,7 @@
           <th>Nom</th>
           <th>Prénom</th>
           <th>Email</th>
-          <th>Rôle</th>
+          <!-- <th>Rôle</th> -->
           <th>Entreprise</th>
           <th>État</th>
           <th>Actions</th>
@@ -48,7 +48,7 @@
           <td>{{ u.nom }}</td>
           <td>{{ u.prenom }}</td>
           <td>{{ u.email }}</td>
-          <td>{{ u.role }}</td>
+          <!-- <td>{{ u.role }}</td> -->
           <td>{{ getEntrepriseNom(u.entrepriseId) }}</td>
           <td>
             <span class="status" [ngClass]="{ active: u.actif, inactive: !u.actif }">

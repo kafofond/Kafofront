@@ -2,12 +2,28 @@
   <div class="historique-header">
   
     <div class="historique-filtres">
-      <select id="filtre" [(ngModel)]="filtreAction">
+      <select id="filtre" [(ngModel)]="filtreAction" (ngModelChange)="loadHistorique()">
         <option value="toutes">Toutes</option>
         <option value="cree">Créé</option>
         <option value="modifie">Modifié</option>
         <option value="valide">Validé</option>
         <option value="rejete">Rejeté</option>
+        <option value="approuve">Approuvé</option>
+        <option value="active">Activé</option>
+      </select>
+      
+      <select id="filtreType" [(ngModel)]="filtreTypeDocument" (ngModelChange)="loadHistorique()">
+        <option value="tous">Tous les documents</option>
+        <option value="BUDGET">Budget</option>
+        <option value="LIGNE_CREDIT">Ligne de Credit</option>
+        <option value="FICHE_BESOIN">Fiche de Besoin</option>
+        <option value="DEMANDE_ACHAT">Demande d'Achat</option>
+        <option value="BON_COMMANDE">Bon de Commande</option>
+        <option value="ATTESTATION_SERVICE_FAIT">Attestation de Service</option>
+        <option value="DECISION_PRELEVEMENT">Decision de Prelevement</option>
+        <option value="ORDRE_PAIEMENT">Ordre de Paiement</option>
+        <option value="ENTREPRISE">Entreprise</option>
+        <option value="UTILISATEUR">Utilisateur</option>
       </select>
     </div>
   </div>
@@ -39,7 +55,7 @@
         <tr *ngFor="let h of historiquesPageCourante">
           <td>{{ h.fichier }}</td>
           <td>{{ h.auteur }}</td>
-          <td>{{ h.typeDocument }}</td>
+          <td>{{ h.typeDocumentFormate }}</td>
           <td>
             <span class="action-status" [ngClass]="{
               cree: h.action === 'Créé',
@@ -47,7 +63,10 @@
               valide: h.action === 'Validé',
               rejete: h.action === 'Rejeté',
               desactive: h.action === 'Désactivé',
-              reactive: h.action === 'Réactivé'
+              reactive: h.action === 'Réactivé',
+              approuve: h.action === 'Approuvé',
+              active: h.action === 'Activé',
+              miseajour: h.action === 'Mise à jour montants'
             }">
               {{ h.action }}
             </span>

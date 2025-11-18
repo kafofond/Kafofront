@@ -12,6 +12,7 @@ export interface HistoriqueAction {
   id: number;
   typeDocument: string;
   idDocument: number;
+  documentCode: string | null;
   action: string;
   ancienStatut: string | null;
   nouveauStatut: string | null;
@@ -21,6 +22,7 @@ export interface HistoriqueAction {
   utilisateurId: number;
   utilisateurNomComplet: string;
   utilisateurEmail: string;
+  utilisateurConcerneNom: string | null;
   entrepriseId: number;
   entrepriseNom: string | null;
 }
@@ -41,6 +43,10 @@ export class HistoriqueService {
     return this.http.get<HistoriqueResponse>(`${this.apiUrl}/entreprise`);
   }
 
+  getHistoriqueEntrepriseParType(typeDocument: string): Observable<HistoriqueResponse> {
+    return this.http.get<HistoriqueResponse>(`${this.apiUrl}/entreprise/${typeDocument}`);
+  }
+
   // Méthode pour formater l'action en français
   formaterAction(action: string): string {
     const actionsMap: { [key: string]: string } = {
@@ -49,7 +55,10 @@ export class HistoriqueService {
       'DESACTIVATION': 'Désactivé',
       'REACTIVATION': 'Réactivé',
       'VALIDATION': 'Validé',
-      'REJET': 'Rejeté'
+      'REJET': 'Rejeté',
+      'APPROBATION': 'Approuvé',
+      'ACTIVATION': 'Activé',
+      'MISE_A_JOUR_MONTANTS': 'Mise à jour montants'
     };
     return actionsMap[action] || action;
   }
@@ -57,16 +66,39 @@ export class HistoriqueService {
   // Méthode pour formater le type de document
   formaterTypeDocument(typeDocument: string): string {
     const typesMap: { [key: string]: string } = {
-      'UTILISATEUR': 'Utilisateur',
-      'DOCUMENT': 'Document',
+      'BUDGET': 'Budget',
+      'LIGNE_CREDIT': 'Ligne de Credit',
+      'FICHE_BESOIN': 'Fiche de Besoin',
+      'DEMANDE_ACHAT': 'Demande d\'Achat',
+      'BON_COMMANDE': 'Bon de Commande',
+      'ATTESTATION_SERVICE_FAIT': 'Attestation de Service',
+      'DECISION_PRELEVEMENT': 'Decision de Prelevement',
+      'ORDRE_PAIEMENT': 'Ordre de Paiement',
       'ENTREPRISE': 'Entreprise',
-      'PROJET': 'Projet'
+      'UTILISATEUR': 'Utilisateur',
+      'SEUIL_VALIDATION': 'Seuil de Validation',
+      'RAPPORT_ACHAT': 'Rapport d\'Achat'
     };
     return typesMap[typeDocument] || typeDocument;
   }
 
   // Méthode pour générer un nom de fichier basé sur le type et l'ID
   genererNomFichier(historique: HistoriqueAction): string {
+    // Pour les utilisateurs, afficher le nom de l'utilisateur concerné
+    if (historique.typeDocument === 'UTILISATEUR' && historique.utilisateurConcerneNom) {
+      return historique.utilisateurConcerneNom;
+    }
+    
+    // Pour les entreprises, afficher le nom de l'entreprise
+    if (historique.typeDocument === 'ENTREPRISE' && historique.entrepriseNom) {
+      return historique.entrepriseNom;
+    }
+    
+    // Pour les autres documents, utiliser le documentCode s'il est disponible, sinon le format par défaut
+    if (historique.documentCode) {
+      return historique.documentCode;
+    }
+    
     const prefix = this.formaterTypeDocument(historique.typeDocument);
     return `${prefix}_${historique.idDocument}`;
   }

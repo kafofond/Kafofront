@@ -76,19 +76,13 @@
 
   <section id="activity" class="activity-section" *ngIf="!isLoading && !errorMessage">
     <div class="activity-header">
-      <h3>Évolution des validations par mois</h3>
+      <h1>Évolution des validations par mois</h1>
       <div class="activity-controls">
         <select id="periodSelect" [value]="currentPeriode" (change)="onPeriodeChange($event)">
           <option value="jour">Aujourd'hui</option>
           <option value="semaine">Cette semaine</option>
           <option value="mois">Ce mois</option>
         </select>
-
-        <div class="activity-actions">
-          <button class="btn btn-secondary" (click)="exportChart()">
-            Exporter
-          </button>
-        </div>
       </div>
     </div>
     <div class="chart-container">
