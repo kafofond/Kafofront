@@ -7,8 +7,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 34px;
+  margin-bottom: 50px;
   gap: 20px;
+  padding-top: 20px;
+  margin-left: 20px;
+  margin-right: 20px;
 }
 
 .header-left,
@@ -37,6 +40,7 @@
   font-size: 14px;
   padding: 10px 18px;
   transition: all 0.3s ease;
+  position: relative;
 }
 
 .action-btn img {
@@ -70,18 +74,94 @@
   transform: translateY(-1px);
 }
 
+/* Dropdown Menu Style */
+.filter-dropdown-container {
+  position: relative;
+  display: inline-block;
+}
+
+.filter-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 10;
+  min-width: auto;
+  width: 100%;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 10px;
+  padding: 5px 0;
+}
+
+.dropdown-header {
+  font-size: 12px;
+  font-weight: 700;
+  color: #888;
+  padding: 8px 15px;
+  text-transform: uppercase;
+  border-bottom: 1px solid #f0f4f7;
+  margin-bottom: 5px;
+}
+
+.dropdown-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 10px 15px;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.1s;
+}
+
+.dropdown-item:hover {
+  background-color: #f4f7fa;
+}
+
+.dropdown-item.reset {
+  color: #cc0000;
+  font-weight: 500;
+}
+
+.check-icon {
+  color: #0c8f11;
+  font-weight: 700;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: #f0f4f7;
+  margin: 5px 0;
+}
+
+.active-filter-label {
+  margin-left: 8px;
+  color: #0b4f63;
+  font-weight: 600;
+}
+
 /* ----- Table ----- */
 .budget-table-container {
   background-color: #ffffff;
   border-radius: 15px;
   border: 1px solid #e2e8f0;
   padding: 10px;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: -20px;
+  margin-bottom: 30px;
 }
 
 .table-header,
 .table-row {
   display: grid;
-  grid-template-columns: 2.2fr 1.2fr 1.2fr 1.2fr 1.3fr 1fr 1.5fr;
+  grid-template-columns: 2.2fr 1.2fr 1.2fr 1.3fr 1fr 1.5fr;
   align-items: center;
   padding: 20px 24px;
 }

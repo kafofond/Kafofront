@@ -117,6 +117,7 @@ export class DocumentsExecution implements OnInit {
   mapApiStatut(statut: string): string {
     const statutMap: { [key: string]: string } = {
       'VALIDE': 'Validé',
+      'EN_COURS': 'En cours',
       'EN_ATTENTE': 'En attente',
       'REJETE': 'Rejeté',
       'VALIDÉ': 'Validé',

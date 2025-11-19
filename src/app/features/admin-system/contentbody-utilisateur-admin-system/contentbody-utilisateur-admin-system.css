@@ -103,8 +103,8 @@
   color: #334155;
 }
 
-.utilisateurs-table th:nth-child(7),
-.utilisateurs-table td:nth-child(7) {
+.utilisateurs-table th:nth-child(6),
+.utilisateurs-table td:nth-child(6) {
   width: 18%;
   min-width: 140px;
 }

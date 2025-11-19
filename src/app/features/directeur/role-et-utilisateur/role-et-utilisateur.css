@@ -1,5 +1,8 @@
 .page-header {
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  margin-left: 20px;
+  margin-right: 20px;
+  padding-top: 20px;
 }
 
 .header-controls {
@@ -67,14 +70,19 @@
 .utilisateurs-section {
   padding: 25px;
   background-color: white;
-  border-radius: 10px;
+  border-radius: 15px;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 5px;
 }
 
 .table-container {
   background: #fff;
-  border-radius: 10px;
+  border-radius: 15px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   overflow-x: auto;
+  border: 1px solid #e2e8f0;
+  padding: 10px;
 }
 
 .utilisateurs-table {

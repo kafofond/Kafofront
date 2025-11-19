@@ -23,7 +23,6 @@ export class NavbarDirecteur implements OnInit {
   private routeTitles: { [key: string]: { title: string, breadcrumb: string } } = {
     'directeur': { title: 'Tableau de bord', breadcrumb: 'Vue d\'ensemble' },
     'directeur/listbudget-directeur': { title: 'Gestion des budgets', breadcrumb: 'Budgets' },
-    'directeur/listbudget-directeur/listlignesbudget-directeur': { title: 'Détails du budget', breadcrumb: 'Lignes budgétaires' },
     'directeur/utilisateurs-directeur': { title: 'Utilisateurs et rôles', breadcrumb: 'Gestion des accès' },
     'directeur/depenses-directeur': { title: 'Suivi des dépenses', breadcrumb: 'Dépenses' },
     'directeur/documents-execution-directeur': { title: 'Documents d\'exécution', breadcrumb: 'Documents' },
@@ -55,6 +54,13 @@ export class NavbarDirecteur implements OnInit {
   private updatePageTitle(url: string) {
     // Nettoyer l'URL pour correspondre aux clés du mapping
     const cleanUrl = url.replace(/^\//, ''); // Retirer le slash initial
+    
+    // Vérifier si l'URL correspond à la route des lignes de crédit
+    if (cleanUrl.startsWith('directeur/listbudget-directeur/listlignesbudget-directeur/')) {
+      this.pageTitle = 'Lignes de crédit';
+      this.breadcrumb = 'Détails du budget';
+      return;
+    }
     
     if (this.routeTitles[cleanUrl]) {
       this.pageTitle = this.routeTitles[cleanUrl].title;

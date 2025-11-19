@@ -6,13 +6,37 @@
     </button>
   </div>
 
-  <h3 class="content-title">Lignes de crédit - Budget #{{ budgetId }}</h3>
+  <h3 class="content-title">Lignes de crédit - Budget {{ budgetCode || budgetId }}</h3>
 
   <div class="header-right">
-    <button class="action-btn filter-button">
-      <img src="assets/417_213.svg" alt="Filtrer" />
-      <span>Filtrer</span>
-    </button>
+    <div class="filter-dropdown-container">
+      <button class="action-btn filter-button" (click)="toggleFilterDropdown($event)">
+        <img src="assets/417_213.svg" alt="Filtrer" />
+        <span>Filtrer</span>
+        <span class="active-filter-label" *ngIf="activeFilter !== 'Aucun'">({{ activeFilter }})</span>
+      </button>
+      
+      <div class="filter-dropdown" *ngIf="showFilterDropdown" (click)="$event.stopPropagation()">
+        <div class="dropdown-header">Filtrer par statut</div>
+        <button class="dropdown-item" (click)="applyFilter('Validé')">
+          Validé
+          <span class="check-icon" *ngIf="activeFilter === 'Validé'">✓</span>
+        </button>
+        <button class="dropdown-item" (click)="applyFilter('En cours')">
+          En cours
+          <span class="check-icon" *ngIf="activeFilter === 'En cours'">✓</span>
+        </button>
+        <button class="dropdown-item" (click)="applyFilter('Refusé')">
+          Refusé
+          <span class="check-icon" *ngIf="activeFilter === 'Refusé'">✓</span>
+        </button>
+        <div class="dropdown-divider"></div>
+        <button class="dropdown-item reset" (click)="applyFilter('Aucun')">
+          Réinitialiser le filtre
+        </button>
+      </div>
+    </div>
+    
     <button class="action-btn credit-button" (click)="openCreateLigneModal()">
       <img src="assets/foundation_plus.svg" alt="Ajouter" />
       <span>Nouvelle ligne</span>
@@ -26,7 +50,6 @@
       <div>Intitulé</div>
       <div>Montant Alloué</div>
       <div>Montant Engagé</div>
-      <div>Montant Restant</div>
       <div>Taux d'utilisation</div>
       <div>Statut</div>
       <div>Actions</div>
@@ -50,7 +73,6 @@
         </div>
         <div>{{ ligne.montantAlloue | number }} FCFA</div>
         <div>{{ ligne.montantEngage | number }} FCFA</div>
-        <div>{{ ligne.montantRestant | number }} FCFA</div>
         <div class="col-taux">
           <div class="progress-bar">
             <div class="progress-bar-inner" [style.width.%]="ligne.tauxUtilisation"></div>
@@ -173,10 +195,6 @@
         <div class="detail-group">
           <label>Montant Engagé</label>
           <p class="detail-value">{{ selectedLigne.montantEngage | number:'1.0-0' }} FCFA</p>
-        </div>
-        <div class="detail-group">
-          <label>Montant Restant</label>
-          <p class="detail-value">{{ selectedLigne.montantRestant | number:'1.0-0' }} FCFA</p>
         </div>
         <div class="detail-group">
           <label>Taux d'utilisation</label>

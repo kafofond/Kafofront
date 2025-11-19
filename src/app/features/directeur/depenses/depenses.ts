@@ -50,7 +50,7 @@ export class Depenses implements OnInit, OnDestroy {
       ? this.fichesBesoin
       : this.fichesBesoin.filter(f => this.mapApiStatutToDisplay(f.statut) === this.selectedStatus);
     
-    return filtered.slice(0, 5); // max 5 lignes
+    return filtered.slice(0, ); // max 5 lignes
   }
 
   private subscriptions: Subscription = new Subscription();

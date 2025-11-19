@@ -114,6 +114,119 @@
   vertical-align: middle; /* Assurance supplémentaire */
 }
 
+/* Styles pour les boutons d'action */
+.action-btn {
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 100px;
+}
+
+.btn-activate {
+  background-color: #0b4f63;
+  color: white;
+}
+
+.btn-activate:hover {
+  background-color: #093d4d;
+}
+
+.btn-block {
+  background-color: #ef4444; /* Rouge pour le bouton bloquer */
+  color: white;
+}
+
+.btn-block:hover {
+  background-color: #dc2626; /* Rouge plus foncé au survol */
+}
+
+/* Styles pour la modale de confirmation */
+.confirm-modal {
+  max-width: 400px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.confirm-icon {
+  font-size: 48px;
+  text-align: center;
+  margin: 20px 0;
+  color: #ef4444; /* Rouge pour l'icône d'avertissement */
+}
+
+.confirm-message {
+  text-align: center;
+  font-size: 16px;
+  margin: 20px 0;
+  font-weight: 500;
+  color: #333;
+}
+
+.confirm-warning {
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+  margin: 10px 0 20px;
+  padding: 0 20px;
+}
+
+.modal-header {
+  background-color: #ffffff;
+  border-bottom: 1px solid #ffffff;
+  padding: 20px;
+  border-radius: 8px 8px 0 0;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: #0b4f63;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #999;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-btn:hover {
+  color: #666;
+  background-color: #f3f4f6;
+  border-radius: 50%;
+}
+
+.btn-danger {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-danger:hover {
+  background-color: #dc2626;
+}
+
 .header-color {
     background-color: #E2E8F0;
 }
