@@ -21,6 +21,15 @@ export class ContentbodyFicheDeBesoinGest implements OnInit {
   showConfirmationModal = false;
   rejetMotif = '';
   entrepriseId: number | null = null;
+  
+  // Propriétés pour le filtre de statut
+  showFilterDropdown = false;
+  statutFilter = 'Tous';
+  
+  // Propriétés pour la pagination
+  currentPage = 1;
+  itemsPerPage = 10;
+  totalPages = 0;
 
   constructor(
     private ficheService: FicheBesoinService,
@@ -48,7 +57,7 @@ export class ContentbodyFicheDeBesoinGest implements OnInit {
     this.ficheService.getFichesByEntreprise(this.entrepriseId).subscribe({
       next: (response) => {
         this.fiches = response.fiches;
-        this.filteredFiches = [...this.fiches];
+        this.applyFilters();
         this.isLoading = false;
       },
       error: (error) => {
@@ -167,6 +176,64 @@ export class ContentbodyFicheDeBesoinGest implements OnInit {
 
   // Méthode pour vérifier si la fiche peut être validée
   canValidateFiche(fiche: FicheBesoin): boolean {
-    return fiche.statut !== 'APPROUVE' && fiche.statut !== 'VALIDE' && fiche.statut !== 'REJETE';
+    return fiche.statut !== 'APPROUVE' && fiche.statut !== 'VALIDE';
+  }
+  
+  // Méthode pour calculer le montant total des désignations
+  getTotalMontantDesignations(): number {
+    if (!this.selectedFiche || !this.selectedFiche.designations) {
+      return 0;
+    }
+    return this.selectedFiche.designations.reduce((total, designation) => total + designation.montantTotal, 0);
+  }
+  
+  // Méthodes pour le filtre de statut
+  applyFilters(): void {
+    if (this.statutFilter === 'Tous') {
+      this.filteredFiches = [...this.fiches];
+    } else {
+      this.filteredFiches = this.fiches.filter(fiche => 
+        fiche.statut === this.statutFilter
+      );
+    }
+    
+    // Réinitialiser à la première page après le filtrage
+    this.currentPage = 1;
+    this.updateTotalPages();
+  }
+  
+  // Méthodes pour la pagination
+  get paginatedFiches(): FicheBesoin[] {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    return this.filteredFiches.slice(startIndex, endIndex);
+  }
+  
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
+  }
+  
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+    }
+  }
+  
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
+  }
+  
+  updateTotalPages(): void {
+    this.totalPages = Math.ceil(this.filteredFiches.length / this.itemsPerPage);
+  }
+  
+  onStatutFilterChange(statut: string): void {
+    this.statutFilter = statut;
+    this.showFilterDropdown = false;
+    this.applyFilters();
   }
 }

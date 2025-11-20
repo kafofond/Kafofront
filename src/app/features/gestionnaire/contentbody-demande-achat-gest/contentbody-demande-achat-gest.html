@@ -1,8 +1,8 @@
-<section id="demandes-achat" class="content-body">
+<section id="demandes-achat" class="content-body" (click)="showFilterDropdown = false">
     <div class="controls-bar">
         <div class="filter-group">
             <label for="status-filter">Statut :</label>
-            <div class="filter-dropdown" (click)="showFilterDropdown = !showFilterDropdown">
+            <div class="filter-dropdown" (click)="$event.stopPropagation(); showFilterDropdown = !showFilterDropdown">
                 <span>{{ statutFilter === 'Tous' ? 'Tous les Statuts' : getStatusLabel(statutFilter) }}</span>
                 <!-- Remplacement de l'icône manquante par une icône standard -->
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -11,21 +11,21 @@
             </div>
             
             <!-- Dropdown de filtre -->
-            <div class="filter-dropdown-container" *ngIf="showFilterDropdown">
+            <div class="filter-dropdown-container" *ngIf="showFilterDropdown" (click)="$event.stopPropagation()">
                 <div class="filter-dropdown-menu">
-                    <div class="dropdown-item" (click)="onStatutFilterChange('Tous'); showFilterDropdown = false">
+                    <div class="dropdown-item" (click)="onStatutFilterChange('Tous')">
                         Tous les Statuts
                     </div>
-                    <div class="dropdown-item" (click)="onStatutFilterChange('EN_COURS'); showFilterDropdown = false">
+                    <div class="dropdown-item" (click)="onStatutFilterChange('EN_COURS')">
                         En cours
                     </div>
-                    <div class="dropdown-item" (click)="onStatutFilterChange('APPROUVE'); showFilterDropdown = false">
+                    <div class="dropdown-item" (click)="onStatutFilterChange('APPROUVE')">
                         Approuvé
                     </div>
-                    <div class="dropdown-item" (click)="onStatutFilterChange('VALIDE'); showFilterDropdown = false">
+                    <div class="dropdown-item" (click)="onStatutFilterChange('VALIDE')">
                         Validé
                     </div>
-                    <div class="dropdown-item" (click)="onStatutFilterChange('REJETE'); showFilterDropdown = false">
+                    <div class="dropdown-item" (click)="onStatutFilterChange('REJETE')">
                         Rejeté
                     </div>
                 </div>
@@ -43,7 +43,7 @@
     </div>
 
     <div class="data-table-container">
-        <h2 class="table-title">Demandes d'achat</h2>
+        <!-- <h2 class="table-title">Demandes d'achat</h2> -->
         
         <!-- Loading State -->
         <div *ngIf="isLoading" class="loading-state">
@@ -62,13 +62,12 @@
                 <div class="table-cell">Objet</div>
                 <div class="table-cell">Montant</div>
                 <div class="table-cell">Fournisseur</div>
-                <div class="table-cell">Date</div>
                 <div class="table-cell">Statut</div>
                 <div class="table-cell">Actions</div>
             </div>
             
             <div class="table-body">
-                <div class="table-row" *ngFor="let demande of filteredDemandes">
+                <div class="table-row" *ngFor="let demande of paginatedDemandes">
                     <div class="table-cell" data-label="Auteur">
                         <div class="author-info">
                             <div class="author-name">{{ demande.createurNom || 'Non spécifié' }}</div>
@@ -85,9 +84,6 @@
                     <div class="table-cell" data-label="Fournisseur">
                         <div class="fournisseur">{{ demande.fournisseur || 'Non spécifié' }}</div>
                     </div>
-                    <div class="table-cell" data-label="Date">
-                        <div class="date">{{ demande.dateCreation | date:'dd/MM/yyyy' }}</div>
-                    </div>
                     <div class="table-cell" data-label="Statut">
                         <span class="status-badge" [ngClass]="demande.statut.toLowerCase()">
                             {{ getStatusLabel(demande.statut) }}
@@ -95,7 +91,7 @@
                     </div>
                     <div class="table-cell" data-label="Actions">
                         <div class="action-buttons">
-                            <button class="action-btn" (click)="viewDetails(demande)" title="Voir détails">
+                            <button class="action-btn" (click)="openDetailsModal(demande)" title="Voir détails">
                                 <!-- Remplacement de l'icône manquante -->
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                   <path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -126,6 +122,21 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            
+            <!-- Pagination Controls -->
+            <div class="pagination-controls" *ngIf="totalPages > 1">
+                <button class="pagination-btn" (click)="previousPage()" [disabled]="currentPage === 1">
+                    Précédent
+                </button>
+                
+                <span class="pagination-info">
+                    Page {{ currentPage }} sur {{ totalPages }}
+                </span>
+                
+                <button class="pagination-btn" (click)="nextPage()" [disabled]="currentPage === totalPages">
+                    Suivant
+                </button>
             </div>
             
             <!-- Empty State -->
@@ -166,6 +177,59 @@
         <div class="modal-footer">
             <button class="btn btn-secondary" (click)="cancelReject()">Annuler</button>
             <button class="btn btn-danger" [disabled]="!rejectComment.trim()" (click)="rejectDemande()">Rejeter</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modale de détails -->
+<div class="modal-overlay" *ngIf="showDetailsModal" (click)="closeDetailsModal()">
+    <div class="modal-content detail-modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header detail-header">
+            <h2 class="modal-title">Détails de la demande d'achat</h2>
+            <button class="close-btn" (click)="closeDetailsModal()">
+                <!-- Remplacement de l'icône manquante -->
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+        
+        <div class="detail-body" *ngIf="selectedDemande">
+            <div class="detail-section full-width-fields">
+                <div class="detail-group">
+                    <label>Code</label>
+                    <p class="detail-value">{{ selectedDemande.code }}</p>
+                </div>
+                <div class="detail-group">
+                    <label>Auteur</label>
+                    <p class="detail-value">{{ selectedDemande.createurNom || 'Non spécifié' }}</p>
+                </div>
+                <div class="detail-group">
+                    <label>Fournisseur</label>
+                    <p class="detail-value">{{ selectedDemande.fournisseur || 'Non spécifié' }}</p>
+                </div>
+            </div>
+            
+            <div class="detail-section grid-fields">
+                <div class="detail-group">
+                    <label>Montant total</label>
+                    <p class="detail-value">{{ selectedDemande.montantTotal | number:'1.0-0' }} FCFA</p>
+                </div>
+                <div class="detail-group">
+                    <label>Statut</label>
+                    <span class="status-badge" [ngClass]="selectedDemande.statut.toLowerCase()">{{ getStatusLabel(selectedDemande.statut) }}</span>
+                </div>
+                <div class="detail-group">
+                    <label>Date de création</label>
+                    <p class="detail-value">{{ selectedDemande.dateCreation | date:'dd/MM/yyyy' }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal-footer detail-footer">
+            <p class="creation-info">Créé le : {{ selectedDemande?.dateCreation | date:'dd/MM/yyyy' }}</p>
+            <button class="btn btn-primary" (click)="closeDetailsModal()">Fermer</button>
         </div>
     </div>
 </div>

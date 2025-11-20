@@ -1,16 +1,16 @@
 <section id="attestations" class="content-body">
     <div class="controls-bar">
-        <div class="filter-group">
+        <!-- <div class="filter-group">
             <label for="status-filter">Statut :</label>
             <div class="filter-dropdown" (click)="showFilterDropdown = !showFilterDropdown">
                 <span>Tous les Statuts</span>
-                <!-- Remplacement de l'icône manquante par une icône standard -->
+                
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </div>
             
-            <!-- Dropdown de filtre -->
+            
             <div class="filter-dropdown-container" *ngIf="showFilterDropdown">
                 <div class="filter-dropdown-menu">
                     <div class="dropdown-item" (click)="showFilterDropdown = false">
@@ -18,7 +18,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
         <button class="export-button">
             <!-- Remplacement de l'icône manquante par une icône standard -->
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -31,7 +31,7 @@
     </div>
 
     <div class="data-table-container">
-        <h2 class="table-title">Attestations de service fait</h2>
+        <!-- <h2 class="table-title">Attestations de service fait</h2> -->
         
         <!-- Loading State -->
         <div *ngIf="isLoading" class="loading-state">
@@ -54,7 +54,7 @@
             </div>
             
             <div class="table-body">
-                <div class="table-row" *ngFor="let attestation of filteredAttestations">
+                <div class="table-row" *ngFor="let attestation of paginatedAttestations">
                     <div class="table-cell" data-label="Référence bon de commande">{{ attestation.referenceBonCommande }}</div>
                     <div class="table-cell" data-label="Fournisseur">{{ attestation.fournisseur }}</div>
                     <div class="table-cell" data-label="Titre">{{ attestation.titre }}</div>
@@ -77,14 +77,29 @@
             <div *ngIf="filteredAttestations.length === 0 && !isLoading" class="empty-state">
                 <p>Aucune attestation de service fait trouvée</p>
             </div>
+            
+            <!-- Pagination Controls -->
+            <div class="pagination-controls" *ngIf="totalPages > 1">
+                <button class="pagination-btn" (click)="previousPage()" [disabled]="currentPage === 1">
+                    Précédent
+                </button>
+                
+                <span class="pagination-info">
+                    Page {{ currentPage }} sur {{ totalPages }}
+                </span>
+                
+                <button class="pagination-btn" (click)="nextPage()" [disabled]="currentPage === totalPages">
+                    Suivant
+                </button>
+            </div>
         </div>
     </div>
 </section>
 
 <!-- Modal pour les détails de l'attestation -->
 <div class="modal-overlay" *ngIf="showDetailsModal" (click)="closeDetailsModal()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-        <div class="modal-header">
+    <div class="modal-content detail-modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header detail-header">
             <h2 class="modal-title">Détails de l'attestation de service fait</h2>
             <button class="close-btn" (click)="closeDetailsModal()">
                 <!-- Remplacement de l'icône manquante -->
@@ -95,30 +110,30 @@
             </button>
         </div>
         
-        <div class="modal-body" *ngIf="selectedAttestation">
-            <div class="detail-section">
-                <h3>Informations générales</h3>
-                <div class="detail-row">
-                    <span class="label">Référence bon de commande:</span>
-                    <span class="value">{{ selectedAttestation.referenceBonCommande }}</span>
+        <div class="detail-body" *ngIf="selectedAttestation">
+            <div class="detail-section full-width-fields">
+                <div class="detail-group">
+                    <label>Référence bon de commande</label>
+                    <p class="detail-value">{{ selectedAttestation.referenceBonCommande }}</p>
                 </div>
-                <div class="detail-row">
-                    <span class="label">Fournisseur:</span>
-                    <span class="value">{{ selectedAttestation.fournisseur }}</span>
+                <div class="detail-group">
+                    <label>Fournisseur</label>
+                    <p class="detail-value">{{ selectedAttestation.fournisseur }}</p>
                 </div>
-                <div class="detail-row">
-                    <span class="label">Titre:</span>
-                    <span class="value">{{ selectedAttestation.titre }}</span>
+                <div class="detail-group">
+                    <label>Titre</label>
+                    <p class="detail-value">{{ selectedAttestation.titre }}</p>
                 </div>
-                <div class="detail-row">
-                    <span class="label">Date d'envoi:</span>
-                    <span class="value">{{ selectedAttestation.dateCreation | date:'dd/MM/yyyy' }}</span>
+                <div class="detail-group">
+                    <label>Date d'envoi</label>
+                    <p class="detail-value">{{ selectedAttestation.dateCreation | date:'dd/MM/yyyy' }}</p>
                 </div>
             </div>
         </div>
         
-        <div class="modal-footer">
-            <button class="btn btn-secondary" (click)="closeDetailsModal()">Fermer</button>
+        <div class="modal-footer detail-footer">
+            <p class="creation-info">Créé le : {{ selectedAttestation?.dateCreation | date:'dd/MM/yyyy' }}</p>
+            <button class="btn btn-primary" (click)="closeDetailsModal()">Fermer</button>
         </div>
     </div>
 </div>

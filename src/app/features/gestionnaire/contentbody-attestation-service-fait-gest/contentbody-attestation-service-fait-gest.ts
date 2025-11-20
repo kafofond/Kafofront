@@ -25,6 +25,11 @@ export class ContentbodyAttestationServiceFaitGest implements OnInit {
   entrepriseId: number | null = null;
   showFilterDropdown = false;
   
+  // Propriétés pour la pagination
+  currentPage: number = 1;
+  itemsPerPage: number = 10;
+  totalPages: number = 0;
+  
   // Propriétés pour la modale de détails
   showDetailsModal = false;
   selectedAttestation: Attestation | null = null;
@@ -62,6 +67,7 @@ export class ContentbodyAttestationServiceFaitGest implements OnInit {
           dateCreation: att.dateCreation
         }));
         this.filteredAttestations = [...this.attestations];
+        this.calculatePagination();
         this.isLoading = false;
       },
       error: (error: any) => {
@@ -70,6 +76,38 @@ export class ContentbodyAttestationServiceFaitGest implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  calculatePagination(): void {
+    this.totalPages = Math.ceil(this.filteredAttestations.length / this.itemsPerPage);
+    // S'assurer que la page actuelle ne dépasse pas le nombre total de pages
+    if (this.currentPage > this.totalPages && this.totalPages > 0) {
+      this.currentPage = this.totalPages;
+    }
+  }
+
+  get paginatedAttestations(): Attestation[] {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    return this.filteredAttestations.slice(startIndex, endIndex);
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+    }
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
   }
 
   // Méthode temporaire pour éviter les erreurs
