@@ -61,7 +61,7 @@
                   [ngClass]="{
                     'status-success': bon.statut === 'Validé',
                     'status-danger': bon.statut === 'Rejeté',
-                    'status-pending': bon.statut === 'En attente'
+                    'status-pending': bon.statut === 'En attente' || bon.statut === 'En cours'
                   }">
               {{ bon.statut }}
             </span>

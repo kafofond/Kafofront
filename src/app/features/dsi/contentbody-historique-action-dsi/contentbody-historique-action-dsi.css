@@ -75,6 +75,9 @@
 .action-status.rejete { background-color: #fad9d9; color: #991b1b; }
 .action-status.desactive { background-color: #cbdaf7; color: #374151; }
 .action-status.reactive { background-color: #c4f5e1; color: #1e40af; }
+.action-status.approuve { background-color: #e0f2fe; color: #0369a1; }
+.action-status.active { background-color: #dcfce7; color: #166534; }
+.action-status.miseajour { background-color: #e0e7ff; color: #4f46e5; }
 
 /* --- AUTRES --- */
 .header-color {

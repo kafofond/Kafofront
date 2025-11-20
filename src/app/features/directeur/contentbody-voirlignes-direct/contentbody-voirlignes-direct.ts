@@ -11,6 +11,7 @@ import {
   LigneCredit,
   Commentaire 
 } from '../../../services/ligne-credit.service';
+import { BudgetService, Budget } from '../../../services/budget.service';
 
 @Component({
   selector: 'app-contentbody-voirlignes-direct',
@@ -27,16 +28,22 @@ export class ContentbodyVoirlignesDirect implements OnInit, OnDestroy {
   showEditLigneModal: boolean = false;
   showRejetLigneModal: boolean = false;
   showDesactivationLigneModal: boolean = false;
+  showFilterDropdown: boolean = false;
   
   // Données
+  allLignes: LigneBudget[] = [];
   lignes: LigneBudget[] = [];
   isLoading: boolean = true;
   errorMessage: string = '';
   budgetId: number = 0;
+  budgetCode: string = '';
   
   // Ligne sélectionnée
   selectedLigne: LigneBudget | null = null;
   selectedLigneCredit: LigneCredit | null = null;
+  
+  // Filtrage
+  activeFilter: string = 'Aucun';
   
   // Formulaires
   newLigneCredit: any = {
@@ -57,9 +64,11 @@ export class ContentbodyVoirlignesDirect implements OnInit, OnDestroy {
 
   private lignesSubscription?: Subscription;
   private routeSubscription?: Subscription;
+  private budgetSubscription?: Subscription;
 
   constructor(
     private ligneCreditService: LigneCreditService,
+    private budgetService: BudgetService,
     private route: ActivatedRoute,
     private router: Router
   ) { }
@@ -75,12 +84,16 @@ export class ContentbodyVoirlignesDirect implements OnInit, OnDestroy {
       
       if (this.budgetId && !isNaN(this.budgetId)) {
         console.log('✅ Budget ID valide, chargement des lignes...');
+        this.loadBudgetInfo();
         this.loadLignes();
       } else {
         console.error('❌ Budget ID invalide:', this.budgetId);
         this.handleRoutingError();
       }
     });
+    
+    // Ajouter l'écouteur d'événements pour fermer le dropdown
+    document.addEventListener('click', this.onClickOutside.bind(this));
   }
 
   ngOnDestroy(): void {
@@ -90,6 +103,23 @@ export class ContentbodyVoirlignesDirect implements OnInit, OnDestroy {
     if (this.routeSubscription) {
       this.routeSubscription.unsubscribe();
     }
+    if (this.budgetSubscription) {
+      this.budgetSubscription.unsubscribe();
+    }
+    
+    // Retirer l'écouteur d'événements
+    document.removeEventListener('click', this.onClickOutside.bind(this));
+  }
+
+  loadBudgetInfo(): void {
+    this.budgetSubscription = this.budgetService.getBudgetById(this.budgetId).subscribe({
+      next: (budget) => {
+        this.budgetCode = budget.code;
+      },
+      error: (error) => {
+        console.error('❌ Erreur chargement informations budget:', error);
+      }
+    });
   }
 
   loadLignes(): void {
@@ -101,9 +131,10 @@ export class ContentbodyVoirlignesDirect implements OnInit, OnDestroy {
     this.lignesSubscription = this.ligneCreditService.getLignesByBudget(this.budgetId).subscribe({
       next: (response) => {
         console.log('✅ Lignes chargées pour le budget:', this.budgetId, response);
-        this.lignes = response.lignes.map(apiLigne => 
+        this.allLignes = response.lignes.map(apiLigne => 
           mapApiLigneToLigneBudget(apiLigne)
         );
+        this.lignes = [...this.allLignes];
         this.isLoading = false;
       },
       error: (error) => {
@@ -112,6 +143,30 @@ export class ContentbodyVoirlignesDirect implements OnInit, OnDestroy {
         this.isLoading = false;
       }
     });
+  }
+
+  // MÉTHODES DE FILTRAGE
+  toggleFilterDropdown(event: Event): void {
+    event.stopPropagation();
+    this.showFilterDropdown = !this.showFilterDropdown;
+  }
+
+  applyFilter(filterType: string): void {
+    this.activeFilter = filterType;
+    this.showFilterDropdown = false;
+    
+    if (filterType === 'Aucun') {
+      this.lignes = [...this.allLignes];
+    } else {
+      this.lignes = this.allLignes.filter(ligne => ligne.statut === filterType);
+    }
+  }
+
+  onClickOutside(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.filter-dropdown') && this.showFilterDropdown) {
+      this.showFilterDropdown = false;
+    }
   }
 
   // MÉTHODES POUR LES ACTIONS AUTOMATIQUES

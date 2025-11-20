@@ -31,7 +31,7 @@ a, button {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 34px;
+  margin-bottom: 50px;
   padding: 0 35px;
 }
 
@@ -113,6 +113,8 @@ a, button {
   color: rgba(0, 0, 0, 0.67); /* --color-text-muted */
   background-color: #e2e8f0; /* --color-background */
   border-radius: 15px;
+  padding: 20px 35px;
+  margin: 0 24px;
 }
 
 .table-row {

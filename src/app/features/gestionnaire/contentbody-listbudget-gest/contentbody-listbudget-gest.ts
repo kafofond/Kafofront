@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, Router } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { FormsModule } from '@angular/forms';
 import { BudgetService } from '../../../services/budget.service';
 import { BudgetItem, mapApiBudgetToBudgetItem } from '../../../models/budget-item.model';
@@ -9,7 +9,7 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-contentbody-listbudget-gest',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './contentbody-listbudget-gest.html',
   styleUrls: ['./contentbody-listbudget-gest.css']
 })

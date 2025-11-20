@@ -7,18 +7,18 @@
         </button>
 
         <div class="filter-dropdown" *ngIf="showFilterDropdown" (click)="$event.stopPropagation()">
-            <div class="dropdown-header">Filtrer par période</div>
-            <button class="dropdown-item" (click)="applyFilter('Ce mois')">
-                Ce mois
-                <span class="check-icon" *ngIf="activeFilter === 'Ce mois'">✓</span>
+            <div class="dropdown-header">Filtrer par statut</div>
+            <button class="dropdown-item" (click)="applyFilter('Validé')">
+                Validé
+                <span class="check-icon" *ngIf="activeFilter === 'Validé'">✓</span>
             </button>
-            <button class="dropdown-item" (click)="applyFilter('Ce trimestre')">
-                Ce trimestre
-                <span class="check-icon" *ngIf="activeFilter === 'Ce trimestre'">✓</span>
+            <button class="dropdown-item" (click)="applyFilter('En cours')">
+                En cours
+                <span class="check-icon" *ngIf="activeFilter === 'En cours'">✓</span>
             </button>
-            <button class="dropdown-item" (click)="applyFilter('L\'année dernière')">
-                L'année dernière
-                <span class="check-icon" *ngIf="activeFilter === 'L\'année dernière'">✓</span>
+            <button class="dropdown-item" (click)="applyFilter('Refusé')">
+                Refusé
+                <span class="check-icon" *ngIf="activeFilter === 'Refusé'">✓</span>
             </button>
             <div class="dropdown-divider"></div>
             <button class="dropdown-item reset" (click)="applyFilter('Aucun')">
@@ -36,7 +36,6 @@
     <div class="budget-table">
         <div class="table-header">
             <div>Intitulé</div>
-            <div>Description</div>
             <div>État</div>
             <div>Statut</div>
             <div>Montant Alloué</div>
@@ -45,7 +44,6 @@
         <div class="table-body">
             <div class="table-row" *ngFor="let budget of budgets">
                 <div>{{ budget.intituleBudget }}</div>
-                <div>{{ budget.description }}</div>
                 <div>
                     <span [class]="getEtatBadgeClass(budget.etat)">{{ budget.etat }}</span>
                 </div>
@@ -62,10 +60,24 @@
                         <img src="assets/32_236.svg" alt="Modifier">
                     </button>
                 </div>
-
             </div>
         </div>
     </div>
+</div>
+
+<!-- Pagination Controls -->
+<div class="pagination-controls" *ngIf="totalPages > 1">
+    <button class="pagination-btn" (click)="prevPage()" [disabled]="currentPage === 1">
+        Précédent
+    </button>
+    
+    <span class="pagination-info">
+        Page {{ currentPage }} sur {{ totalPages }}
+    </span>
+    
+    <button class="pagination-btn" (click)="nextPage()" [disabled]="currentPage === totalPages">
+        Suivant
+    </button>
 </div>
 
 <!-- Modal Création Budget -->

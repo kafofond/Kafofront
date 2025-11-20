@@ -14,6 +14,7 @@ import { HttpClientModule } from '@angular/common/http';
 export class ContentbodyHistoriqueActionDsi implements OnInit {
 
   filtreAction: string = 'toutes';
+  filtreTypeDocument: string = 'tous';
   historiques: HistoriqueAction[] = [];
   isLoading: boolean = false;
   error: string = '';
@@ -32,23 +33,43 @@ export class ContentbodyHistoriqueActionDsi implements OnInit {
     this.isLoading = true;
     this.error = '';
 
-    this.historiqueService.getHistoriqueUtilisateur().subscribe({
-      next: (response) => {
-        this.historiques = response.historique;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        if (err.status === 0) {
-          this.error = 'Erreur de connexion au serveur. Vérifiez que le serveur est démarré.';
-        } else if (err.status === 403) {
-          this.error = 'Accès refusé. Vérifiez vos autorisations.';
-        } else {
-          this.error = 'Erreur lors du chargement de l\'historique';
+    if (this.filtreTypeDocument === 'tous') {
+      this.historiqueService.getHistoriqueEntreprise().subscribe({
+        next: (response) => {
+          this.historiques = response.historique;
+          this.isLoading = false;
+        },
+        error: (err) => {
+          if (err.status === 0) {
+            this.error = 'Erreur de connexion au serveur. Vérifiez que le serveur est démarré.';
+          } else if (err.status === 403) {
+            this.error = 'Accès refusé. Vérifiez vos autorisations.';
+          } else {
+            this.error = 'Erreur lors du chargement de l\'historique';
+          }
+          this.isLoading = false;
+          console.error('Erreur historique:', err);
         }
-        this.isLoading = false;
-        console.error('Erreur historique:', err);
-      }
-    });
+      });
+    } else {
+      this.historiqueService.getHistoriqueEntrepriseParType(this.filtreTypeDocument).subscribe({
+        next: (response) => {
+          this.historiques = response.historique;
+          this.isLoading = false;
+        },
+        error: (err) => {
+          if (err.status === 0) {
+            this.error = 'Erreur de connexion au serveur. Vérifiez que le serveur est démarré.';
+          } else if (err.status === 403) {
+            this.error = 'Accès refusé. Vérifiez vos autorisations.';
+          } else {
+            this.error = 'Erreur lors du chargement de l\'historique';
+          }
+          this.isLoading = false;
+          console.error('Erreur historique:', err);
+        }
+      });
+    }
   }
 
   transformHistoriqueData(historique: HistoriqueAction): any {
@@ -57,6 +78,7 @@ export class ContentbodyHistoriqueActionDsi implements OnInit {
       fichier: this.historiqueService.genererNomFichier(historique),
       auteur: historique.utilisateurNomComplet,
       typeDocument: this.historiqueService.formaterTypeDocument(historique.typeDocument),
+      typeDocumentFormate: this.historiqueService.formaterTypeDocument(historique.typeDocument),
       action: this.historiqueService.formaterAction(historique.action),
       date: new Date(historique.dateAction)
     };
@@ -70,7 +92,9 @@ export class ContentbodyHistoriqueActionDsi implements OnInit {
       'cree': 'Créé',
       'modifie': 'Modifié',
       'valide': 'Validé',
-      'rejete': 'Rejeté'
+      'rejete': 'Rejeté',
+      'approuve': 'Approuvé',
+      'active': 'Activé'
     };
 
     return historiquesTransformes.filter(h => h.action === filtreMap[this.filtreAction]);
@@ -95,6 +119,8 @@ export class ContentbodyHistoriqueActionDsi implements OnInit {
   }
 
   retry() {
+    this.filtreAction = 'toutes';
+    this.filtreTypeDocument = 'tous';
     this.loadHistorique();
   }
 }

@@ -89,6 +89,7 @@
   padding: 12px 15px; /* Augmentation de l'espacement horizontal */
   text-align: left;
   border-bottom: 1px solid #e2e8f0;
+  
 }
 
 /* Augmentation des espacements entre les colonnes */
@@ -280,6 +281,41 @@
 
 .header-color {
   background-color: #E2E8F0;
+}
+
+/* Coins arrondis pour l'en-tête du tableau */
+thead.header-color th:first-child {
+  border-top-left-radius: 10px;
+}
+
+thead.header-color th:last-child {
+  border-top-right-radius: 10px;
+}
+
+/* Alternative : Conteneur avec coins arrondis */
+.table-container {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* Style du tableau avec coins arrondis */
+.utilisateurs-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.utilisateurs-table thead th {
+  border-top: none;
+}
+
+.utilisateurs-table thead.header-color th:first-child {
+  border-top-left-radius: 10px;
+}
+
+.utilisateurs-table thead.header-color th:last-child {
+  border-top-right-radius: 10px;
 }
 
 .error-banner {

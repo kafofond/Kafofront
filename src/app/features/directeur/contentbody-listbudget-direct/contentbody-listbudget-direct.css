@@ -30,9 +30,11 @@ button {
 .content-toolbar {
     display: flex; 
     gap: 15px;
-    margin-bottom: 34px;
+    margin-bottom: 40px;
     margin-left: 326px;
-    justify-content: flex-start;
+    justify-content: flex-end;
+    margin-right: 20px;
+    padding-top: 20px;
 }
 
 /* --- Styles pour le bouton de Filtre et le Dropdown --- */
@@ -78,7 +80,8 @@ button {
     top: 100%;
     right: 0;
     z-index: 10;
-    min-width: 220px;
+    min-width: auto;
+    width: 100%;
     background: #fff;
     border: 1px solid #e2e8f0;
     border-radius: 8px;
@@ -138,12 +141,18 @@ button {
     border: 1px solid #e2e8f0;
     padding: 10px;
     flex-grow: 1;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: -20px;
+    margin-bottom: 30px;
+    max-height: 70vh;
+    overflow-y: auto;
 }
 
 .table-header,
 .table-row {
     display: grid;
-    grid-template-columns: 1.2fr 1.5fr 1.2fr 1fr 1.3fr 1.5fr;
+    grid-template-columns: 1.5fr 1.2fr 1fr 1.3fr 1.5fr;
     align-items: center;
     padding: 20px 24px;
 }
@@ -655,4 +664,42 @@ input:checked + .slider:before {
     .creation-info {
         align-self: flex-start;
     }
+}
+
+/* --- Pagination --- */
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin: 20px 0;
+    padding: 0 20px;
+}
+
+.pagination-btn {
+    padding: 8px 16px;
+    background-color: #f59e0b;
+    color: #0b4f63;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background-color: #f9aa21;
+}
+
+.pagination-btn:disabled {
+    background-color: #e2e8f0;
+    color: #94a3b8;
+    cursor: not-allowed;
+}
+
+.pagination-info {
+    font-weight: 600;
+    color: #0b4f63;
+    min-width: 120px;
+    text-align: center;
 }

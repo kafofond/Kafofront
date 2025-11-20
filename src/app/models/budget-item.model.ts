@@ -46,7 +46,7 @@ function mapApiStatutToDisplay(apiStatut: string): string {
   const statutMap: { [key: string]: string } = {
     'VALIDE': 'Validé',
     'EN_COURS': 'En cours',
-    'REFUSE': 'Refusé'
+    'REJETE': 'Refusé'
   };
   return statutMap[apiStatut] || apiStatut;
 }

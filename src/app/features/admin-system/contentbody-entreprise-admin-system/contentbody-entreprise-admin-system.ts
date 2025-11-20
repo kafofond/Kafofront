@@ -30,6 +30,11 @@ export class ContentbodyEntrepriseAdminSystem implements OnInit {
     email: ''
   };
 
+  // Variables pour le popup de confirmation
+  showConfirmModal: boolean = false;
+  entrepriseToDeactivate: Entreprise | null = null;
+  confirmMessage: string = '';
+
   constructor(private entrepriseService: EntrepriseService) {}
 
   ngOnInit() {
@@ -100,18 +105,64 @@ export class ContentbodyEntrepriseAdminSystem implements OnInit {
     });
   }
 
+  // Méthodes pour activer/désactiver
   bloquerEntreprise(entreprise: Entreprise) {
-    const nouvelleEntreprise = { ...entreprise, etat: !entreprise.etat };
+    // Si l'entreprise est déjà bloquée, on la réactive directement
+    if (!entreprise.etat) {
+      this.reactiverEntreprise(entreprise);
+      return;
+    }
+
+    // Sinon, on ouvre la modale de confirmation
+    this.openConfirmModal(entreprise);
+  }
+
+  reactiverEntreprise(entreprise: Entreprise) {
+    const nouvelleEntreprise = { ...entreprise, etat: true };
     
     this.entrepriseService.updateEntreprise(entreprise.id, nouvelleEntreprise).subscribe({
       next: () => {
-        entreprise.etat = !entreprise.etat;
-        const action = entreprise.etat ? 'activée' : 'bloquée';
+        entreprise.etat = true;
+        const action = 'activée';
         //alert(`${entreprise.nom} a été ${action} avec succès.`);
         this.loadEntreprises(); // Recharger les données
       },
       error: (error) => {
         alert(`Erreur lors de la modification de l'entreprise: ${error.message}`);
+      }
+    });
+  }
+
+  // Méthodes pour le popup de confirmation
+  openConfirmModal(entreprise: Entreprise): void {
+    this.entrepriseToDeactivate = entreprise;
+    this.confirmMessage = `Êtes-vous sûr de vouloir bloquer ${entreprise.nom} ?`;
+    this.showConfirmModal = true;
+  }
+
+  closeConfirmModal(): void {
+    this.showConfirmModal = false;
+    this.entrepriseToDeactivate = null;
+    this.confirmMessage = '';
+  }
+
+  confirmDeactivation(): void {
+    if (!this.entrepriseToDeactivate) return;
+
+    const entreprise = this.entrepriseToDeactivate;
+    const nouvelleEntreprise = { ...entreprise, etat: false };
+    
+    this.entrepriseService.updateEntreprise(entreprise.id, nouvelleEntreprise).subscribe({
+      next: () => {
+        entreprise.etat = false;
+        const action = 'bloquée';
+        //alert(`${entreprise.nom} a été ${action} avec succès.`);
+        this.closeConfirmModal();
+        this.loadEntreprises(); // Recharger les données
+      },
+      error: (error) => {
+        alert(`Erreur lors de la modification de l'entreprise: ${error.message}`);
+        this.closeConfirmModal();
       }
     });
   }

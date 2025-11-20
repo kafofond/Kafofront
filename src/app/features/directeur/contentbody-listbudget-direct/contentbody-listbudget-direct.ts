@@ -16,9 +16,15 @@ import { Subscription } from 'rxjs';
 })
 export class ContentbodyListbudgetDirect implements OnInit, OnDestroy {
   
+  allBudgets: BudgetItem[] = [];
   budgets: BudgetItem[] = [];
   isLoading: boolean = true;
   errorMessage: string = '';
+
+  // Pagination properties
+  currentPage: number = 1;
+  itemsPerPage: number = 10;
+  totalPages: number = 0;
 
   showCreateModal: boolean = false;
   showDetailModal: boolean = false;
@@ -76,9 +82,10 @@ export class ContentbodyListbudgetDirect implements OnInit, OnDestroy {
 
     this.budgetsSubscription = this.budgetService.getBudgets().subscribe({
       next: (response) => {
-        this.budgets = response.budgets.map(apiBudget => 
+        this.allBudgets = response.budgets.map(apiBudget => 
           mapApiBudgetToBudgetItem(apiBudget)
         );
+        this.updatePagination();
         this.isLoading = false;
       },
       error: (error) => {
@@ -89,7 +96,6 @@ export class ContentbodyListbudgetDirect implements OnInit, OnDestroy {
     });
   }
 
-  // ... (le reste des méthodes existantes reste inchangé)
   onStatutChange(event: Event): void {
     const newValue = (event.target as HTMLSelectElement).value;
 
@@ -200,6 +206,40 @@ export class ContentbodyListbudgetDirect implements OnInit, OnDestroy {
     });
   }
 
+  // Pagination methods
+  updatePagination(): void {
+    this.totalPages = Math.ceil(this.allBudgets.length / this.itemsPerPage);
+    this.goToPage(1);
+  }
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.totalPages) return;
+    
+    this.currentPage = page;
+    const startIndex = (page - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    
+    // Apply filter if active
+    let filteredBudgets = this.allBudgets;
+    if (this.activeFilter !== 'Aucun') {
+      filteredBudgets = this.allBudgets.filter(budget => budget.statut === this.activeFilter);
+    }
+    
+    this.budgets = filteredBudgets.slice(startIndex, endIndex);
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.goToPage(this.currentPage + 1);
+    }
+  }
+
+  prevPage(): void {
+    if (this.currentPage > 1) {
+      this.goToPage(this.currentPage - 1);
+    }
+  }
+
   // MÉTHODES EXISTANTES
   toggleFilterDropdown(event: Event): void {
     event.stopPropagation();
@@ -209,6 +249,7 @@ export class ContentbodyListbudgetDirect implements OnInit, OnDestroy {
   applyFilter(filterType: string): void {
     this.activeFilter = filterType;
     this.showFilterDropdown = false;
+    this.updatePagination();
   }
 
   onClickOutside(event: MouseEvent): void {

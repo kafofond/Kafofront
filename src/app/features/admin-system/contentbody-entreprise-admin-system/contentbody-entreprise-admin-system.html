@@ -37,7 +37,7 @@
       <thead class="header-color">
         <tr>
           <th>Nom</th>
-          <th>Adresse</th>
+          <!-- <th>Adresse</th> -->
           <th>Domaine</th>
           <th>Email</th>
           <th>Téléphone</th>
@@ -50,7 +50,7 @@
       <tbody>
         <tr *ngFor="let e of filteredEntreprises">
           <td>{{ e.nom }}</td>
-          <td>{{ e.adresse }}</td>
+          <!-- <td>{{ e.adresse }}</td> -->
           <td>{{ e.domaine }}</td>
           <td>{{ e.email }}</td>
           <td>{{ e.telephone }}</td>
@@ -61,12 +61,11 @@
             </span>
           </td>
           <td class="actions">
-            <button class="action-btn" (click)="openDetailModal(e)" title="Voir détails">
-              <img src="assets/87_501.svg" alt="Voir détails" />
+            <button class="action-btn btn-activate" (click)="openDetailModal(e)" title="Voir détails">
+              Voir détails
             </button>
-            <button class="action-btn" (click)="bloquerEntreprise(e)" [title]="e.etat ? 'Bloquer' : 'Activer'">
-              <img [src]="e.etat ? 'assets/bx_block.svg' : 'assets/check-circle.svg'" 
-                   [alt]="e.etat ? 'Bloquer' : 'Activer'" />
+            <button class="action-btn" [ngClass]="e.etat ? 'btn-block' : 'btn-activate'" (click)="bloquerEntreprise(e)" [title]="e.etat ? 'Bloquer' : 'Activer'">
+              {{ e.etat ? 'Bloquer' : 'Activer' }}
             </button>
           </td>
         </tr>
@@ -157,6 +156,27 @@
       <div class="modal-footer">
         <button class="btn btn-secondary" (click)="closeAjouterModal()">Annuler</button>
         <button class="btn btn-primary" (click)="creerEntreprise()" [disabled]="!entrepriseForm.valid">Valider</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Popup de confirmation pour la désactivation -->
+  <div *ngIf="showConfirmModal" class="modal-overlay">
+    <div class="modal confirm-modal">
+      <div class="modal-header">
+        <h3>Confirmation de blocage</h3>
+        <button class="close-btn" (click)="closeConfirmModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="confirm-icon">
+          ⚠️
+        </div>
+        <p class="confirm-message">{{ confirmMessage }}</p>
+        <p class="confirm-warning">Cette action empêchera l'entreprise d'utiliser le système.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeConfirmModal()">Annuler</button>
+        <button class="btn btn-danger" (click)="confirmDeactivation()">Confirmer le blocage</button>
       </div>
     </div>
   </div>

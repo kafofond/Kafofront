@@ -85,7 +85,7 @@
 
 .utilisateurs-table th,
 .utilisateurs-table td {
-  padding: 12px 10px;
+  padding: 10px 10px;
   text-align: left;
   border-bottom: 1px solid #e2e8f0;
   vertical-align: middle;
@@ -103,10 +103,21 @@
   color: #334155;
 }
 
-.utilisateurs-table th:nth-child(7),
-.utilisateurs-table td:nth-child(7) {
+.utilisateurs-table th:nth-child(6),
+.utilisateurs-table td:nth-child(6) {
   width: 18%;
   min-width: 140px;
+}
+
+/* Réduction de la largeur des colonnes Nom et Prénom pour éviter le chevauchement */
+.utilisateurs-table th:nth-child(1),
+.utilisateurs-table td:nth-child(1) { /* Nom */
+  width: 11%;
+}
+
+.utilisateurs-table th:nth-child(2),
+.utilisateurs-table td:nth-child(2) { /* Prénom */
+  width: 11%;
 }
 
 /* ====== STATUT ====== */

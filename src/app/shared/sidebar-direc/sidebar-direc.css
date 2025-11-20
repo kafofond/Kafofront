@@ -6,32 +6,27 @@
     display: flex;
     flex-direction: column;
     z-index: 100;
-    /* Assure que la sidebar remplisse exactement la hauteur du viewport */
     height: 100vh;
 }
 
 .sidebar-header {
-    /* Padding réduit de 20px à 15px pour économiser de l'espace */
-    padding: 15px 20px 4px; 
+    padding: 20px 20px 4px;
     display: flex;
-    flex-shrink: 0; 
 }
 
 .logo {
     display: flex;
     align-items: center;
-    gap: 12px; /* Gap réduit */
+    gap: 16px;
 }
 
 .logo-img {
-    /* Taille du logo réduite */
-    width: 100px; 
-    height: 75px; 
+    width: 145px;
+    height: 109px;
 }
 
 .logo-text {
-    /* Taille du texte du logo réduite */
-    font-size: 1.3rem; 
+    font-size: 1.5rem;
     color: #ffffff;
 }
 
@@ -41,9 +36,7 @@
 
 .sidebar-nav {
     flex: 1;
-    padding: 0;
-    /* ❌ Suppression du défilement. Le contenu doit tenir. */
-    overflow-y: hidden; 
+    padding: auto 0;
 }
 
 .sidebar-nav ul {
@@ -55,18 +48,16 @@
 .nav-item a {
     display: flex;
     align-items: center;
-    gap: 12px; /* Gap réduit entre icône et texte */
-    /* Padding réduit pour compacter les éléments */
-    padding: 8px 20px; 
-    /* Taille de police réduite */
-    font-size: 20px; 
+    gap: 16px;
+    padding: 10px 20px;
+    font-size: 22px;
     font-weight: 600;
     position: relative;
     text-decoration: none;
     color: #ffffff;
     background: transparent;
     transition: background-color 0.3s, color 0.3s;
-    margin-bottom: 5px; /* Marge réduite entre les liens */
+    margin-bottom: 10px;
 }
 
 .nav-bar {
@@ -89,7 +80,7 @@
 
 .nav-item a.active .nav-icon,
 .nav-item a.active .nav-text {
-    filter: brightness(0) saturate(100%) invert(64%) sepia(89%)
+    filter: brightness(0) saturate(100%) invert(64%) sepia(89%) 
         saturate(1842%) hue-rotate(0deg) brightness(101%) contrast(101%);
     color: #f59e0b;
 }
@@ -99,29 +90,25 @@
 }
 
 .nav-icon {
-    /* Taille des icônes réduite */
-    width: 30px; 
-    height: 30px; 
+    width: 40px;
+    height: 40px;
     object-fit: contain;
 }
 
 .sidebar-footer {
-    /* Padding réduit */
-    padding: 0 30px 20px; 
+    padding: 0 30px 36px;
     margin-top: auto;
     background: #0b4f63;
-    flex-shrink: 0; 
 }
 
 .logout-button {
     display: flex;
     align-items: center;
-    gap: 15px; /* Gap réduit */
-    /* Padding et taille de police du bouton de déconnexion réduits */
-    padding: 10px 20px; 
+    gap: 29px;
+    padding: 17px 29px;
     background-color: rgba(91, 88, 88, 0.17);
     border-radius: 5px;
-    font-size: 24px; 
+    font-size: 32px;
     font-weight: 600;
     color: #ffffff;
     text-decoration: none;
@@ -135,12 +122,12 @@
     }
 
     .nav-item a {
-        font-size: 20px; /* Taille conservée pour les petits écrans */
-        padding: 10px 20px;
-        gap: 10px;
+        font-size: 24px;
+        padding: 15px 20px;
+        gap: 12px;
     }
 
     .logout-button {
-        font-size: 20px;
+        font-size: 24px;
     }
 }

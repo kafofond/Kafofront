@@ -19,7 +19,7 @@ img {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 38px;
+  margin-bottom: 20px;
 }
 
 .filter-group label {
@@ -44,7 +44,7 @@ img {
   border-radius: 10px;
   padding: 12px 15px;
   cursor: pointer;
-  width: 100px;
+  width: 120px;
 }
 
 .filter-select span {
@@ -57,7 +57,7 @@ img {
   position: absolute;
   top: 100%;
   left: 0;
-  width: 180px;
+  width: 120px;
   background: #fff;
   border: 2px solid rgba(0, 0, 0, 0.12);
   border-radius: 10px;
@@ -66,6 +66,7 @@ img {
   list-style: none;
   padding: 5px 0;
   z-index: 10;
+  left: 60px;
 }
 
 .dropdown-list li {
@@ -104,11 +105,11 @@ img {
   background-color: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 15px;
-  padding: 24px 24px 35px;
+  padding: 15px 24px 25px;
 }
 
 .table-section {
-  margin-bottom: 56px;
+  margin-bottom: 30px;
 }
 
 .table-section:last-child {
@@ -131,7 +132,7 @@ img {
 .table-row {
   display: flex;
   align-items: center;
-  padding: 24px 23px;
+  padding: 15px 23px;
 }
 
 .table-header {
@@ -205,12 +206,14 @@ img {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 8px;
-  border-radius: 6px;
+  padding: 18px;
+  border-radius: 12px;
   transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 75px;
+  height: 75px;
 }
 
 .action-btn:hover {
@@ -224,8 +227,8 @@ img {
 }
 
 .action-btn img {
-  width: 20px;
-  height: 20px;
+  width: 36px;
+  height: 36px;
 }
 
 /* --------------------------- */
