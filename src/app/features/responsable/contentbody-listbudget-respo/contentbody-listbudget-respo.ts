@@ -15,6 +15,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./contentbody-listbudget-respo.css']
 })
 export class ContentbodyListbudgetRespo implements OnInit, OnDestroy {
+  allBudgets: BudgetItem[] = []; // Stocker tous les budgets pour le filtrage
   budgets: BudgetItem[] = [];
   isLoading: boolean = true;
   errorMessage: string = '';
@@ -28,7 +29,7 @@ export class ContentbodyListbudgetRespo implements OnInit, OnDestroy {
   rejetCommentaire: string = '';
 
   showFilterDropdown: boolean = false;
-  activeFilter: string = 'Aucun';
+  activeFilter: string = 'Tous';
 
   createFormData: any = {
     statut: 'En attente de validation',
@@ -75,9 +76,10 @@ export class ContentbodyListbudgetRespo implements OnInit, OnDestroy {
 
     this.budgetsSubscription = this.budgetService.getBudgets().subscribe({
       next: (response) => {
-        this.budgets = response.budgets.map(apiBudget => 
+        this.allBudgets = response.budgets.map(apiBudget => 
           mapApiBudgetToBudgetItem(apiBudget)
         );
+        this.budgets = [...this.allBudgets]; // Initialiser avec tous les budgets
         this.isLoading = false;
       },
       error: (error) => {
@@ -86,6 +88,20 @@ export class ContentbodyListbudgetRespo implements OnInit, OnDestroy {
         this.isLoading = false;
       }
     });
+  }
+
+  // MÉTHODE DE FILTRAGE PAR STATUT
+  applyFilter(filterType: string): void {
+    this.activeFilter = filterType;
+    this.showFilterDropdown = false;
+    
+    if (filterType === 'Tous') {
+      this.budgets = [...this.allBudgets];
+    } else {
+      this.budgets = this.allBudgets.filter(budget => 
+        budget.statut === filterType
+      );
+    }
   }
 
   onStatutChange(event: Event): void {
@@ -202,11 +218,6 @@ export class ContentbodyListbudgetRespo implements OnInit, OnDestroy {
   toggleFilterDropdown(event: Event): void {
     event.stopPropagation();
     this.showFilterDropdown = !this.showFilterDropdown;
-  }
-
-  applyFilter(filterType: string): void {
-    this.activeFilter = filterType;
-    this.showFilterDropdown = false;
   }
 
   onClickOutside(event: MouseEvent): void {

@@ -6,13 +6,30 @@
     </button>
   </div>
 
-  <h3 class="content-title">Lignes de crédit - Budget #{{ budgetId }}</h3>
+  <h3 class="content-title">Lignes de crédit - {{ budgetCode }}</h3>
 
   <div class="header-right">
-    <button class="action-btn filter-button">
-      <img src="assets/417_213.svg" alt="Filtrer" />
-      <span>Filtrer</span>
-    </button>
+    <div class="filter-dropdown-container">
+      <button class="action-btn filter-button" (click)="toggleFilterDropdown($event)">
+        <img src="assets/417_213.svg" alt="Filtrer" />
+        <span>Filtrer</span>
+      </button>
+
+      <div class="filter-dropdown" *ngIf="showFilterDropdown" (click)="$event.stopPropagation()">
+        <button class="dropdown-item" (click)="applyFilter('Tous')">
+          Tous
+        </button>
+        <button class="dropdown-item" (click)="applyFilter('En cours')">
+          En cours
+        </button>
+        <button class="dropdown-item" (click)="applyFilter('Validé')">
+          Validé
+        </button>
+        <button class="dropdown-item" (click)="applyFilter('Refusé')">
+          Refusé
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -22,7 +39,6 @@
       <div>Intitulé</div>
       <div>Montant Alloué</div>
       <div>Montant Engagé</div>
-      <div>Montant Restant</div>
       <div>Taux d'utilisation</div>
       <div>Statut</div>
       <div>Actions</div>
@@ -46,7 +62,6 @@
         </div>
         <div>{{ ligne.montantAlloue | number }} FCFA</div>
         <div>{{ ligne.montantEngage | number }} FCFA</div>
-        <div>{{ ligne.montantRestant | number }} FCFA</div>
         <div class="col-taux">
           <div class="progress-bar">
             <div class="progress-bar-inner" [style.width.%]="ligne.tauxUtilisation"></div>

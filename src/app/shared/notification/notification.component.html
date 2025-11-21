@@ -28,8 +28,8 @@
         *ngFor="let notification of notifications" 
         (click)="onNotificationClick(notification)">
         <div class="notification-content">
-          <h4 class="notification-title">{{ notification.titre }}</h4>
-          <p class="notification-message">{{ notification.message }}</p>
+          <h4 class="notification-title">{{ formatNotificationTitle(notification.titre) }}</h4>
+          <p class="notification-message">{{ formatNotificationTitle(notification.message) }}</p>
           <span class="notification-date">{{ formatDate(notification.dateEnvoi) }}</span>
         </div>
         <div class="notification-status" *ngIf="!notification.etat">

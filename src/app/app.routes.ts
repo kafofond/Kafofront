@@ -21,6 +21,7 @@ import { ContentbodyListbudgetRespo } from './features/responsable/contentbody-l
 import { ContentbodyBonsDeCommandeRespo } from './features/responsable/contentbody-bons-de-commande-respo/contentbody-bons-de-commande-respo';
 import { ContentbodyAttestationDeServiceRespo } from './features/responsable/contentbody-attestation-de-service-respo/contentbody-attestation-de-service-respo';
 import { ContentbodyVoirlignesRespo } from './features/responsable/contentbody-voirlignes-respo/contentbody-voirlignes-respo';
+import { ContentbodyValidationRespo } from './features/responsable/contentbody-validation-respo/contentbody-validation-respo';
 import { ChangerMotDePasse } from './shared/changer-mot-de-passe/changer-mot-de-passe';
 import { SeConnecter } from './shared/se-connecter/se-connecter';
 import { CreerCompte } from './shared/creer-compte/creer-compte';
@@ -163,6 +164,11 @@ export const routes: Routes = [
                 path: 'attestation-de-service-fait-responsable',
                 component: ContentbodyAttestationDeServiceRespo
             
+            },
+            
+            {
+                path: 'validation-responsable',
+                component: ContentbodyValidationRespo
             },
             
             {

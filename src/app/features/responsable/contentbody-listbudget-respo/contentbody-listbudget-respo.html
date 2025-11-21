@@ -3,26 +3,20 @@
         <button class="filter-btn" (click)="toggleFilterDropdown($event)">
             <img src="assets/417_213.svg" alt="Filtrer">
             <span>Filtrer</span>
-            <span class="active-filter-label" *ngIf="activeFilter !== 'Aucun'">({{ activeFilter }})</span>
         </button>
 
         <div class="filter-dropdown" *ngIf="showFilterDropdown" (click)="$event.stopPropagation()">
-            <div class="dropdown-header">Filtrer par période</div>
-            <button class="dropdown-item" (click)="applyFilter('Ce mois')">
-                Ce mois
-                <span class="check-icon" *ngIf="activeFilter === 'Ce mois'">✓</span>
+            <button class="dropdown-item" (click)="applyFilter('Tous')">
+                Tous
             </button>
-            <button class="dropdown-item" (click)="applyFilter('Ce trimestre')">
-                Ce trimestre
-                <span class="check-icon" *ngIf="activeFilter === 'Ce trimestre'">✓</span>
+            <button class="dropdown-item" (click)="applyFilter('En cours')">
+                En cours
             </button>
-            <button class="dropdown-item" (click)="applyFilter('L\'année dernière')">
-                L'année dernière
-                <span class="check-icon" *ngIf="activeFilter === 'L\'année dernière'">✓</span>
+            <button class="dropdown-item" (click)="applyFilter('Validé')">
+                Validé
             </button>
-            <div class="dropdown-divider"></div>
-            <button class="dropdown-item reset" (click)="applyFilter('Aucun')">
-                Réinitialiser le filtre
+            <button class="dropdown-item" (click)="applyFilter('Refusé')">
+                Refusé
             </button>
         </div>
     </div>
@@ -37,7 +31,6 @@
     <div class="budget-table">
         <div class="table-header">
             <div>Intitulé</div>
-            <div>Description</div>
             <div>État</div>
             <div>Statut</div>
             <div>Montant Alloué</div>
@@ -46,7 +39,6 @@
         <div class="table-body">
             <div class="table-row" *ngFor="let budget of budgets">
                 <div>{{ budget.intituleBudget }}</div>
-                <div>{{ budget.description }}</div>
                 <div>
                     <span [class]="getEtatBadgeClass(budget.etat)">{{ budget.etat }}</span>
                 </div>
@@ -63,7 +55,6 @@
                         <img src="assets/32_236.svg" alt="Modifier">
                     </button>
                 </div>
-
             </div>
         </div>
     </div>

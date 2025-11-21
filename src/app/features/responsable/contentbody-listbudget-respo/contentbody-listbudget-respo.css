@@ -28,16 +28,13 @@ button {
 /* ---------------------------------------------------- */
 
 .content-toolbar {
-    /* Changement pour aligner les boutons horizontalement */
+    /* Changement pour aligner les boutons complètement à gauche */
     display: flex; 
     gap: 15px; /* Espacement entre les boutons */
     margin-bottom: 34px;
-    margin-left: 326px; /* Maintient l'alignement initial (ajustez si nécessaire selon le layout global) */
+    margin-left: 0; /* Déplacement complètement à gauche */
     justify-content: flex-start;
 }
-
-/* Le bouton "Créer budget" a été remplacé par le même style que le directeur */
-
 
 /* --- Styles pour le bouton de Filtre et le Dropdown --- */
 
@@ -84,12 +81,12 @@ button {
     top: 100%; /* Positionnement juste en dessous du bouton */
     right: 0;
     z-index: 10;
-    min-width: 220px;
+    min-width: 130px; /* Réduction supplémentaire de la largeur */
     background: #fff;
     border: 1px solid #e2e8f0;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    margin-top: 10px;
+    margin-top: 2px;
     padding: 5px 0;
 }
 
@@ -119,7 +116,7 @@ button {
 }
 
 .dropdown-item:hover {
-    background-color: #f4f7fa; /* Fond léger au survol */
+    background-color: #f59e0b; /* Fond léger au survol */
 }
 
 .dropdown-item.reset {
@@ -150,8 +147,8 @@ button {
 .table-header,
 .table-row {
     display: grid;
-    /* La grille a 6 colonnes */
-    grid-template-columns: 1.2fr 1.5fr 1.2fr 1fr 1.3fr 1.5fr;
+    /* La grille a 5 colonnes au lieu de 6 */
+    grid-template-columns: 1.5fr 1fr 1fr 1.3fr 1.5fr;
     align-items: center;
     padding: 20px 24px;
 }
@@ -293,6 +290,7 @@ button {
 .close-icon {
     width: 18px;
     height: 18px;
+
 }
 
 /* --- Formulaire --- */

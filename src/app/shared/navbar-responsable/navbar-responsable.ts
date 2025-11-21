@@ -4,10 +4,11 @@ import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { UserService } from '../../services/user.service';
 import { NotificationService } from '../../services/notification.service';
+import { NotificationComponent } from '../notification/notification.component';
 
 @Component({
   selector: 'app-navbar-responsable',
-  imports: [CommonModule],
+  imports: [CommonModule, NotificationComponent],
   templateUrl: './navbar-responsable.html',
   styleUrl: './navbar-responsable.css'
 })
@@ -28,6 +29,7 @@ export class NavbarResponsable implements OnInit {
     'responsable/gestion-prelevement': { title: 'Gestion des prélèvements', breadcrumb: 'Prélèvements' },
     'responsable/bons-de-commande-responsable': { title: 'Bons de commande', breadcrumb: 'Commandes' },
     'responsable/attestation-de-service-fait-responsable': { title: 'Attestations de service fait', breadcrumb: 'Attestations' },
+    'responsable/validation-responsable': { title: 'Historique des validations', breadcrumb: 'Validations' },
     'responsable/parametres-responsable': { title: 'Paramètres', breadcrumb: 'Configuration' }
   };
 

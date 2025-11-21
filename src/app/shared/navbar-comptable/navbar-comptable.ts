@@ -4,10 +4,11 @@ import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { UserService } from '../../services/user.service';
 import { NotificationService } from '../../services/notification.service';
+import { NotificationComponent } from '../notification/notification.component';
 
 @Component({
   selector: 'app-navbar-comptable',
-  imports: [CommonModule],
+  imports: [CommonModule, NotificationComponent],
   templateUrl: './navbar-comptable.html',
   styleUrl: './navbar-comptable.css'
 })

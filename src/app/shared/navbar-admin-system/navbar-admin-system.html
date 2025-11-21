@@ -10,12 +10,8 @@
       <input type="text" placeholder="Recherche" class="search-input" />
     </div>
 
-    <button class="notification-btn" (click)="onNotificationsClick()">
-      <span class="bell-icon">🔔</span>
-      <span class="notification-badge" *ngIf="unreadNotifications > 0">
-        {{ unreadNotifications > 99 ? '99+' : unreadNotifications }}
-      </span>
-    </button>
+    <!-- Composant de notification -->
+    <app-notification></app-notification>
 
     <div class="divider"></div>
 

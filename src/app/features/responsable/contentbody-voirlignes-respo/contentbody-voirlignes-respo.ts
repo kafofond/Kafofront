@@ -11,6 +11,7 @@ import {
   LigneCredit,
   Commentaire 
 } from '../../../services/ligne-credit.service';
+import { BudgetService } from '../../../services/budget.service'; // Import du service Budget
 
 @Component({
   selector: 'app-contentbody-voirlignes-respo',
@@ -29,10 +30,16 @@ export class ContentbodyVoirlignesRespo implements OnInit, OnDestroy {
   showDesactivationLigneModal: boolean = false;
   
   // Données
+  allLignes: LigneBudget[] = []; // Ajout pour le filtrage
   lignes: LigneBudget[] = [];
   isLoading: boolean = true;
   errorMessage: string = '';
   budgetId: number = 0;
+  budgetCode: string = ''; // Ajout de la propriété pour le code du budget
+  
+  // Propriétés pour le filtre
+  showFilterDropdown: boolean = false;
+  activeFilter: string = 'Tous';
   
   // Ligne sélectionnée
   selectedLigne: LigneBudget | null = null;
@@ -60,6 +67,7 @@ export class ContentbodyVoirlignesRespo implements OnInit, OnDestroy {
 
   constructor(
     private ligneCreditService: LigneCreditService,
+    private budgetService: BudgetService, // Injection du service Budget
     private route: ActivatedRoute,
     private router: Router
   ) { }
@@ -74,13 +82,17 @@ export class ContentbodyVoirlignesRespo implements OnInit, OnDestroy {
       console.log('🔢 Budget ID converti:', this.budgetId);
       
       if (this.budgetId && !isNaN(this.budgetId)) {
-        console.log('✅ Budget ID valide, chargement des lignes...');
-        this.loadLignes();
+        console.log('✅ Budget ID valide, chargement des informations du budget...');
+        this.loadBudgetInfo(); // Chargement des informations du budget en premier
+        // On charge les lignes après avoir obtenu le code du budget
       } else {
         console.error('❌ Budget ID invalide:', this.budgetId);
         this.handleRoutingError();
       }
     });
+    
+    // Ajout de l'écouteur d'événements pour fermer le dropdown quand on clique à l'extérieur
+    document.addEventListener('click', this.onClickOutside.bind(this));
   }
 
   ngOnDestroy(): void {
@@ -90,6 +102,24 @@ export class ContentbodyVoirlignesRespo implements OnInit, OnDestroy {
     if (this.routeSubscription) {
       this.routeSubscription.unsubscribe();
     }
+    // Suppression de l'écouteur d'événements
+    document.removeEventListener('click', this.onClickOutside.bind(this));
+  }
+
+  // Méthode pour charger les informations du budget
+  loadBudgetInfo(): void {
+    this.budgetService.getBudgetById(this.budgetId).subscribe({
+      next: (budget) => {
+        console.log('✅ Informations du budget chargées:', budget);
+        this.budgetCode = budget.code || `Budget #${this.budgetId}`;
+        this.loadLignes(); // On charge les lignes après avoir obtenu le code du budget
+      },
+      error: (error) => {
+        console.error('❌ Erreur chargement informations budget:', error);
+        this.budgetCode = `Budget #${this.budgetId}`;
+        this.loadLignes(); // On charge quand même les lignes même si on ne peut pas récupérer le code
+      }
+    });
   }
 
   loadLignes(): void {
@@ -101,9 +131,10 @@ export class ContentbodyVoirlignesRespo implements OnInit, OnDestroy {
     this.lignesSubscription = this.ligneCreditService.getLignesByBudget(this.budgetId).subscribe({
       next: (response) => {
         console.log('✅ Lignes chargées pour le budget:', this.budgetId, response);
-        this.lignes = response.lignes.map(apiLigne => 
+        this.allLignes = response.lignes.map(apiLigne => 
           mapApiLigneToLigneBudget(apiLigne)
         );
+        this.lignes = [...this.allLignes]; // Initialiser avec toutes les lignes
         this.isLoading = false;
       },
       error: (error) => {
@@ -112,6 +143,32 @@ export class ContentbodyVoirlignesRespo implements OnInit, OnDestroy {
         this.isLoading = false;
       }
     });
+  }
+
+  // MÉTHODES DE FILTRAGE
+  toggleFilterDropdown(event: Event): void {
+    event.stopPropagation();
+    this.showFilterDropdown = !this.showFilterDropdown;
+  }
+
+  applyFilter(filterType: string): void {
+    this.activeFilter = filterType;
+    this.showFilterDropdown = false;
+    
+    if (filterType === 'Tous') {
+      this.lignes = [...this.allLignes];
+    } else {
+      this.lignes = this.allLignes.filter(ligne => 
+        ligne.statut === filterType
+      );
+    }
+  }
+
+  onClickOutside(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.filter-dropdown-container') && this.showFilterDropdown) {
+      this.showFilterDropdown = false;
+    }
   }
 
   // MÉTHODES POUR LES ACTIONS AUTOMATIQUES

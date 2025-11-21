@@ -1,0 +1,83 @@
+<section class="validation-section">
+  <div class="validation-header">
+    <h2>Historique des Validations</h2>
+    
+    <div class="validation-filtres">
+      <label for="filtreStatut">Filtrer par statut:</label>
+      <select id="filtreStatut" [(ngModel)]="filtreStatut" (ngModelChange)="loadValidations()">
+        <option value="tous">Tous</option>
+        <option value="valide">Validé</option>
+        <option value="approuve">Approuvé</option>
+        <option value="rejete">Rejeté</option>
+      </select>
+      
+      <label for="filtreType">Type de document:</label>
+      <select id="filtreType" [(ngModel)]="filtreTypeDocument" (ngModelChange)="loadValidations()">
+        <option value="tous">Tous les documents</option>
+        <option value="DECISION_PRELEVEMENT">Décision de Prélèvement</option>
+        <option value="FICHE_BESOIN">Fiche de Besoin</option>
+        <option value="DEMANDE_ACHAT">Demande d'Achat</option>
+        <option value="BON_COMMANDE">Bon de Commande</option>
+        <option value="ATTESTATION_SERVICE_FAIT">Attestation de Service Fait</option>
+        <option value="ORDRE_PAIEMENT">Ordre de Paiement</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Message d'erreur -->
+  <div *ngIf="error" class="error-banner">
+    <span>{{ error }}</span>
+    <button class="retry-btn" (click)="retry()">Réessayer</button>
+  </div>
+
+  <!-- Chargement -->
+  <div *ngIf="isLoading" class="loading-spinner">
+    Chargement de l'historique des validations...
+  </div>
+
+  <!-- Tableau -->
+  <div *ngIf="!isLoading && validationsFiltrees.length > 0" class="table-container">
+    <table class="validation-table">
+      <thead class="header-color">
+        <tr>
+          <th>Document</th>
+          <th>Validateur</th>
+          <th>Type de document</th>
+          <th>Statut</th>
+          <th>Commentaire</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let v of validationsPageCourante">
+          <td>{{ v.codeDocument || (v.typeDocument + ' #' + v.idDocument) }}</td>
+          <td>{{ v.validateurNomComplet || 'Non spécifié' }}</td>
+          <td>{{ validationService.formaterTypeDocument(v.typeDocument) }}</td>
+          <td>
+            <span class="validation-status" [ngClass]="{
+              valide: v.statut === 'VALIDE',
+              approuve: v.statut === 'APPROUVE',
+              rejete: v.statut === 'REJETE'
+            }">
+              {{ validationService.formaterStatut(v.statut) }}
+            </span>
+          </td>
+          <td>{{ v.commentaire }}</td>
+          <td>{{ v.dateValidation | date: 'yyyy-MM-dd HH:mm' }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="pagination">
+      <button (click)="pagePrecedente()" [disabled]="pageActuelle === 1">Précédent</button>
+      <span>Page {{ pageActuelle }} / {{ totalPages }}</span>
+      <button (click)="pageSuivante()" [disabled]="pageActuelle === totalPages">Suivant</button>
+    </div>
+  </div>
+
+  <!-- Aucun résultat -->
+  <div *ngIf="!isLoading && validationsFiltrees.length === 0 && !error" class="no-data">
+    Aucune validation trouvée dans l'historique
+  </div>
+</section>
