@@ -2,31 +2,33 @@
     <div class="controls-bar">
         <div class="filter-group">
             <label for="status-filter">Statut :</label>
-            <div class="filter-dropdown" (click)="$event.stopPropagation(); showFilterDropdown = !showFilterDropdown">
-                <span>{{ statutFilter === 'Tous' ? 'Tous les Statuts' : getStatusLabel(statutFilter) }}</span>
-                <!-- Remplacement de l'icône manquante par une icône standard -->
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </div>
-            
-            <!-- Dropdown de filtre -->
-            <div class="filter-dropdown-container" *ngIf="showFilterDropdown" (click)="$event.stopPropagation()">
-                <div class="filter-dropdown-menu">
-                    <div class="dropdown-item" (click)="onStatutFilterChange('Tous')">
-                        Tous les Statuts
-                    </div>
-                    <div class="dropdown-item" (click)="onStatutFilterChange('EN_COURS')">
-                        En cours
-                    </div>
-                    <div class="dropdown-item" (click)="onStatutFilterChange('APPROUVE')">
-                        Approuvé
-                    </div>
-                    <div class="dropdown-item" (click)="onStatutFilterChange('VALIDE')">
-                        Validé
-                    </div>
-                    <div class="dropdown-item" (click)="onStatutFilterChange('REJETE')">
-                        Rejeté
+            <div class="filter-wrapper" style="position: relative; display: inline-block;">
+                <div class="filter-dropdown" (click)="$event.stopPropagation(); showFilterDropdown = !showFilterDropdown">
+                    <span>{{ statutFilter === 'Tous' ? 'Tous les Statuts' : getStatusLabel(statutFilter) }}</span>
+                    <!-- Remplacement de l'icône manquante par une icône standard -->
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                
+                <!-- Dropdown de filtre -->
+                <div class="filter-dropdown-container" *ngIf="showFilterDropdown" (click)="$event.stopPropagation()">
+                    <div class="filter-dropdown-menu">
+                        <div class="dropdown-item" (click)="onStatutFilterChange('Tous')">
+                            Tous les Statuts
+                        </div>
+                        <div class="dropdown-item" (click)="onStatutFilterChange('EN_COURS')">
+                            En cours
+                        </div>
+                        <div class="dropdown-item" (click)="onStatutFilterChange('APPROUVE')">
+                            Approuvé
+                        </div>
+                        <div class="dropdown-item" (click)="onStatutFilterChange('VALIDE')">
+                            Validé
+                        </div>
+                        <div class="dropdown-item" (click)="onStatutFilterChange('REJETE')">
+                            Rejeté
+                        </div>
                     </div>
                 </div>
             </div>

@@ -18,8 +18,8 @@
       <button class="dropdown-item" (click)="applyFilter('Approuvé')">
         Approuvé
       </button>
-      <button class="dropdown-item" (click)="applyFilter('Rejeté')">
-        Rejeté
+      <button class="dropdown-item" (click)="applyFilter('Refusé')">
+        Refusé
       </button>
     </div>
   </div>
@@ -29,7 +29,6 @@
   <div class="budget-table">
     <div class="table-header">
       <div>Intitulé</div>
-      <div>Description</div>
       <div>État</div>
       <div>Statut</div>
       <div>Montant Alloué</div>
@@ -38,7 +37,6 @@
     <div class="table-body">
       <div class="table-row" *ngFor="let budget of budgets">
         <div>{{ budget.intituleBudget }}</div>
-        <div>{{ budget.description }}</div>
         <div>
           <span [class]="getEtatBadgeClass(budget.etat)">{{ budget.etat }}</span>
         </div>

@@ -81,7 +81,7 @@
 .table-header,
 .table-row {
   display: grid;
-  grid-template-columns: 2.2fr 1.2fr 1.2fr 1.2fr 1.3fr 1fr 1.5fr;
+  grid-template-columns: 2.2fr 1.2fr 1.2fr 1.3fr 1fr 1.5fr;
   align-items: center;
   padding: 20px 24px;
 }
@@ -604,4 +604,40 @@
   .grid-fields {
     grid-template-columns: 1fr;
   }
+}
+
+/* Dropdown de filtre */
+.filter-dropdown-container {
+  position: relative;
+}
+
+.filter-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 8px 0;
+  width: 100px; /* Réduction de la largeur */
+  z-index: 100;
+  margin-top: 5px;
+}
+
+.dropdown-item {
+  display: flex;
+  justify-content: flex-start; /* Alignement à gauche */
+  align-items: center;
+  padding: 10px 16px;
+  width: 100%;
+  text-align: left;
+  font-size: 13px;
+  color: #000000;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background-color: #f59e0b; /* Couleur jaune au survol */
 }

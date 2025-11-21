@@ -110,6 +110,32 @@ export class NotificationComponent implements OnInit {
     });
   }
 
+  // Méthode pour formater les titres qui contiennent des types de documents
+  formatNotificationTitle(title: string): string {
+    if (!title) return title;
+    
+    // Mapping des types de documents en majuscules vers leur version formatée
+    const typeMappings: { [key: string]: string } = {
+      'BUDGET': 'Budget',
+      'LIGNE_CREDIT': 'Ligne de crédit',
+      'FICHE_BESOIN': 'Fiche de besoin',
+      'DEMANDE_ACHAT': 'Demande d\'achat',
+      'BON_COMMANDE': 'Bon de commande',
+      'ATTESTATION_SERVICE_FAIT': 'Attestation de service fait',
+      'DECISION_PRELEVEMENT': 'Décision de prélèvement',
+      'ORDRE_PAIEMENT': 'Ordre de paiement'
+    };
+    
+    // Remplacer chaque type de document trouvé dans le titre
+    let formattedTitle = title;
+    for (const [key, value] of Object.entries(typeMappings)) {
+      const regex = new RegExp(`\\b${key}\\b`, 'g');
+      formattedTitle = formattedTitle.replace(regex, value);
+    }
+    
+    return formattedTitle;
+  }
+
   onNotificationClick(notification: Notification) {
     this.markAsRead(notification.id);
     this.showNotifications = false;

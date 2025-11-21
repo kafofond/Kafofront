@@ -78,4 +78,20 @@ export class NotificationService {
       })
     );
   }
+
+  // Méthode pour formater les types de documents
+  formatDocumentType(typeDocument: string): string {
+    const typeMap: { [key: string]: string } = {
+      'BUDGET': 'Budget',
+      'LIGNE_CREDIT': 'Ligne de crédit',
+      'FICHE_BESOIN': 'Fiche de besoin',
+      'DEMANDE_ACHAT': 'Demande d\'achat',
+      'BON_COMMANDE': 'Bon de commande',
+      'ATTESTATION_SERVICE_FAIT': 'Attestation de service fait',
+      'DECISION_PRELEVEMENT': 'Décision de prélèvement',
+      'ORDRE_PAIEMENT': 'Ordre de paiement'
+    };
+    
+    return typeMap[typeDocument] || typeDocument;
+  }
 }

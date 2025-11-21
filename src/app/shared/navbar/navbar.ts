@@ -129,6 +129,11 @@ export class Navbar implements OnInit {
     return role === 'GESTIONNAIRE' ? 'Gestionnaire' : 'Utilisateur';
   }
 
+  onNotificationsClick() {
+    // Cette méthode n'est plus utilisée car nous utilisons le composant de notification
+    // mais laissons-la pour compatibilité
+  }
+
   onSearch(event: any) {
     const searchTerm = event.target.value;
     if (searchTerm.trim()) {

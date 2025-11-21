@@ -34,7 +34,7 @@ export class ContentbodyBonsDeCommandeComptable implements OnInit {
       this.selectedStatus === 'Tous'
         ? this.bonsDeCommande
         : this.bonsDeCommande.filter(
-            (b) => b.statut && b.statut.toLowerCase() === this.selectedStatus.toLowerCase()
+            (b) => b.statut && b.statut === this.selectedStatus
           );
     return filtered;
   }
@@ -100,7 +100,7 @@ export class ContentbodyBonsDeCommandeComptable implements OnInit {
     const statutMap: { [key: string]: string } = {
       'VALIDE': 'Validé',
       'EN_COURS': 'En attente',
-      'REFUSE': 'Rejeté'
+      'REJETE': 'Rejeté'
     };
     return statutMap[statut] || statut;
   }

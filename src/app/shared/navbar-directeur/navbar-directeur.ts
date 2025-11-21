@@ -4,10 +4,11 @@ import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { UserService } from '../../services/user.service';
 import { NotificationService } from '../../services/notification.service';
+import { NotificationComponent } from '../notification/notification.component';
 
 @Component({
   selector: 'app-navbar-directeur',
-  imports: [CommonModule],
+  imports: [CommonModule, NotificationComponent],
   templateUrl: './navbar-directeur.html',
   styleUrl: './navbar-directeur.css'
 })

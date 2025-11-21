@@ -1,0 +1,176 @@
+.validation-section {
+  padding: 20px;
+  background-color: #f8fafc;
+  border-radius: 12px;
+}
+
+.validation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.validation-header h2 {
+  color: #0b4f63;
+  font-size: 1.4rem;
+  margin: 0;
+}
+
+.validation-filtres {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  width: 100%;
+}
+
+.validation-filtres label {
+  font-size: 14px;
+  color: #333;
+}
+
+.validation-filtres select {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.table-container {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+}
+
+.validation-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.validation-table th,
+.validation-table td {
+  padding: 12px 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+/* --- STATUTS --- */
+.validation-status {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: capitalize;
+}
+
+.validation-status.valide { 
+  background-color: #cff1db; 
+  color: #166534; 
+}
+
+.validation-status.approuve { 
+  background-color: #e0f2fe; 
+  color: #0369a1; 
+}
+
+.validation-status.rejete { 
+  background-color: #fad9d9; 
+  color: #991b1b; 
+}
+
+.header-color {
+  background-color: #E2E8F0;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  gap: 15px;
+}
+
+.pagination button {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  background-color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: #0b4f63;
+  color: white;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  font-weight: 500;
+}
+
+.loading-spinner {
+  text-align: center;
+  padding: 40px;
+  font-size: 1.1rem;
+  color: #666;
+}
+
+.error-banner {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.retry-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.retry-btn:hover {
+  background-color: #c82333;
+}
+
+.no-data {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .validation-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .validation-filtres {
+    justify-content: center;
+  }
+  
+  .validation-table {
+    font-size: 0.85rem;
+  }
+  
+  .validation-table th,
+  .validation-table td {
+    padding: 8px 10px;
+  }
+}
