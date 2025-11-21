@@ -14,6 +14,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./contentbody-listbudget-gest.css']
 })
 export class ContentbodyListbudgetGest implements OnInit, OnDestroy {
+  allBudgets: BudgetItem[] = [];
   budgets: BudgetItem[] = [];
   isLoading: boolean = true;
   errorMessage: string = '';
@@ -24,7 +25,7 @@ export class ContentbodyListbudgetGest implements OnInit, OnDestroy {
   selectedBudget: BudgetItem | null = null;
 
   showFilterDropdown: boolean = false;
-  activeFilter: string = 'Aucun';
+  activeFilter: string = 'Tous';
 
   private budgetsSubscription?: Subscription;
 
@@ -61,9 +62,10 @@ export class ContentbodyListbudgetGest implements OnInit, OnDestroy {
 
     this.budgetsSubscription = this.budgetService.getBudgets().subscribe({
       next: (response) => {
-        this.budgets = response.budgets.map(apiBudget => 
+        this.allBudgets = response.budgets.map(apiBudget => 
           mapApiBudgetToBudgetItem(apiBudget)
         );
+        this.budgets = [...this.allBudgets];
         this.isLoading = false;
       },
       error: (error) => {
@@ -83,6 +85,16 @@ export class ContentbodyListbudgetGest implements OnInit, OnDestroy {
   applyFilter(filterType: string): void {
     this.activeFilter = filterType;
     this.showFilterDropdown = false;
+    
+    // Appliquer le filtrage
+    if (filterType === 'Tous') {
+      this.budgets = [...this.allBudgets];
+    } else {
+      // Filtrer directement sur les valeurs d'affichage puisque les budgets sont déjà mappés
+      this.budgets = this.allBudgets.filter(budget => 
+        budget.statut === filterType
+      );
+    }
   }
 
   onClickOutside(event: MouseEvent): void {

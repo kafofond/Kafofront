@@ -87,14 +87,24 @@ export class NavbarDsi implements OnInit {
   }
 
   private loadNotifications() {
-    this.notificationService.getUnreadCount().subscribe({
-      next: (response) => {
-        this.unreadNotifications = response.nombreNonLues;
-      },
-      error: (error) => {
-        console.error('Erreur chargement notifications:', error);
-      }
-    });
+    const token = localStorage.getItem('auth_token');
+    if (!token) return;
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const userId = payload.userId || 1;
+      
+      this.notificationService.getUnreadCount(userId).subscribe({
+        next: (response) => {
+          this.unreadNotifications = response.nombreNonLues;
+        },
+        error: (error) => {
+          console.error('Erreur chargement notifications:', error);
+        }
+      });
+    } catch (error) {
+      console.error('Erreur décodage token:', error);
+    }
   }
 
   private mapRoleToDisplay(role: string): string {

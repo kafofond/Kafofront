@@ -1,5 +1,5 @@
 .sidebar {
-    width: 400px;
+    width: 350px;
     background-color: #0b4f63;
     position: sticky;
     top: 0;
@@ -10,7 +10,7 @@
 }
 
 .sidebar-header {
-    padding: 20px 20px 4px;
+    padding: 5px 15px 2px;
     display: flex;
 }
 
@@ -21,12 +21,12 @@
 }
 
 .logo-img {
-    width: 145px;
-    height: 109px;
+    width: 120px;
+    height: 90px;
 }
 
 .logo-text {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     color: #ffffff;
 }
 
@@ -36,7 +36,7 @@
 
 .sidebar-nav {
     flex: 1;
-    padding: auto 0;
+    padding: 5px 0;
 }
 
 .sidebar-nav ul {
@@ -48,16 +48,16 @@
 .nav-item a {
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding: 10px 20px;
-    font-size: 22px;
+    gap: 12px;
+    padding: 6px 15px;
+    font-size: 20px;
     font-weight: 600;
     position: relative;
     text-decoration: none;
     color: #ffffff;
     background: transparent;
     transition: background-color 0.3s, color 0.3s;
-    margin-bottom: 10px;
+    margin-bottom: 3px;
 }
 
 .nav-bar {
@@ -90,13 +90,13 @@
 }
 
 .nav-icon {
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
     object-fit: contain;
 }
 
 .sidebar-footer {
-    padding: 0 30px 36px;
+    /* padding: 0 0px 10px; */
     margin-top: auto;
     background: #0b4f63;
 }
@@ -104,16 +104,16 @@
 .logout-button {
     display: flex;
     align-items: center;
-    gap: 29px;
-    padding: 17px 29px;
+    gap: 20px;
+    padding: 15px 25px;
     background-color: rgba(91, 88, 88, 0.17);
     border-radius: 5px;
-    font-size: 32px;
+    font-size: 28px;
     font-weight: 600;
     color: #ffffff;
     text-decoration: none;
     float: left;
-    margin-top: 10px;
+    margin-top: 25px;
 }
 
 @media (max-width: 1200px) {

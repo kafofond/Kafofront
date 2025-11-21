@@ -7,7 +7,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 17px 0;
-    margin-bottom: 52px;
+    margin-bottom: 20px;
 }
 
 .filter-group {
@@ -42,13 +42,14 @@
     font-size: 13px;
     font-weight: 700;
     color: rgba(0, 0, 0, 0.67);
+    margin-top: -10px;
 }
 
 .data-table-container {
     background-color: #ffffff;
     border: 1px solid rgba(0, 0, 0, 0.15);
     border-radius: 15px;
-    padding: 36px 30px;
+    padding: 20px 30px;
 }
 
 .table-title {
@@ -56,7 +57,7 @@
     font-size: 24px;
     font-weight: 600;
     color: #0b4f63;
-    margin: 0 0 27px 0;
+    margin: 0 0 15px 0;
 }
 
 .data-table {
@@ -67,9 +68,9 @@
 .table-header,
 .table-row {
   display: grid;
-  grid-template-columns: 1.5fr 2fr 1fr 1fr 1.2fr;
+  grid-template-columns: 1.5fr 1.4fr 1.7fr 1fr 0.6fr;
   align-items: center;
-  padding: 20px 24px;
+  padding: 12px 24px;
 }
 
 .table-header {
@@ -162,21 +163,22 @@
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  padding: 30px;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px;
+  margin-bottom: 25px;
   border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 15px;
 }
 
 .modal-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #000000;
-  margin: 0;
+  color: #0b4f63;
+  font-size: 26px;
+  font-weight: 700;
 }
 
 .close-btn {
@@ -193,6 +195,10 @@
 
 .modal-body {
   padding: 20px;
+}
+
+.detail-body {
+  padding: 0 30px;
 }
 
 .detail-section {
@@ -222,11 +228,78 @@
   color: rgba(0, 0, 0, 0.87);
 }
 
+/* --- Modale de Détails --- */
+.detail-modal-content {
+  max-width: 650px;
+  padding: 0;
+}
+
+.detail-header {
+  border-bottom: none;
+  padding: 20px 30px;
+  background-color: #f7f9fb;
+  border-radius: 12px 12px 0 0;
+}
+
+.detail-section {
+  padding: 15px 0;
+  border-bottom: 1px solid #f0f4f7;
+}
+
+.detail-section:last-child {
+  border-bottom: none;
+}
+
+/* Organisation des champs en Grille */
+.grid-fields {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px 30px;
+}
+
+.full-width-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.detail-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-group label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #0b4f63;
+  margin-bottom: 3px;
+  text-transform: uppercase;
+}
+
+.detail-value {
+  background-color: #eef3f7;
+  padding: 12px 15px;
+  border-radius: 8px;
+  font-size: 15px;
+  color: #333;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+
 .modal-footer {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
   padding: 20px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.detail-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 30px;
   border-top: 1px solid #e2e8f0;
 }
 
@@ -238,14 +311,34 @@
   border: none;
 }
 
+.btn-primary {
+  background-color: #f59e0b;
+  color: #0b4f63;
+  padding: 12px 25px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  transition: background-color 0.3s, color 0.3s;
+}
+
 .btn-secondary {
   background-color: #e2e8f0;
   color: #000000;
 }
 
+.btn-primary:hover {
+  background-color: #f9aa21;
+}
+
 .btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.creation-info {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.67);
+  font-weight: 500;
 }
 
 /* === States === */
@@ -335,4 +428,43 @@
         width: auto;
         font-weight: 700;
     }
+}
+
+/* === Pagination Controls === */
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+  padding: 15px 0;
+}
+
+.pagination-btn {
+  padding: 8px 16px;
+  background-color: #e2e8f0;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-weight: 600;
+  color: #0f172a;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background-color: #cbd5e1;
+  transform: translateY(-1px);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.pagination-info {
+  font-weight: 600;
+  color: #0f172a;
+  font-size: 14px;
+
 }

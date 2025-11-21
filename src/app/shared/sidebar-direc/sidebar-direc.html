@@ -108,6 +108,22 @@
 
             <li class="nav-item">
                 <a
+                    routerLink="historiques-directeur"
+                    routerLinkActive="active"
+                    [routerLinkActiveOptions]="{ exact: true }"
+                >
+                    <span class="nav-bar"></span>
+                    <img
+                        src="assets/fa-solid_file-upload.svg"
+                        alt=""
+                        class="nav-icon"
+                    />
+                    <span class="nav-text">Historiques</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a
                     routerLink="parametres-directeur"
                     routerLinkActive="active"
                     [routerLinkActiveOptions]="{ exact: true }"

@@ -23,8 +23,16 @@ export class ContentbodyDemandeAchatGest implements OnInit {
   selectedDemande: DemandeAchat | null = null;
   rejectComment = '';
 
+  // Propriétés pour la modale de détails
+  showDetailsModal = false;
+  
   // Filtres
   statutFilter = 'Tous';
+  
+  // Pagination
+  currentPage = 1;
+  itemsPerPage = 10;
+  totalPages = 0;
 
   constructor(
     private demandeService: DemandeAchatService,
@@ -69,6 +77,16 @@ export class ContentbodyDemandeAchatGest implements OnInit {
       this.filteredDemandes = this.demandes.filter(demande => 
         demande.statut === this.statutFilter
       );
+    }
+    
+    // Mettre à jour le nombre total de pages
+    this.totalPages = Math.ceil(this.filteredDemandes.length / this.itemsPerPage);
+    
+    // S'assurer que la page courante est valide
+    if (this.currentPage > this.totalPages && this.totalPages > 0) {
+      this.currentPage = this.totalPages;
+    } else if (this.currentPage < 1) {
+      this.currentPage = 1;
     }
   }
 
@@ -156,8 +174,44 @@ export class ContentbodyDemandeAchatGest implements OnInit {
     this.closeRejectModal();
   }
 
+  // Méthodes pour les détails
+  openDetailsModal(demande: DemandeAchat): void {
+    this.selectedDemande = demande;
+    this.showDetailsModal = true;
+  }
+
+  closeDetailsModal(): void {
+    this.showDetailsModal = false;
+    this.selectedDemande = null;
+  }
+
   viewDetails(demande: DemandeAchat): void {
     console.log('Voir détails:', demande);
     // Implémentation de la navigation vers les détails
+  }
+  
+  // Méthodes de pagination
+  get paginatedDemandes(): DemandeAchat[] {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    return this.filteredDemandes.slice(startIndex, endIndex);
+  }
+  
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
+  }
+  
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+    }
+  }
+  
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
   }
 }

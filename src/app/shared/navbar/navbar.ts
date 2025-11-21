@@ -4,10 +4,11 @@ import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { UserService } from '../../services/user.service';
 import { NotificationService } from '../../services/notification.service';
+import { NotificationComponent } from '../notification/notification.component';
 
 @Component({
   selector: 'app-navbar',
-  imports: [CommonModule],
+  imports: [CommonModule, NotificationComponent],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css'
 })
@@ -90,14 +91,24 @@ export class Navbar implements OnInit {
   }
 
   private loadNotifications() {
-    this.notificationService.getUnreadCount().subscribe({
-      next: (response) => {
-        this.unreadNotifications = response.nombreNonLues;
-      },
-      error: (error) => {
-        console.error('Erreur chargement notifications:', error);
-      }
-    });
+    const token = localStorage.getItem('auth_token');
+    if (!token) return;
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const userId = payload.userId || 1;
+      
+      this.notificationService.getUnreadCount(userId).subscribe({
+        next: (response) => {
+          this.unreadNotifications = response.nombreNonLues;
+        },
+        error: (error) => {
+          console.error('Erreur chargement notifications:', error);
+        }
+      });
+    } catch (error) {
+      console.error('Erreur décodage token:', error);
+    }
   }
 
   private mapRoleToDisplay(role: string): string {
@@ -116,10 +127,6 @@ export class Navbar implements OnInit {
 
   private getRoleText(role: string): string {
     return role === 'GESTIONNAIRE' ? 'Gestionnaire' : 'Utilisateur';
-  }
-
-  onNotificationsClick() {
-    console.log('Page notifications pas encore implémentée');
   }
 
   onSearch(event: any) {

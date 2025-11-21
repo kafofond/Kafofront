@@ -122,6 +122,10 @@ export const routes: Routes = [
                 component: GestionPrelevement
             },
             {
+                path: 'historiques-directeur',
+                component: ContentbodyHistoriqueActionDsi
+            },
+            {
                 path: 'parametres-directeur',
                 component: Parametres
             }
