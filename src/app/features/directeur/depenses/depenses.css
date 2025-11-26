@@ -107,6 +107,46 @@ img {
   cursor: pointer;
 }
 
+/* Styles pour le dropdown d'exportation */
+.export-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.export-dropdown .export-options {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: #fff;
+  border: 2px solid rgba(0, 0, 0, 0.12);
+  border-radius: 10px;
+  margin-top: 4px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  list-style: none;
+  padding: 5px 0;
+  z-index: 10;
+  min-width: 200px;
+  display: none;
+}
+
+.export-dropdown:hover .export-options {
+  display: block;
+}
+
+.export-options li {
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.67);
+  transition: background 0.2s ease;
+}
+
+.export-options li:hover {
+  background-color: #f59e0b;
+  color: #fff;
+}
+
 .data-card {
   background-color: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.15);

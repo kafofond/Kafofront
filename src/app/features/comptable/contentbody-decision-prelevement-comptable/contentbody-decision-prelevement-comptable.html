@@ -21,15 +21,15 @@
         <span>Exporter</span>
       </button>
       <button class="create-btn" (click)="openCreationModal()">
-        <img src="assets/32_236.svg" alt="Créer Icon" />
-        <span>Créer</span>
+        <!-- <img src="assets/32_236.svg" alt="Créer Icon" /> -->
+        <span>+ Créer</span>
       </button>
     </div>
   </div>
 
   <!-- Tableau des Décisions de Prélèvement -->
   <div class="data-card">
-    <h2 class="table-title">Décisions de Prélèvement</h2>
+    <!-- <h2 class="table-title">Décisions de Prélèvement</h2> -->
     
     <!-- États de chargement et d'erreur -->
     <div *ngIf="isLoading" class="loading-state">
@@ -138,6 +138,17 @@
           <label>Entreprise</label>
           <p class="detail-value">{{ selectedDecision.entrepriseNom }}</p>
         </div>
+      </div>
+    </div>
+    
+    <!-- Boutons d'action dans le modal de détails -->
+    <div class="modal-footer">
+      <div class="button-group">
+        <button class="btn btn-pdf btn-sm" (click)="downloadDecisionPrelevementPdf()" title="Télécharger le PDF">
+          <img src="assets/fa6-solid_file-pdf.svg" alt="Export PDF" class="pdf-icon">
+          <span>Télécharger PDF</span>
+        </button>
+        <button class="btn btn-outline" (click)="closeDetailModal()">Fermer</button>
       </div>
     </div>
   </div>

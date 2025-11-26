@@ -23,7 +23,7 @@
 
   <!-- Tableau des Bons de Commande -->
   <div class="data-card">
-    <h2 class="table-title">Bons de Commande</h2>
+    <!-- <h2 class="table-title">Bons de Commande</h2> -->
     
     <!-- États de chargement et d'erreur -->
     <div *ngIf="isLoading" class="loading-state">
@@ -155,6 +155,17 @@
           <label>Entreprise</label>
           <p class="detail-value">{{ selectedBon.entrepriseNom }}</p>
         </div>
+      </div>
+    </div>
+    
+    <!-- Boutons d'action dans le modal de détails -->
+    <div class="modal-footer">
+      <div class="button-group">
+        <button class="btn btn-pdf btn-sm" (click)="downloadBonCommandePdf()" title="Télécharger le PDF">
+          <img src="assets/fa6-solid_file-pdf.svg" alt="Export PDF" class="pdf-icon">
+          <span>Télécharger PDF</span>
+        </button>
+        <button class="btn btn-outline" (click)="closeDetailModal()">Fermer</button>
       </div>
     </div>
   </div>

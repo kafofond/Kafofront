@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { BonCommandeService } from '../../../services/bon-commande.service';
 import { AuthService } from '../../../services/auth.service';
+import { DocumentService } from '../../../services/document.service'; // Import du service de document
 
 @Component({
   selector: 'app-contentbody-bons-de-commande-comptable',
@@ -41,7 +42,8 @@ export class ContentbodyBonsDeCommandeComptable implements OnInit {
 
   constructor(
     private bonCommandeService: BonCommandeService,
-    private authService: AuthService
+    private authService: AuthService,
+    private documentService: DocumentService // Injection du service de document
   ) {}
 
   ngOnInit(): void {
@@ -253,6 +255,26 @@ export class ContentbodyBonsDeCommandeComptable implements OnInit {
     const dropdown = document.querySelector('.filter-group');
     if (dropdown && !dropdown.contains(target)) {
       this.statusDropdownOpen = false;
+    }
+  }
+
+  // Fonction pour télécharger le PDF d'un bon de commande
+  downloadBonCommandePdf(): void {
+    if (this.selectedBon) {
+      this.documentService.downloadBonCommandePdf(this.selectedBon.id).subscribe({
+        next: (blob: Blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `bon_commande_${this.selectedBon?.code || this.selectedBon?.id}.pdf`;
+          link.click();
+          window.URL.revokeObjectURL(url);
+        },
+        error: (error: any) => {
+          console.error('Erreur lors du téléchargement du PDF:', error);
+          alert('Erreur lors du téléchargement du PDF. Veuillez réessayer.');
+        }
+      });
     }
   }
 }

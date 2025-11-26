@@ -549,6 +549,62 @@ img {
   cursor: not-allowed;
 }
 
+/* Styles pour les petits boutons */
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+/* Style pour le bouton discret PDF */
+.btn-pdf {
+  background-color: #f59e0b; /* Jaune */
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btn-pdf:hover {
+  opacity: 0.9;
+}
+
+.btn-pdf .pdf-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* Style pour le bouton contour (Fermer) */
+.btn-outline {
+  background-color: #0b4f63; /* Bleu foncé */
+  color: white;
+  border: 1px solid #0b4f63;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-outline:hover {
+  background-color: #0a4255; /* Bleu légèrement plus foncé au survol */
+  color: white;
+}
+
+/* Groupe de boutons */
+.button-group {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin: 20px 0; /* Ajout de marges en haut et en bas */
+  padding: 0 30px; /* Ajout de padding gauche et droit pour ne pas coller aux bords */
+}
+
 /* --------------------------- */
 /* Responsive                  */
 /* --------------------------- */

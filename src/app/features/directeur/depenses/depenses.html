@@ -16,10 +16,17 @@
       </ul>
     </div>
     
-    <button class="export-btn">
-      <img src="assets/87_188.svg" alt="Export Icon" />
-      <span>Exporter</span>
-    </button>
+    <div class="export-dropdown">
+      <button class="export-btn" (click)="exportAllDataPdf()">
+        <img src="assets/87_188.svg" alt="Export Icon" />
+        <span>Exporter</span>
+      </button>
+      <ul class="export-options">
+        <li (click)="exportDemandesAchatPdf()">Exporter les demandes d'achat</li>
+        <li (click)="exportFichesBesoinPdf()">Exporter les fiches de besoin</li>
+        <li (click)="exportAllDataPdf()">Exporter tout</li>
+      </ul>
+    </div>
   </div>
 
   <!-- ÉTATS DE CHARGEMENT ET ERREUR -->
@@ -203,7 +210,13 @@
     </div>
 
     <div class="modal-footer">
-      <button class="btn btn-primary" (click)="closeDetailDemandeModal()">Fermer</button>
+      <div class="button-group">
+        <button class="btn btn-secondary btn-sm" (click)="downloadDemandeAchatPdf()" title="Télécharger le PDF">
+          <img src="assets/fa6-solid_file-pdf.svg" alt="Export PDF" class="pdf-icon">
+          <span>Télécharger PDF</span>
+        </button>
+        <button class="btn btn-outline" (click)="closeDetailDemandeModal()">Fermer</button>
+      </div>
     </div>
   </div>
 </div>

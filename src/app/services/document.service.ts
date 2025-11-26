@@ -89,4 +89,124 @@ export class DocumentService {
       responseType: 'blob'
     });
   }
+
+  /**
+   * Télécharger le PDF d'une liste de fiches de besoin
+   * @param ids Liste des IDs des fiches de besoin
+   * @param nomFichier Nom du fichier PDF (optionnel)
+   */
+  downloadListeFichesBesoinPdf(ids: number[], nomFichier?: string): Observable<Blob> {
+    const requestBody = {
+      ids: ids,
+      nomFichier: nomFichier
+    };
+    return this.http.post(`${this.baseUrl}/liste/fiches-besoin/pdf`, requestBody, {
+      responseType: 'blob'
+    });
+  }
+
+  /**
+   * Télécharger le PDF d'une liste de demandes d'achat
+   * @param ids Liste des IDs des demandes d'achat
+   * @param nomFichier Nom du fichier PDF (optionnel)
+   */
+  downloadListeDemandesAchatPdf(ids: number[], nomFichier?: string): Observable<Blob> {
+    const requestBody = {
+      ids: ids,
+      nomFichier: nomFichier
+    };
+    return this.http.post(`${this.baseUrl}/liste/demandes-achat/pdf`, requestBody, {
+      responseType: 'blob'
+    });
+  }
+
+  /**
+   * Télécharger le PDF d'une liste de bons de commande
+   * @param ids Liste des IDs des bons de commande
+   * @param nomFichier Nom du fichier PDF (optionnel)
+   */
+  downloadListeBonsCommandePdf(ids: number[], nomFichier?: string): Observable<Blob> {
+    const requestBody = {
+      ids: ids,
+      nomFichier: nomFichier
+    };
+    return this.http.post(`${this.baseUrl}/liste/bons-commande/pdf`, requestBody, {
+      responseType: 'blob'
+    });
+  }
+
+  /**
+   * Télécharger le PDF d'une liste de budgets
+   * @param ids Liste des IDs des budgets
+   * @param nomFichier Nom du fichier PDF (optionnel)
+   */
+  downloadListeBudgetsPdf(ids: number[], nomFichier?: string): Observable<Blob> {
+    const requestBody = {
+      ids: ids,
+      nomFichier: nomFichier
+    };
+    return this.http.post(`${this.baseUrl}/liste/budgets/pdf`, requestBody, {
+      responseType: 'blob'
+    });
+  }
+
+  /**
+   * Télécharger le PDF d'une liste d'attestations de service fait
+   * @param ids Liste des IDs des attestations
+   * @param nomFichier Nom du fichier PDF (optionnel)
+   */
+  downloadListeAttestationsServicePdf(ids: number[], nomFichier?: string): Observable<Blob> {
+    const requestBody = {
+      ids: ids,
+      nomFichier: nomFichier
+    };
+    return this.http.post(`${this.baseUrl}/liste/attestations-service-fait/pdf`, requestBody, {
+      responseType: 'blob'
+    });
+  }
+
+  /**
+   * Télécharger le PDF d'une liste de décisions de prélèvement
+   * @param ids Liste des IDs des décisions
+   * @param nomFichier Nom du fichier PDF (optionnel)
+   */
+  downloadListeDecisionsPrelevementPdf(ids: number[], nomFichier?: string): Observable<Blob> {
+    const requestBody = {
+      ids: ids,
+      nomFichier: nomFichier
+    };
+    return this.http.post(`${this.baseUrl}/liste/decisions-prelevement/pdf`, requestBody, {
+      responseType: 'blob'
+    });
+  }
+
+  /**
+   * Télécharger le PDF d'une liste d'ordres de paiement
+   * @param ids Liste des IDs des ordres
+   * @param nomFichier Nom du fichier PDF (optionnel)
+   */
+  downloadListeOrdresPaiementPdf(ids: number[], nomFichier?: string): Observable<Blob> {
+    const requestBody = {
+      ids: ids,
+      nomFichier: nomFichier
+    };
+    return this.http.post(`${this.baseUrl}/liste/ordres-paiement/pdf`, requestBody, {
+      responseType: 'blob'
+    });
+  }
+
+  /**
+   * Télécharger le PDF d'une liste de lignes de crédit
+   * @param ids Liste des IDs des lignes de crédit
+   * @param nomFichier Nom du fichier PDF (optionnel)
+   */
+  downloadListeLignesCreditPdf(ids: number[], nomFichier?: string): Observable<Blob> {
+    const requestBody = {
+      ids: ids,
+      nomFichier: nomFichier
+    };
+    return this.http.post(`${this.baseUrl}/liste/lignes-credit/pdf`, requestBody, {
+      responseType: 'blob'
+    });
+  }
 }
