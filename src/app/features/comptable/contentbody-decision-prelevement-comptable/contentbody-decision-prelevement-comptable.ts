@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { DecisionPrelevementService } from '../../../services/decision-prelevement.service';
 import { AuthService } from '../../../services/auth.service';
+import { DocumentService } from '../../../services/document.service'; // Import du service de document
 
 @Component({
   selector: 'app-contentbody-decision-prelevement-comptable',
@@ -45,7 +46,8 @@ export class ContentbodyDecisionPrelevementComptable implements OnInit {
 
   constructor(
     public decisionPrelevementService: DecisionPrelevementService,
-    private authService: AuthService
+    private authService: AuthService,
+    private documentService: DocumentService // Injection du service de document
   ) {}
 
   ngOnInit(): void {
@@ -258,6 +260,26 @@ export class ContentbodyDecisionPrelevementComptable implements OnInit {
     const dropdown = document.querySelector('.filter-group');
     if (dropdown && !dropdown.contains(target)) {
       this.statusDropdownOpen = false;
+    }
+  }
+
+  // Fonction pour télécharger le PDF d'une décision de prélèvement
+  downloadDecisionPrelevementPdf(): void {
+    if (this.selectedDecision) {
+      this.documentService.downloadDecisionPrelevementPdf(this.selectedDecision.id).subscribe({
+        next: (blob: Blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `decision_prelevement_${this.selectedDecision?.code || this.selectedDecision?.id}.pdf`;
+          link.click();
+          window.URL.revokeObjectURL(url);
+        },
+        error: (error: any) => {
+          console.error('Erreur lors du téléchargement du PDF:', error);
+          alert('Erreur lors du téléchargement du PDF. Veuillez réessayer.');
+        }
+      });
     }
   }
 }

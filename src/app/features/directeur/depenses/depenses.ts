@@ -51,7 +51,7 @@ export class Depenses implements OnInit, OnDestroy {
       ? this.fichesBesoin
       : this.fichesBesoin.filter(f => this.mapApiStatutToDisplay(f.statut) === this.selectedStatus);
     
-    return filtered.slice(0, ); // max 5 lignes
+    return filtered.slice(0, 5); // max 5 lignes
   }
 
   private subscriptions: Subscription = new Subscription();
@@ -162,6 +162,73 @@ export class Depenses implements OnInit, OnDestroy {
         }
       });
     }
+  }
+
+  // Fonction pour télécharger le PDF d'une demande d'achat
+  downloadDemandeAchatPdf(): void {
+    if (this.selectedDemande) {
+      this.documentService.downloadDemandeAchatPdf(this.selectedDemande.id).subscribe({
+        next: (blob: Blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `demande_achat_${this.selectedDemande?.code || this.selectedDemande?.id}.pdf`;
+          link.click();
+          window.URL.revokeObjectURL(url);
+        },
+        error: (error: any) => {
+          console.error('Erreur lors du téléchargement du PDF:', error);
+          alert('Erreur lors du téléchargement du PDF. Veuillez réessayer.');
+        }
+      });
+    }
+  }
+
+  // Fonction pour exporter la liste des demandes d'achat en PDF
+  exportDemandesAchatPdf(): void {
+    const ids = this.demandesAchat.map(demande => demande.id);
+    this.documentService.downloadListeDemandesAchatPdf(ids, 'liste_demandes_achat.pdf').subscribe({
+      next: (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'liste_demandes_achat.pdf';
+        link.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (error: any) => {
+        console.error('Erreur lors de l\'exportation des demandes d\'achat:', error);
+        alert('Erreur lors de l\'exportation des demandes d\'achat. Veuillez réessayer.');
+      }
+    });
+  }
+
+  // Fonction pour exporter la liste des fiches de besoin en PDF
+  exportFichesBesoinPdf(): void {
+    const ids = this.fichesBesoin.map(fiche => fiche.id);
+    this.documentService.downloadListeFichesBesoinPdf(ids, 'liste_fiches_besoin.pdf').subscribe({
+      next: (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'liste_fiches_besoin.pdf';
+        link.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (error: any) => {
+        console.error('Erreur lors de l\'exportation des fiches de besoin:', error);
+        alert('Erreur lors de l\'exportation des fiches de besoin. Veuillez réessayer.');
+      }
+    });
+  }
+
+  // Fonction pour exporter toutes les données (demandes d'achat et fiches de besoin) en PDF
+  exportAllDataPdf(): void {
+    // Exporter les demandes d'achat
+    this.exportDemandesAchatPdf();
+    
+    // Exporter les fiches de besoin
+    this.exportFichesBesoinPdf();
   }
 
   // CORRECTION : Méthode publique pour le template
