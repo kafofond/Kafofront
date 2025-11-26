@@ -303,7 +303,13 @@
     </div>
 
     <div class="modal-footer">
-      <button class="btn btn-primary" (click)="closeDetailFicheModal()">Fermer</button>
+      <div class="button-group">
+        <button class="btn btn-secondary btn-sm" (click)="downloadFicheBesoinPdf()" title="Télécharger le PDF">
+          <img src="assets/fa6-solid_file-pdf.svg" alt="Export PDF" class="pdf-icon">
+          <span>Télécharger PDF</span>
+        </button>
+        <button class="btn btn-outline" (click)="closeDetailFicheModal()">Fermer</button>
+      </div>
     </div>
   </div>
 </div>

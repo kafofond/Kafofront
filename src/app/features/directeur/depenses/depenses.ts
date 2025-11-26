@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 // Services
 import { DemandeAchatService, DemandeAchat } from '../../../services/demande-achat.service';
 import { FicheBesoinService, FicheBesoin, Designation } from '../../../services/fiche-besoin.service';
+import { DocumentService } from '../../../services/document.service'; // Ajout de l'import du service de document
 
 // Modèles
 import { Statut } from '../../../enums/statut';
@@ -58,7 +59,8 @@ export class Depenses implements OnInit, OnDestroy {
 
   constructor(
     private demandeAchatService: DemandeAchatService,
-    private ficheBesoinService: FicheBesoinService
+    private ficheBesoinService: FicheBesoinService,
+    private documentService: DocumentService // Ajout du service de document
   ) { }
 
   ngOnInit(): void {
@@ -140,6 +142,26 @@ export class Depenses implements OnInit, OnDestroy {
     this.selectedFiche = null;
     this.showDetailFicheModal = false;
     document.body.classList.remove('modal-open');
+  }
+
+  // Fonction pour télécharger le PDF d'une fiche de besoin
+  downloadFicheBesoinPdf(): void {
+    if (this.selectedFiche) {
+      this.documentService.downloadFicheBesoinPdf(this.selectedFiche.id).subscribe({
+        next: (blob: Blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `fiche_besoin_${this.selectedFiche?.code || this.selectedFiche?.id}.pdf`;
+          link.click();
+          window.URL.revokeObjectURL(url);
+        },
+        error: (error: any) => {
+          console.error('Erreur lors du téléchargement du PDF:', error);
+          alert('Erreur lors du téléchargement du PDF. Veuillez réessayer.');
+        }
+      });
+    }
   }
 
   // CORRECTION : Méthode publique pour le template
