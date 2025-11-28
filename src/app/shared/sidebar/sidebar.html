@@ -1,7 +1,7 @@
 <aside class="sidebar">
   <!-- Logo -->
   <div class="sidebar-header">
-    <a routerLink="/" class="logo">
+    <a class="logo">
       <img
         src="assets/714cbf89a893ed060d5aa944464a6360bc1f47ea.png"
         alt="KafoFond Logo"
@@ -18,7 +18,7 @@
     <ul>
       <li class="nav-item">
         <a
-          routerLink=""
+          routerLink="/gestionnaire"
           routerLinkActive="active"
           [routerLinkActiveOptions]="{ exact: true }"
         >
@@ -33,7 +33,7 @@
       </li>
 
       <li class="nav-item">
-        <a routerLink="/listbudget-gest" routerLinkActive="active">
+        <a routerLink="listbudget-gest" routerLinkActive="active">
           <span class="nav-bar"></span>
           <img
             src="assets/87_54.svg"
@@ -80,7 +80,7 @@
 
       <li class="nav-item">
         <a
-          routerLink="/attestation-de-service-fait-gest"
+          routerLink="/gestionnaire/attestation-de-service-fait-gest"
           routerLinkActive="active"
           [routerLinkActiveOptions]="{ exact: true }"
         >
@@ -96,7 +96,7 @@
 
       <li class="nav-item">
         <a
-          routerLink="/parametres-gest"
+          routerLink="/gestionnaire/parametres-gest"
           routerLinkActive="active"
           [routerLinkActiveOptions]="{ exact: true }"
         >
@@ -114,7 +114,7 @@
 
   <!-- Déconnexion -->
   <div class="sidebar-footer">
-    <a routerLink="/seconnecter" class="logout-button">
+    <a routerLink="" class="logout-button">
       <img src="assets/87_33.svg" alt="" class="nav-icon" />
       <span>Déconnexion</span>
     </a>

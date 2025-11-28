@@ -40,59 +40,80 @@ import { MainLayoutDSI } from './shared/layouts/main-layout-dsi/main-layout-dsi'
 import { ContentbodyDashbordDsi } from './features/dsi/contentbody-dashbord-dsi/contentbody-dashbord-dsi';
 import { ContentbodyUtilisateurDsi } from './features/dsi/contentbody-utilisateur-dsi/contentbody-utilisateur-dsi';
 import { ContentbodyHistoriqueActionDsi } from './features/dsi/contentbody-historique-action-dsi/contentbody-historique-action-dsi';
+import { ForbiddenComponent } from './shared/forbidden-component/forbidden-component';
+import { AuthGuard } from './services/auth.guard';
+import { RoleGuard } from './services/role.guard';
 
 export const routes: Routes = [
+
+    // --- Routes Publiques (non protégées) ---
+    {path:'', component: SeConnecter},
+    {path: 'changer-mot-de-passe', component: ChangerMotDePasse},
+    {path:'forbidden', component: ForbiddenComponent},
+
+    // --- Routes Protégées par Rôle ---
+
+
+    // 1. Routes SUPER_ADMIN
     {
-        path: '',
-        component: MainLayout,
+        path: 'admin-system',
+        component: MainLayoutAdminSystem,
+        canActivate: [AuthGuard, RoleGuard],
+        data: { role: 'SUPER_ADMIN' },
         children: [
             {
                 path: '',
-                component: ContentbodyDashbordGest
+                component: ContentbodyDashbordAdminSystem
             },
             {
-                path: 'listbudget-gest',
-                component: ContentbodyListbudgetGest
+                path: 'entreprises-admin-system',
+                component: ContentbodyEntrepriseAdminSystem
             },
             {
-                path: 'listbudget-gest/listlignesbudget-gest/:budgetId', // ✅ AJOUT :budgetId
-                component: ContentbodyVoirlignesGest
+                path: 'utilisateurs-admin-system',
+                component: ContentbodyUtilisateurAdminSystem
             },
             {
-                path: 'fiche-de-besoin-gest',
-                component: ContentbodyFicheDeBesoinGest
-            },
-            {
-                path: 'demande-achat-gest',
-                component: ContentbodyDemandeAchatGest
-            },
-            {
-                path: 'attestation-de-service-fait-gest',
-                component: ContentbodyAttestationServiceFaitGest
-            },
-            {
-                path: 'parametres-gest',
+                path: 'parametres-admin-system',
                 component: Parametres
             }
         ]
-    }, 
-
-    {
-        path: "mot-de-passe-oublie",
-        component: ChangerMotDePasse
-    },
-    {
-        path: 'seconnecter',
-        component: SeConnecter
-    },
-    {
-        path: 'creer-un-compte',
-        component:CreerCompte
     },
 
+
+    // 2 Routes DSI
+    {
+        path: 'dsi',
+        component: MainLayoutDSI,
+        canActivate: [AuthGuard, RoleGuard],
+        data: { role: 'DSI' },
+        children: [
+            {
+                path: '',
+                component: ContentbodyDashbordDsi
+            },
+            {
+                path: 'utilisateurs-dsi',
+                component: ContentbodyUtilisateurDsi
+            },
+            {
+                path: 'historiques-dsi',
+                component: ContentbodyHistoriqueActionDsi
+            },
+            {
+                path: 'parametres-dsi',
+                component: Parametres
+            }
+        ]
+    },
+
+
+    // 3. Routes DIRECTEUR
     {
         path: 'directeur',
         component: MainLayoutDirecteur,
+        canActivate: [AuthGuard, RoleGuard],
+        data: { role: 'DIRECTEUR' },
         children: [
             {
                 path: '',
@@ -132,9 +153,53 @@ export const routes: Routes = [
             }
         ]
     },
+
+
+    // 4. Routes GESTIONNAIRE
+    {
+        path: 'gestionnaire',
+        component: MainLayout,
+        canActivate: [AuthGuard, RoleGuard],
+        data: { role: 'GESTIONNAIRE' },
+        children: [
+            {
+                path: '',
+                component: ContentbodyDashbordGest
+            },
+            {
+                path: 'listbudget-gest',
+                component: ContentbodyListbudgetGest
+            },
+            {
+                path: 'listbudget-gest/listlignesbudget-gest/:budgetId', // ✅ AJOUT :budgetId
+                component: ContentbodyVoirlignesGest
+            },
+            {
+                path: 'fiche-de-besoin-gest',
+                component: ContentbodyFicheDeBesoinGest
+            },
+            {
+                path: 'demande-achat-gest',
+                component: ContentbodyDemandeAchatGest
+            },
+            {
+                path: 'attestation-de-service-fait-gest',
+                component: ContentbodyAttestationServiceFaitGest
+            },
+            {
+                path: 'parametres-gest',
+                component: Parametres
+            }
+        ]
+    }, 
+
+
+    // 5. Routes RESPONSABLE
     {
         path: 'responsable',
         component: MainLayoutResponsable,
+        canActivate: [AuthGuard, RoleGuard],
+        data: { role: 'RESPONSABLE' },
         children: [
             {
                 path: '',
@@ -177,9 +242,14 @@ export const routes: Routes = [
             }
         ]
     },
+
+
+    // 6. Routes COMPTABLE
     {
         path: 'comptable',
         component: MainLayoutComptable,
+        canActivate: [AuthGuard, RoleGuard],
+        data: { role: 'COMPTABLE' },
         children: [
             {
                 path: '',
@@ -215,50 +285,32 @@ export const routes: Routes = [
             }
         ]
     },
+
+
+    // --- Routes non définies ---
+    {path: '**', redirectTo: 'forbidden'}
+
+
+    /*
+
     {
-        path: 'admin-system',
-        component: MainLayoutAdminSystem,
-        children: [
-            {
-                path: '',
-                component: ContentbodyDashbordAdminSystem
-            },
-            {
-                path: 'entreprises-admin-system',
-                component: ContentbodyEntrepriseAdminSystem
-            },
-            {
-                path: 'utilisateurs-admin-system',
-                component: ContentbodyUtilisateurAdminSystem
-            },
-            {
-                path: 'parametres-admin-system',
-                component: Parametres
-            }
-        ]
+        path: "mot-de-passe-oublie",
+        component: ChangerMotDePasse
     },
     {
-        path: 'dsi',
-        component: MainLayoutDSI,
-        children: [
-            {
-                path: '',
-                component: ContentbodyDashbordDsi
-            },
-            {
-                path: 'utilisateurs-dsi',
-                component: ContentbodyUtilisateurDsi
-            },
-            {
-                path: 'historiques-dsi',
-                component: ContentbodyHistoriqueActionDsi
-            },
-            {
-                path: 'parametres-dsi',
-                component: Parametres
-            }
-        ]
+        path: 'seconnecter',
+        component: SeConnecter
     },
+    {
+        path: 'creer-un-compte',
+        component:CreerCompte
+    },
+
+    
+    
+    
+    
+    
 
     {
         path: '',
@@ -269,4 +321,5 @@ export const routes: Routes = [
         path: '**',
         redirectTo: 'seconnecter'
     },
+    */
 ];

@@ -19,6 +19,14 @@ export class ContentbodyListbudgetGest implements OnInit, OnDestroy {
   isLoading: boolean = true;
   errorMessage: string = '';
 
+  searchQuery: string = '';
+
+  filteredBudgets: BudgetItem[] = [];
+
+  currentPage = 1;
+  itemsPerPage = 10;
+  totalPages = 0;
+
   showDetailModal: boolean = false;
   showEditModal: boolean = false;
   showRejetModal: boolean = false;
@@ -53,7 +61,7 @@ export class ContentbodyListbudgetGest implements OnInit, OnDestroy {
     }
 
     console.log(`🔎 Navigation vers lignes du budget ${budget.id}...`);
-    this.router.navigate(['/listbudget-gest/listlignesbudget-gest', budget.id]);
+    this.router.navigate(['/gestionnaire/listbudget-gest/listlignesbudget-gest', budget.id]);
   }
 
   loadBudgets(): void {
@@ -65,7 +73,8 @@ export class ContentbodyListbudgetGest implements OnInit, OnDestroy {
         this.allBudgets = response.budgets.map(apiBudget => 
           mapApiBudgetToBudgetItem(apiBudget)
         );
-        this.budgets = [...this.allBudgets];
+        // Initieren les listes filtrées/affichées
+        this.applyFilters();
         this.isLoading = false;
       },
       error: (error) => {
@@ -85,16 +94,8 @@ export class ContentbodyListbudgetGest implements OnInit, OnDestroy {
   applyFilter(filterType: string): void {
     this.activeFilter = filterType;
     this.showFilterDropdown = false;
-    
-    // Appliquer le filtrage
-    if (filterType === 'Tous') {
-      this.budgets = [...this.allBudgets];
-    } else {
-      // Filtrer directement sur les valeurs d'affichage puisque les budgets sont déjà mappés
-      this.budgets = this.allBudgets.filter(budget => 
-        budget.statut === filterType
-      );
-    }
+    // Appliquer les filtres composés (recherche + statut)
+    this.applyFilters();
   }
 
   onClickOutside(event: MouseEvent): void {
@@ -123,5 +124,42 @@ export class ContentbodyListbudgetGest implements OnInit, OnDestroy {
 
   getEtatBadgeClass(etat: string): string {
     return etat === 'Actif' ? 'status-badge active' : 'status-badge rejected';
+  }
+
+  updateTotalPages(): void {
+    this.totalPages = Math.ceil(this.filteredBudgets.length / this.itemsPerPage);
+  }
+
+  applySearchFilter() {
+    // Keep backward compatibility; simply re-run composite filter
+    this.applyFilters();
+  }
+
+  applyFilters(): void {
+    const query = this.searchQuery.trim().toLowerCase();
+
+    let temp = [...this.allBudgets];
+
+    // Filter by activeFilter (statut) if set and not Tous
+    if (this.activeFilter && this.activeFilter !== 'Tous') {
+      temp = temp.filter(b => b.statut === this.activeFilter || b.etat === this.activeFilter);
+    }
+
+    // Filter by free text search on intituleBudget, etat or statut
+    if (query.length > 0) {
+      temp = temp.filter(
+        f =>
+          (f.intituleBudget && f.intituleBudget.toLowerCase().includes(query)) ||
+          (f.etat && f.etat.toLowerCase().includes(query)) ||
+          (f.statut && f.statut.toLowerCase().includes(query))
+      );
+    }
+
+    this.filteredBudgets = temp;
+    // reset pagination
+    this.currentPage = 1;
+    // Update the visible budgets for display (could be paginated)
+    this.budgets = [...this.filteredBudgets];
+    this.updateTotalPages();
   }
 }

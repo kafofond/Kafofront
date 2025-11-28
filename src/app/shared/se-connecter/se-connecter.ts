@@ -102,7 +102,8 @@ export class SeConnecter {
             console.log('🔑 Token stocké, rôle:', response.role);
             console.log('📍 Début de la redirection...');
             
-            this.redirectBasedOnRole(response.role);
+            this.redirectUser(response.role);
+            //this.redirectBasedOnRole(response.role);
           } else {
             console.warn('❌ Pas de token dans la réponse, redirection par défaut');
             this.router.navigate(['/']);
@@ -144,7 +145,7 @@ export class SeConnecter {
       'DIRECTEUR': '/directeur',
       'RESPONSABLE': '/responsable', 
       'COMPTABLE': '/comptable',
-      'GESTIONNAIRE': '/'
+      'GESTIONNAIRE': '/gestionnaire'
     };
     
     const route = roleMapping[role] || '/';
@@ -161,4 +162,17 @@ export class SeConnecter {
       clearTimeout(this.errorTimeout);
     }
   }
+
+  redirectUser(role: string) {
+  switch(role) {
+    case 'SUPER_ADMIN': this.router.navigate(['/admin-system']); break;
+    case 'DSI': this.router.navigate(['/dsi']); break;
+    case 'DIRECTEUR': this.router.navigate(['/directeur']); break;
+    case 'GESTIONNAIRE': this.router.navigate(['/gestionnaire']); break;
+    case 'RESPONSABLE': this.router.navigate(['/responsable']); break;
+    case 'COMPTABLE': this.router.navigate(['/comptable']); break;
+    default: this.router.navigate(['/forbidden']);
+  }
+}
+
 }

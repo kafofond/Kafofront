@@ -43,6 +43,22 @@ a, button {
   margin: 0;
 }
 
+/* Barre de recherche pour la liste des lignes */
+.content-title .search-input {
+  width: 380px;
+  padding: 10px 14px;
+  border: 2px solid rgba(0,0,0,0.12);
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.content-title .search-info {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #64748b;
+}
+
 .header-left,
 .header-right {
   display: flex;
@@ -136,10 +152,12 @@ a, button {
 .table-header,
 .table-row {
   display: grid;
-  /* 6 colonnes: Intitulé(3.2) | Alloué(1) | Engagé(1) | Taux(1.5) | Statut(1.2) | Actions(1) */
-  grid-template-columns: 3.2fr 1fr 1fr 1.5fr 1.2fr 1fr;
+  /* 6 colonnes: Intitulé | Montant Alloué | Montant Engagé | Taux | Statut | Actions */
+  /* Recompose columns for better spacing: make numeric columns slightly wider and add gap */
+  grid-template-columns: 3.0fr 1.4fr 1.4fr 1.6fr 1.2fr 1fr;
   align-items: center;
   padding: 20px 24px;
+  column-gap: 18px; /* spacing between columns */
 }
 
 .table-header {
@@ -212,6 +230,38 @@ a, button {
   opacity: 0.8;
 }
 
+/* Align monetary columns to the right and give a little more room */
+.col-montant {
+  text-align: right;
+  padding-right: 14px; /* more space between the number and the next column */
+  font-variant-numeric: tabular-nums; /* keep numbers aligned */
+  min-width: 110px; /* ensure numeric columns don't shrink too much */
+}
+
+/* Align Actions header with the action buttons to the right */
+.table-header .col-actions {
+  text-align: center;
+  padding-right: 8px;
+}
+
+.table-row .col-actions {
+  display: flex;
+  justify-content: center;
+  padding-right: 8px;
+}
+
+.col-montant .item-title {
+  text-align: right;
+}
+
+/* Subtle separation for the 'Montant Engagé' column */
+@media (min-width: 992px) {
+  .col-montant-engage {
+    border-left: 1px solid #e2e8f0;
+    padding-left: 12px;
+  }
+}
+
 .status-badge {
   display: inline-block;
   padding: 3px 20px;
@@ -246,6 +296,10 @@ a, button {
   align-items: center;
   justify-content: flex-start;
   gap: 10px;
+}
+
+.table-row .actions-cell {
+  justify-content: flex-end; /* keep the action buttons at the end of the row */
 }
 
 .action-icon-btn {

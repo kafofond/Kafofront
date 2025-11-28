@@ -1,12 +1,20 @@
 <div class="content-header">
   <div class="header-left">
-    <button class="action-btn back-button" routerLink="/listbudget-gest">
+    <button class="action-btn back-button" routerLink="/gestionnaire/listbudget-gest">
       <img src="assets/tabler_arrow-left.svg" alt="Retour" />
       <span>Retour</span>
     </button>
   </div>
 
-  <h3 class="content-title">Lignes de crédit - {{ budgetCode }}</h3>
+  <!-- Replace static title with a search bar that filters lines in real-time -->
+  <div class="content-title">
+    <input type="text" class="search-input" placeholder="Rechercher une ligne (intitulé, statut, commentaire...)" [(ngModel)]="searchQuery"
+           (input)="applySearchFilter()" />
+    <div class="search-info">
+      <span *ngIf="filteredLignes.length > 0">{{ filteredLignes.length }} résultat(s)</span>
+      <span *ngIf="filteredLignes.length === 0 && !isLoading">Aucun résultat</span>
+    </div>
+  </div>
 
   <div class="header-right">
     <div class="filter-dropdown-container">
@@ -37,11 +45,11 @@
   <div class="budget-table">
     <div class="table-header">
       <div>Intitulé</div>
-      <div>Montant Alloué</div>
-      <div>Montant Engagé</div>
+      <div class="col-montant">Montant Alloué</div>
+      <div class="col-montant">Montant Engagé</div>
       <div>Taux d'utilisation</div>
       <div>Statut</div>
-      <div>Actions</div>
+      <div class="col-actions">Actions</div>
     </div>
 
     <div class="table-body">
@@ -56,12 +64,12 @@
       </div>
 
       <!-- Data -->
-      <div class="table-row" *ngFor="let ligne of lignes">
+      <div class="table-row" *ngFor="let ligne of filteredLignes">
         <div class="col-intitule">
           <span class="item-title">{{ ligne.intituleLigne }}</span>
         </div>
-        <div>{{ ligne.montantAlloue | number }} FCFA</div>
-        <div>{{ ligne.montantEngage | number }} FCFA</div>
+        <div class="col-montant col-montant-alloue">{{ ligne.montantAlloue | number }} FCFA</div>
+        <div class="col-montant col-montant-engage">{{ ligne.montantEngage | number }} FCFA</div>
         <div class="col-taux">
           <div class="progress-bar">
             <div class="progress-bar-inner" [style.width.%]="ligne.tauxUtilisation"></div>
@@ -79,7 +87,7 @@
       </div>
 
       <!-- Empty State -->
-      <div *ngIf="lignes.length === 0 && !isLoading && !errorMessage" class="empty-state">
+      <div *ngIf="filteredLignes.length === 0 && !isLoading && !errorMessage" class="empty-state">
         <div>Aucune ligne de crédit trouvée pour ce budget</div>
       </div>
     </div>

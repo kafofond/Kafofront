@@ -36,6 +36,8 @@ export class ContentbodyVoirlignesGest implements OnInit, OnDestroy {
   errorMessage: string = '';
   budgetId: number = 0;
   budgetCode: string = ''; // Ajout de la propriété pour le code du budget
+  searchQuery: string = '';
+  filteredLignes: LigneBudget[] = [];
   
   // Ligne sélectionnée
   selectedLigne: LigneBudget | null = null;
@@ -132,7 +134,8 @@ export class ContentbodyVoirlignesGest implements OnInit, OnDestroy {
         this.allLignes = response.lignes.map(apiLigne => 
           mapApiLigneToLigneBudget(apiLigne)
         );
-        this.lignes = [...this.allLignes];
+        // Initialise la liste filtrée et applique les filtres si nécessaires
+        this.applyFilters();
         this.isLoading = false;
       },
       error: (error) => {
@@ -152,16 +155,36 @@ export class ContentbodyVoirlignesGest implements OnInit, OnDestroy {
   applyFilter(filterType: string): void {
     this.activeFilter = filterType;
     this.showFilterDropdown = false;
-    
-    // Appliquer le filtrage
-    if (filterType === 'Tous') {
-      this.lignes = [...this.allLignes];
-    } else {
-      // Filtrer sur les valeurs d'affichage
-      this.lignes = this.allLignes.filter(ligne => 
-        ligne.statut === filterType
+    // Appliquer les filtres combinés (statut + recherche)
+    this.applyFilters();
+  }
+
+  applySearchFilter(): void {
+    this.applyFilters();
+  }
+
+  applyFilters(): void {
+
+    const normalize = (s: string) => (s || '').toString().normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+    const query = normalize(this.searchQuery.trim());
+
+    let temp = [...this.allLignes];
+
+    if (this.activeFilter && this.activeFilter !== 'Tous') {
+      temp = temp.filter(l => l.statut === this.activeFilter || (l.etat ? 'Actif' : 'Inactif') === this.activeFilter);
+    }
+
+    if (query.length > 0) {
+      temp = temp.filter(l => 
+        normalize(l.intituleLigne).includes(query) ||
+        normalize(l.commentaire).includes(query) ||
+        normalize(l.statut).includes(query) ||
+        normalize(l.etat ? 'Actif' : 'Inactif').includes(query)
       );
     }
+
+    this.filteredLignes = temp;
+    this.lignes = [...this.filteredLignes];
   }
 
   onClickOutside(event: MouseEvent): void {
