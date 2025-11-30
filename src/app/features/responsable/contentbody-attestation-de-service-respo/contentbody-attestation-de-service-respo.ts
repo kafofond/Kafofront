@@ -8,9 +8,10 @@ import { AttestationServiceFait } from '../../../models/attestation-service-fait
 
 @Component({
   selector: 'app-contentbody-attestation-de-service-respo',
+  standalone: true,
   imports: [FormsModule, CommonModule],
   templateUrl: './contentbody-attestation-de-service-respo.html',
-  styleUrl: './contentbody-attestation-de-service-respo.css'
+  styleUrls: ['./contentbody-attestation-de-service-respo.css']
 })
 export class ContentbodyAttestationDeServiceRespo implements OnInit {
 
@@ -21,19 +22,19 @@ export class ContentbodyAttestationDeServiceRespo implements OnInit {
   errorMessage: string = '';
 
   attestations: AttestationServiceFait[] = [];
+  // Recherche
+  searchQuery: string = '';
   selectedAttestation: AttestationServiceFait | null = null;
   showDetailModal: boolean = false;
 
   // Filtrage dynamique des attestations de service fait
   get filteredAttestations(): AttestationServiceFait[] {
-    const filtered =
-      this.selectedStatus === 'Tous'
-        ? this.attestations
-        : this.attestations.filter(
-            (a) =>
-              a.statut &&
-              a.statut.toLowerCase() === this.selectedStatus.toLowerCase()
-          );
+    const normalize = (s: string) => (s || '').toString().normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+    const q = normalize(this.searchQuery.trim());
+    let filtered = this.selectedStatus === 'Tous' ? this.attestations : this.attestations.filter(a => a.statut && a.statut.toLowerCase() === this.selectedStatus.toLowerCase());
+    if (q) {
+      filtered = filtered.filter(a => [a.code, a.referenceBonCommande, a.fournisseur, a.titre, a.statut].some(f => normalize(f || '').includes(q)));
+    }
     return filtered;
   }
 

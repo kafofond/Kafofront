@@ -43,6 +43,26 @@ export class ContentbodyListbudgetDirect implements OnInit, OnDestroy {
   };
 
   private budgetsSubscription?: Subscription;
+  // Recherche en temps réel
+  searchQuery: string = '';
+
+  private normalizeString(s: any): string {
+    return (s || '').toString().normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+  }
+
+  private getFilteredAllBudgets(): BudgetItem[] {
+    // Apply filter by activeFilter
+    let filtered = this.activeFilter === 'Aucun' ? [...this.allBudgets] : this.allBudgets.filter(b => b.statut === this.activeFilter);
+    // Apply searchQuery filtering
+    const q = this.normalizeString(this.searchQuery.trim());
+    if (q) {
+      filtered = filtered.filter(b => {
+        return [b.intituleBudget, b.description, b.codeBudget, String(b.montantBudget), b.statut]
+          .some(f => this.normalizeString(f).includes(q));
+      });
+    }
+    return filtered;
+  }
 
   constructor(
     private budgetService: BudgetService,
@@ -208,7 +228,8 @@ export class ContentbodyListbudgetDirect implements OnInit, OnDestroy {
 
   // Pagination methods
   updatePagination(): void {
-    this.totalPages = Math.ceil(this.allBudgets.length / this.itemsPerPage);
+    const filtered = this.getFilteredAllBudgets();
+    this.totalPages = Math.ceil(filtered.length / this.itemsPerPage) || 1;
     this.goToPage(1);
   }
 
@@ -219,13 +240,8 @@ export class ContentbodyListbudgetDirect implements OnInit, OnDestroy {
     const startIndex = (page - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
     
-    // Apply filter if active
-    let filteredBudgets = this.allBudgets;
-    if (this.activeFilter !== 'Aucun') {
-      filteredBudgets = this.allBudgets.filter(budget => budget.statut === this.activeFilter);
-    }
-    
-    this.budgets = filteredBudgets.slice(startIndex, endIndex);
+    const filtered = this.getFilteredAllBudgets();
+    this.budgets = filtered.slice(startIndex, endIndex);
   }
 
   nextPage(): void {

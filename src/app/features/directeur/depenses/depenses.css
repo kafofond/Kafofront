@@ -204,6 +204,39 @@ img {
 .col-5 { flex: 1.5; text-align: center; }
 .col-6 { flex: 1; text-align: center; }
 
+/* Allow descriptions and long texts to wrap and not overflow */
+.col-2 {
+  white-space: normal;
+  word-break: break-word;
+}
+
+/* Pagination controls */
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.pagination-btn {
+  padding: 8px 12px;
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 8px;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.pagination-btn[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.pagination-info {
+  font-size: 13px;
+  color: rgba(0,0,0,0.6);
+}
+
 .status-badge {
   display: inline-block;
   padding: 3px 20px;
@@ -222,11 +255,59 @@ img {
   color: #f51919; /* --status-danger */
 }
 
+/* Pending / En attente */
+.status-badge.status-pending {
+  background-color: #fff7cc; /* light yellow */
+  color: #92400e; /* amber/dark yellow */
+}
+
+.status-en-attente {
+    background-color: #fff7cc ;
+    color: #f59e0b;
+}
+
+.status-valide {
+  background-color: #dcffbe;
+  color: #0c8f11;
+}
+
+.status-rejete {
+  background-color: #fff7cc;
+  color: #b91c1c;
+}
+
+.status-approuve {
+  background-color: #dcffbe;
+  color: #1d4ed8;
+}
+
 .action-btn {
   background: none;
   border: none;
   cursor: pointer;
   padding: 0;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.action-btn img {
+  width: 22px;
+  height: 22px;
+  display: inline-block;
+  margin-left: 10px;
+}
+.action-btn:first-child img {
+  margin-left: 0;
+}
+
+textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.12);
 }
 
 /* ---------------------------------- */
@@ -601,4 +682,23 @@ img {
     gap: 10px;
     align-items: flex-start;
   }
+}
+
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.search-input {
+  width: 360px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.12);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .search-input { width: 100%; }
 }

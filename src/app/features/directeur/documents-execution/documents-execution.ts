@@ -14,6 +14,8 @@ import { AuthService } from '../../../services/auth.service';
 })
 export class DocumentsExecution implements OnInit {
   selectedStatus: string = 'Tous';
+  // Recherche
+  searchQuery: string = '';
   statusDropdownOpen: boolean = false;
   isLoading: boolean = false;
   errorMessage: string = '';
@@ -96,21 +98,33 @@ export class DocumentsExecution implements OnInit {
   // Filtrage dynamique des bons de commande
   get filteredBons(): any[] {
     if (!this.bonsDeCommande.length) return [];
-    
     const filtered = this.selectedStatus === 'Tous' 
-      ? this.bonsDeCommande 
+      ? [...this.bonsDeCommande] 
       : this.bonsDeCommande.filter(b => b.statut === this.selectedStatus);
+
+    const q = this.searchQuery.trim().normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+    if (q) {
+      return filtered.filter(b => [b.code, b.numero, b.fournisseur, b.objet, b.statut].some(f => (f || '').toString().normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().includes(q))).slice(0, 5);
+    }
     return filtered.slice(0, 5);
   }
 
   // Filtrage dynamique des attestations
   get filteredAttestations(): any[] {
     if (!this.attestations.length) return [];
-    
     const filtered = this.selectedStatus === 'Tous' 
-      ? this.attestations 
+      ? [...this.attestations] 
       : this.attestations.filter(a => a.statut === this.selectedStatus);
+
+    const q = this.searchQuery.trim().normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+    if (q) {
+      return filtered.filter(a => [a.numero, a.reference, a.fournisseur, a.statut].some(f => (f || '').toString().normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().includes(q))).slice(0, 5);
+    }
     return filtered.slice(0, 5);
+  }
+
+  onSearchQueryChange() {
+    // no-op; getters will reflect the search
   }
 
   // Mapping des statuts de l'API vers l'affichage

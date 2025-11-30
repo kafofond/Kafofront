@@ -155,46 +155,7 @@ export const routes: Routes = [
     },
 
 
-    // 4. Routes GESTIONNAIRE
-    {
-        path: 'gestionnaire',
-        component: MainLayout,
-        canActivate: [AuthGuard, RoleGuard],
-        data: { role: 'GESTIONNAIRE' },
-        children: [
-            {
-                path: '',
-                component: ContentbodyDashbordGest
-            },
-            {
-                path: 'listbudget-gest',
-                component: ContentbodyListbudgetGest
-            },
-            {
-                path: 'listbudget-gest/listlignesbudget-gest/:budgetId', // ✅ AJOUT :budgetId
-                component: ContentbodyVoirlignesGest
-            },
-            {
-                path: 'fiche-de-besoin-gest',
-                component: ContentbodyFicheDeBesoinGest
-            },
-            {
-                path: 'demande-achat-gest',
-                component: ContentbodyDemandeAchatGest
-            },
-            {
-                path: 'attestation-de-service-fait-gest',
-                component: ContentbodyAttestationServiceFaitGest
-            },
-            {
-                path: 'parametres-gest',
-                component: Parametres
-            }
-        ]
-    }, 
-
-
-    // 5. Routes RESPONSABLE
+    // 4. Routes RESPONSABLE
     {
         path: 'responsable',
         component: MainLayoutResponsable,
@@ -244,7 +205,7 @@ export const routes: Routes = [
     },
 
 
-    // 6. Routes COMPTABLE
+    // 5. Routes COMPTABLE
     {
         path: 'comptable',
         component: MainLayoutComptable,
@@ -286,6 +247,48 @@ export const routes: Routes = [
         ]
     },
 
+
+    // 6. Routes GESTIONNAIRE
+    {
+        path: 'gestionnaire',
+        component: MainLayout,
+        canActivate: [AuthGuard, RoleGuard],
+        data: { role: 'GESTIONNAIRE' },
+        children: [
+            {
+                path: '',
+                component: ContentbodyDashbordGest
+            },
+            {
+                path: 'listbudget-gest',
+                component: ContentbodyListbudgetGest
+            },
+            {
+                path: 'listbudget-gest/listlignesbudget-gest/:budgetId', // ✅ AJOUT :budgetId
+                component: ContentbodyVoirlignesGest
+            },
+            {
+                path: 'fiche-de-besoin-gest',
+                component: ContentbodyFicheDeBesoinGest
+            },
+            {
+                path: 'demande-achat-gest',
+                component: ContentbodyDemandeAchatGest
+            },
+            {
+                path: 'attestation-de-service-fait-gest',
+                component: ContentbodyAttestationServiceFaitGest
+            },
+            {
+                path: 'parametres-gest',
+                component: Parametres
+            }
+        ]
+    }, 
+
+
+
+    
 
     // --- Routes non définies ---
     {path: '**', redirectTo: 'forbidden'}

@@ -38,6 +38,9 @@ export class ContentbodyListbudgetRespo implements OnInit, OnDestroy {
 
   private budgetsSubscription?: Subscription;
 
+  // Recherche en temps réel
+  searchQuery: string = '';
+
   constructor(
     private budgetService: BudgetService,
     private ligneCreditService: LigneCreditService,
@@ -102,6 +105,22 @@ export class ContentbodyListbudgetRespo implements OnInit, OnDestroy {
         budget.statut === filterType
       );
     }
+  }
+
+  // Getter derived de la liste courante pour ajouter le filtrage par requête
+  get displayBudgets(): BudgetItem[] {
+    const normalize = (s: string) => (s || '').toString().normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+    const q = normalize(this.searchQuery.trim());
+    if (!q) return this.budgets;
+    return this.budgets.filter(b => {
+      return [
+        b.intituleBudget,
+        b.description,
+        b.statut,
+        String(b.montantBudget),
+          b.codeBudget
+      ].some(field => normalize(field || '').includes(q));
+    });
   }
 
   onStatutChange(event: Event): void {

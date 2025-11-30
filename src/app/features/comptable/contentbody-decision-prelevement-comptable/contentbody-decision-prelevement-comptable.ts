@@ -8,9 +8,10 @@ import { DocumentService } from '../../../services/document.service'; // Import 
 
 @Component({
   selector: 'app-contentbody-decision-prelevement-comptable',
+  standalone: true,
   imports: [FormsModule, CommonModule],
   templateUrl: './contentbody-decision-prelevement-comptable.html',
-  styleUrl: './contentbody-decision-prelevement-comptable.css'
+  styleUrls: ['./contentbody-decision-prelevement-comptable.css']
 })
 export class ContentbodyDecisionPrelevementComptable implements OnInit {
 
@@ -33,15 +34,39 @@ export class ContentbodyDecisionPrelevementComptable implements OnInit {
     attestationId: null
   };
 
+  // Recherche en temps réel
+  searchQuery: string = '';
+
   // Filtrage dynamique des décisions de prélèvement
   get filteredDecisions(): DecisionPrelevement[] {
-    const filtered =
+    const normalize = (s: string) => (s || '').toString().normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+    const q = normalize(this.searchQuery.trim());
+
+    let filtered =
       this.selectedStatus === 'Tous'
         ? this.decisionDePrelevements
         : this.decisionDePrelevements.filter(
             (d) => d.statut && this.mapStatut(d.statut) === this.selectedStatus
           );
+
+    if (q) {
+      filtered = filtered.filter(d => {
+        return [
+          d.code,
+          d.referenceAttestation,
+          d.motifPrelevement,
+          d.compteOrigine,
+          d.compteDestinataire,
+          d.createurNom,
+          d.entrepriseNom
+        ].some(field => normalize(field || '').includes(q));
+      });
+    }
     return filtered;
+  }
+
+  onSearchQueryChange() {
+    // no-op; two-way binding updates view automatically - kept for future hooks
   }
 
   constructor(

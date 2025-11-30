@@ -21,6 +21,29 @@
   gap: 15px;
 }
 
+/* Search input styling */
+.search-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  width: 340px;
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #333;
+  background-color: #fff;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #0b4f63;
+  box-shadow: 0 0 0 3px rgba(11, 79, 99, 0.08);
+}
+
 .content-title {
   flex-grow: 1;
   text-align: center;

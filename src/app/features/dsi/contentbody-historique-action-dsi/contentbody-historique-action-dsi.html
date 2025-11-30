@@ -25,6 +25,7 @@
         <option value="ENTREPRISE">Entreprise</option>
         <option value="UTILISATEUR">Utilisateur</option>
       </select>
+      <input class="search-input" type="text" placeholder="Rechercher auteur, fichier, action..." [(ngModel)]="searchQuery" (input)="onSearchQueryChange()" />
     </div>
   </div>
 

@@ -12,6 +12,34 @@
   gap: 20px;
 }
 
+/* Search wrapper */
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.search-input {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  width: 320px;
+  font-size: 14px;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #0b4f63;
+  box-shadow: 0 0 0 3px rgba(11, 79, 99, 0.08);
+}
+
+/* Controls at the top of the table container */
+.table-top-controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
 .filtre-control {
   display: flex;
   align-items: center;

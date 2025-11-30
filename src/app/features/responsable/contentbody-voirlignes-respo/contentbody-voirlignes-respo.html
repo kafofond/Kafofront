@@ -6,7 +6,7 @@
     </button>
   </div>
 
-  <h3 class="content-title">Lignes de crédit - {{ budgetCode }}</h3>
+  <!-- <h3 class="content-title">Lignes de crédit - {{ budgetCode }}</h3> -->
 
   <div class="header-right">
     <div class="filter-dropdown-container">
@@ -34,6 +34,9 @@
       <img src="assets/foundation_plus.svg" alt="Ajouter" />
       <span>Nouvelle ligne</span>
     </button>
+    <div class="search-wrapper" style="margin-left: 12px;">
+      <input type="text" class="search-input" placeholder="Rechercher une ligne (intitulé, description, commentaire...)" [(ngModel)]="searchQuery" />
+    </div>
   </div>
 </div>
 
@@ -60,7 +63,7 @@
       </div>
 
       <!-- Data -->
-      <div class="table-row" *ngFor="let ligne of lignes">
+      <div class="table-row" *ngFor="let ligne of displayLignes">
         <div class="col-intitule">
           <span class="item-title">{{ ligne.intituleLigne }}</span>
         </div>

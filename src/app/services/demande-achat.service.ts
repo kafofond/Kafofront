@@ -85,6 +85,14 @@ export class DemandeAchatService {
     );
   }
 
+  // Approuver une demande d'achat
+  approuverDemande(id: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/${id}/approuver`, {}).pipe(
+      tap(response => console.log(`✅ Demande ${id} approuvée:`, response)),
+      catchError(this.handleError)
+    );
+  }
+
   // Rejeter une demande d'achat
   rejeterDemande(id: number, commentaire: string): Observable<any> {
     const body = { commentaire: commentaire };

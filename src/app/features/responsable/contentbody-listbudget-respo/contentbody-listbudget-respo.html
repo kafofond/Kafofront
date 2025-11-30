@@ -24,6 +24,9 @@
     <button class="filter-btn" (click)="openCreateBudgetModal()">
         <span>Créer Budget</span>
     </button>
+    <div class="search-wrapper" style="margin-left: auto;">
+        <input type="text" class="search-input" placeholder="Rechercher un budget (intitulé, code, description...)" [(ngModel)]="searchQuery" />
+    </div>
 </div>
 
 
@@ -37,7 +40,7 @@
             <div>Actions</div>
         </div>
         <div class="table-body">
-            <div class="table-row" *ngFor="let budget of budgets">
+            <div class="table-row" *ngFor="let budget of displayBudgets">
                 <div>{{ budget.intituleBudget }}</div>
                 <div>
                     <span [class]="getEtatBadgeClass(budget.etat)">{{ budget.etat }}</span>
