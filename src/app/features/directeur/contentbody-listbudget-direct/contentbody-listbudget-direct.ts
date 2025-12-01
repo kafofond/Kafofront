@@ -3,14 +3,18 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { RouterLink, Router } from "@angular/router";
 import { FormsModule } from '@angular/forms';
 import { BudgetService } from '../../../services/budget.service';
+import { SeuilService } from '../../../services/seuil.service';
+import { ToastService } from '../../../services/toast.service';
+import { ToastComponent } from '../../../shared/toast/toast.component';
 import { BudgetItem, mapApiBudgetToBudgetItem } from '../../../models/budget-item.model';
+import { Seuil } from '../../../models/seuil.model';
 import { LigneCreditService, LigneCredit } from '../../../services/ligne-credit.service';
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-contentbody-listbudget-direct',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ToastComponent],
   templateUrl: './contentbody-listbudget-direct.html',
   styleUrls: ['./contentbody-listbudget-direct.css']
 })
@@ -20,6 +24,15 @@ export class ContentbodyListbudgetDirect implements OnInit, OnDestroy {
   budgets: BudgetItem[] = [];
   isLoading: boolean = true;
   errorMessage: string = '';
+
+  // Seuil properties
+  seuilActif: Seuil | null = null;
+  isLoadingSeuil: boolean = false;
+  showSeuilModal: boolean = false;
+  showEditSeuilModal: boolean = false;
+  editSeuilData: any = {
+    montantSeuil: 0
+  };
 
   // Pagination properties
   currentPage: number = 1;
@@ -46,6 +59,8 @@ export class ContentbodyListbudgetDirect implements OnInit, OnDestroy {
 
   constructor(
     private budgetService: BudgetService,
+    private seuilService: SeuilService,
+    private toastService: ToastService,
     private ligneCreditService: LigneCreditService,
     private router: Router
   ) { }
@@ -60,6 +75,133 @@ export class ContentbodyListbudgetDirect implements OnInit, OnDestroy {
       this.budgetsSubscription.unsubscribe();
     }
     document.removeEventListener('click', this.onClickOutside.bind(this));
+  }
+
+  // Seuil methods
+  openSeuilModal(): void {
+    this.showSeuilModal = true;
+    this.loadSeuilActif();
+    document.body.classList.add('modal-open');
+  }
+
+  closeSeuilModal(): void {
+    this.showSeuilModal = false;
+    this.seuilActif = null;
+    document.body.classList.remove('modal-open');
+  }
+
+  openEditSeuilModal(): void {
+    if (this.seuilActif) {
+      this.editSeuilData.montantSeuil = this.seuilActif.montantSeuil;
+    }
+    this.showEditSeuilModal = true;
+  }
+
+  openCreateSeuilModal(): void {
+    this.editSeuilData.montantSeuil = 0;
+    this.showEditSeuilModal = true;
+  }
+
+  closeEditSeuilModal(): void {
+    this.showEditSeuilModal = false;
+    this.editSeuilData = { montantSeuil: 0 };
+  }
+
+  loadSeuilActif(): void {
+    this.isLoadingSeuil = true;
+    this.seuilService.getSeuilActif().subscribe({
+      next: (seuil) => {
+        // Vérifier que le seuil est valide (a un ID)
+        if (seuil && typeof seuil.id === 'number' && !isNaN(seuil.id)) {
+          this.seuilActif = seuil;
+        } else {
+          // Si le seuil n'est pas valide, le mettre à null
+          this.seuilActif = null;
+        }
+        this.isLoadingSeuil = false;
+      },
+      error: (error) => {
+        console.error('Erreur chargement seuil actif:', error);
+        // Si aucun seuil actif n'est trouvé, on considère qu'il n'y en a pas
+        this.seuilActif = null;
+        this.isLoadingSeuil = false;
+      }
+    });
+  }
+
+  saveSeuil(): void {
+    if (!this.editSeuilData.montantSeuil || this.editSeuilData.montantSeuil <= 0) {
+      this.toastService.show('Veuillez saisir un montant valide pour le seuil', 'error');
+      return;
+    }
+
+    if (this.seuilActif) {
+      // Modification d'un seuil existant
+      this.seuilService.updateSeuil(this.seuilActif.id, this.editSeuilData.montantSeuil).subscribe({
+        next: (response) => {
+          this.seuilActif = response.seuil;
+          this.closeEditSeuilModal();
+          this.toastService.show('Seuil modifié avec succès', 'success');
+        },
+        error: (error) => {
+          console.error('Erreur modification seuil:', error);
+          this.toastService.show('Erreur lors de la modification du seuil', 'error');
+        }
+      });
+    } else {
+      // Création d'un nouveau seuil
+      this.seuilService.createSeuil(this.editSeuilData.montantSeuil).subscribe({
+        next: (response) => {
+          this.seuilActif = response.seuil;
+          this.closeEditSeuilModal();
+          this.toastService.show('Seuil créé avec succès', 'success');
+        },
+        error: (error) => {
+          console.error('Erreur création seuil:', error);
+          this.toastService.show('Erreur lors de la création du seuil', 'error');
+        }
+      });
+    }
+  }
+
+  activerSeuil(): void {
+    if (!this.seuilActif || !this.seuilActif.id) {
+      this.toastService.show('Aucun seuil valide à activer', 'error');
+      return;
+    }
+
+    this.seuilService.activerSeuil(this.seuilActif.id).subscribe({
+      next: (response) => {
+        this.seuilActif = response.seuil;
+        this.toastService.show('Seuil activé avec succès', 'success');
+      },
+      error: (error) => {
+        console.error('Erreur activation seuil:', error);
+        this.toastService.show('Erreur lors de l\'activation du seuil', 'error');
+      }
+    });
+  }
+
+  desactiverSeuil(): void {
+    if (!this.seuilActif || !this.seuilActif.id) {
+      this.toastService.show('Aucun seuil valide à désactiver', 'error');
+      return;
+    }
+
+    this.seuilService.desactiverSeuil(this.seuilActif.id).subscribe({
+      next: (response) => {
+        this.seuilActif = response.seuil;
+        this.toastService.show('Seuil désactivé avec succès', 'success');
+      },
+      error: (error) => {
+        console.error('Erreur désactivation seuil:', error);
+        this.toastService.show('Erreur lors de la désactivation du seuil', 'error');
+      }
+    });
+  }
+
+  getSeuilEtatClass(actif: boolean): string {
+    return actif ? 'status-badge active' : 'status-badge rejected';
   }
 
   // NOUVELLE MÉTHODE POUR CHARGER LES LIGNES DE CRÉDIT
@@ -129,10 +271,11 @@ export class ContentbodyListbudgetDirect implements OnInit, OnDestroy {
         console.log('✅ Budget activé:', response);
         this.loadBudgets();
         this.closeEditBudgetModal();
+        this.toastService.show('Budget activé avec succès', 'success');
       },
       error: (error) => {
         console.error('❌ Erreur activation budget:', error);
-        alert('Erreur lors de l\'activation du budget');
+        this.toastService.show('Erreur lors de l\'activation du budget', 'error');
         this.editFormData.etat = false;
       }
     });
@@ -146,10 +289,11 @@ export class ContentbodyListbudgetDirect implements OnInit, OnDestroy {
         console.log('✅ Budget désactivé:', response);
         this.loadBudgets();
         this.closeEditBudgetModal();
+        this.toastService.show('Budget désactivé avec succès', 'success');
       },
       error: (error) => {
         console.error('❌ Erreur désactivation budget:', error);
-        alert('Erreur lors de la désactivation du budget');
+        this.toastService.show('Erreur lors de la désactivation du budget', 'error');
         this.editFormData.etat = true;
       }
     });
@@ -163,10 +307,11 @@ export class ContentbodyListbudgetDirect implements OnInit, OnDestroy {
         console.log('✅ Budget validé:', response);
         this.loadBudgets();
         this.closeEditBudgetModal();
+        this.toastService.show('Budget validé avec succès', 'success');
       },
       error: (error) => {
         console.error('❌ Erreur validation budget:', error);
-        alert('Erreur lors de la validation du budget');
+        this.toastService.show('Erreur lors de la validation du budget', 'error');
         this.editFormData.statut = this.selectedBudget?.statut;
       }
     });
@@ -187,7 +332,7 @@ export class ContentbodyListbudgetDirect implements OnInit, OnDestroy {
 
   rejeterBudget(): void {
     if (!this.selectedBudget || !this.rejetCommentaire.trim()) {
-      alert('Veuillez saisir un commentaire pour le rejet');
+      this.toastService.show('Veuillez saisir un commentaire pour le rejet', 'error');
       return;
     }
 
@@ -197,10 +342,11 @@ export class ContentbodyListbudgetDirect implements OnInit, OnDestroy {
         this.loadBudgets();
         this.closeRejetModal();
         this.closeEditBudgetModal();
+        this.toastService.show('Budget rejeté avec succès', 'success');
       },
       error: (error) => {
         console.error('❌ Erreur rejet budget:', error);
-        alert('Erreur lors du rejet du budget');
+        this.toastService.show('Erreur lors du rejet du budget', 'error');
         this.editFormData.statut = this.selectedBudget?.statut;
       }
     });
@@ -320,10 +466,11 @@ export class ContentbodyListbudgetDirect implements OnInit, OnDestroy {
       next: (response) => {
         this.loadBudgets();
         this.closeCreateBudgetModal();
+        this.toastService.show('Budget créé avec succès', 'success');
       },
       error: (error) => {
         console.error('❌ Erreur création budget:', error);
-        alert('Erreur lors de la création du budget');
+        this.toastService.show('Erreur lors de la création du budget', 'error');
       }
     });
   }
@@ -345,10 +492,11 @@ export class ContentbodyListbudgetDirect implements OnInit, OnDestroy {
       next: (response) => {
         this.loadBudgets();
         this.closeEditBudgetModal();
+        this.toastService.show('Budget mis à jour avec succès', 'success');
       },
       error: (error) => {
         console.error('❌ Erreur mise à jour budget:', error);
-        alert('Erreur lors de la mise à jour du budget');
+        this.toastService.show('Erreur lors de la mise à jour du budget', 'error');
       }
     });
   }
