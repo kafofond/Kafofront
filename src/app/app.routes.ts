@@ -48,7 +48,7 @@ export const routes: Routes = [
 
     // --- Routes Publiques (non protégées) ---
     {path:'', component: SeConnecter},
-    {path: 'changer-mot-de-passe', component: ChangerMotDePasse},
+    {path: 'mot-de-passe-oublie', component: ChangerMotDePasse},
     {path:'forbidden', component: ForbiddenComponent},
 
     // --- Routes Protégées par Rôle ---
@@ -264,7 +264,7 @@ export const routes: Routes = [
                 component: ContentbodyListbudgetGest
             },
             {
-                path: 'listbudget-gest/listlignesbudget-gest/:budgetId', // ✅ AJOUT :budgetId
+                path: 'listbudget-gest/listlignesbudget-gest/:budgetId',
                 component: ContentbodyVoirlignesGest
             },
             {
