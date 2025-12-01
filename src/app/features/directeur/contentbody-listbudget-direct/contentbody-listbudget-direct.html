@@ -27,6 +27,10 @@
         </div>
     </div>
 
+    <button class="filter-btn" (click)="openSeuilModal()">
+        <span>Voir seuil</span>
+    </button>
+
     <button class="filter-btn" (click)="openCreateBudgetModal()">
         <span>Créer Budget</span>
     </button>
@@ -78,6 +82,88 @@
     <button class="pagination-btn" (click)="nextPage()" [disabled]="currentPage === totalPages">
         Suivant
     </button>
+</div>
+
+<!-- Modal Seuil -->
+<div class="modal-overlay" *ngIf="showSeuilModal" (click)="closeSeuilModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2 class="modal-title">Gestion des seuils</h2>
+            <button class="close-btn" (click)="closeSeuilModal()">
+                <img src="assets/mdi_cancel-bold.svg" alt="Fermer" class="close-icon">
+            </button>
+        </div>
+
+        <div class="modal-body">
+            <div *ngIf="seuilActif" class="seuil-details">
+                <div class="detail-group">
+                    <label>Montant du seuil</label>
+                    <p class="detail-value">{{ seuilActif.montantSeuil | number }} FCFA</p>
+                </div>
+                <div class="detail-group">
+                    <label>Date de création</label>
+                    <p class="detail-value">{{ seuilActif.dateCreation | date:'dd/MM/yyyy' }}</p>
+                </div>
+                <div class="detail-group">
+                    <label>État</label>
+                    <span [class]="getSeuilEtatClass(seuilActif.actif)">{{ seuilActif.actif ? 'Actif' : 'Inactif' }}</span>
+                </div>
+                <div class="detail-group">
+                    <label>Entreprise</label>
+                    <p class="detail-value">{{ seuilActif.entrepriseNom }}</p>
+                </div>
+            </div>
+
+            <div *ngIf="!seuilActif && !isLoadingSeuil" class="no-seuil">
+                <p>Aucun seuil défini pour le moment.</p>
+            </div>
+
+            <div *ngIf="isLoadingSeuil" class="loading-seuil">
+                <p>Chargement des informations du seuil...</p>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <div class="seuil-actions">
+                <button *ngIf="seuilActif" class="btn-edit-seuil" (click)="openEditSeuilModal()">
+                    Modifier le seuil
+                </button>
+                <button *ngIf="!seuilActif" class="btn btn-primary" (click)="openCreateSeuilModal()">
+                    Créer un seuil
+                </button>
+                <button *ngIf="seuilActif && seuilActif.actif" class="btn-deactivate-seuil" (click)="desactiverSeuil()">
+                    Désactiver
+                </button>
+                <button *ngIf="seuilActif && !seuilActif.actif" class="btn-activate-seuil" (click)="activerSeuil()">
+                    Activer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Création/Modification Seuil -->
+<div class="modal-overlay" *ngIf="showEditSeuilModal" (click)="closeEditSeuilModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h2 class="modal-title">{{ seuilActif ? 'Modifier le seuil' : 'Créer un seuil' }}</h2>
+            <button class="close-btn" (click)="closeEditSeuilModal()">
+                <img src="assets/mdi_cancel-bold.svg" alt="Fermer" class="close-icon">
+            </button>
+        </div>
+
+        <form class="seuil-form" (ngSubmit)="saveSeuil()">
+            <div class="form-group">
+                <label for="montantSeuil">Montant du seuil (FCFA)</label>
+                <input type="number" id="montantSeuil" [(ngModel)]="editSeuilData.montantSeuil" name="montantSeuil" placeholder="Ex: 1000000" required min="1">
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary cancel-btn" (click)="closeEditSeuilModal()">Annuler</button>
+                <button type="submit" class="btn btn-primary save-btn">Enregistrer</button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <!-- Modal Création Budget -->
@@ -309,3 +395,6 @@
         </div>
     </div>
 </div>
+
+<!-- Toast Notifications -->
+<app-toast></app-toast>
