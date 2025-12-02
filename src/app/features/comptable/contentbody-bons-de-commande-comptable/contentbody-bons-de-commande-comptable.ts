@@ -9,9 +9,10 @@ import { DocumentService } from '../../../services/document.service'; // Import 
 
 @Component({
   selector: 'app-contentbody-bons-de-commande-comptable',
+  standalone: true,
   imports: [FormsModule, CommonModule],
   templateUrl: './contentbody-bons-de-commande-comptable.html',
-  styleUrl: './contentbody-bons-de-commande-comptable.css'
+  styleUrls: ['./contentbody-bons-de-commande-comptable.css']
 })
 export class ContentbodyBonsDeCommandeComptable implements OnInit {
 
@@ -28,16 +29,35 @@ export class ContentbodyBonsDeCommandeComptable implements OnInit {
   showModificationModal: boolean = false;
   validationCommentaire: string = '';
   modificationData: any = {};
+  // Recherche
+  searchQuery: string = '';
 
   // Filtrage dynamique des bons de commande
   get filteredBons(): BonDeCommande[] {
-    const filtered =
+    const normalize = (s: string) => (s || '').toString().normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+    const query = normalize(this.searchQuery.trim());
+    let filtered =
       this.selectedStatus === 'Tous'
-        ? this.bonsDeCommande
+        ? [...this.bonsDeCommande]
         : this.bonsDeCommande.filter(
-            (b) => b.statut && b.statut === this.selectedStatus
+            (b) => b.statut && normalize(b.statut) === normalize(this.selectedStatus)
           );
+
+    if (query.length > 0) {
+      filtered = filtered.filter(b =>
+        normalize(b.code || '').includes(query) ||
+        normalize(b.fournisseur || '').includes(query) ||
+        normalize(b.referenceDemande || '').includes(query) ||
+        normalize(b.serviceBeneficiaire || '').includes(query) ||
+        normalize(b.statut || '').includes(query)
+      );
+    }
+
     return filtered;
+  }
+
+  onSearchQueryChange(): void {
+    // Real-time search hook; no additional implementation needed for client-side filtering
   }
 
   constructor(
@@ -102,7 +122,8 @@ export class ContentbodyBonsDeCommandeComptable implements OnInit {
     const statutMap: { [key: string]: string } = {
       'VALIDE': 'Validé',
       'EN_COURS': 'En attente',
-      'REJETE': 'Rejeté'
+      'REJETE': 'Rejeté',
+      'APPROUVE':'Approuvé'
     };
     return statutMap[statut] || statut;
   }
@@ -212,7 +233,8 @@ export class ContentbodyBonsDeCommandeComptable implements OnInit {
     const statutMap: { [key: string]: string } = {
       'Validé': 'VALIDE',
       'En attente': 'EN_COURS',
-      'Rejeté': 'REJETE'
+      'Rejeté': 'REJETE',
+      'Approuvé':'APPROUVE'
     };
     return statutMap[statut] || statut;
   }

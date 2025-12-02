@@ -18,6 +18,8 @@ export class ContentbodyDemandeAchatGest implements OnInit {
   entrepriseId: number | null = null;
   showFilterDropdown = false;
   
+  searchQuery: string = '';
+
   // Propriétés pour la modale de rejet
   showRejectModal = false;
   selectedDemande: DemandeAchat | null = null;
@@ -213,5 +215,24 @@ export class ContentbodyDemandeAchatGest implements OnInit {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
     }
+  }
+
+  updateTotalPages(): void {
+    this.totalPages = Math.ceil(this.filteredDemandes.length / this.itemsPerPage);
+  }
+
+  applySearchFilter() {
+    const query = this.searchQuery.trim().toLowerCase();
+
+    this.filteredDemandes = this.demandes.filter(
+      (f) =>
+        f.code?.toLowerCase().includes(query) ||
+        f.createurNom?.toLowerCase().includes(query) ||
+        f.fournisseur?.toLowerCase().includes(query) ||
+        f.serviceBeneficiaire?.toLowerCase().includes(query) ||
+        f.statut?.toLowerCase().includes(query)
+    );
+
+    this.updateTotalPages();
   }
 }

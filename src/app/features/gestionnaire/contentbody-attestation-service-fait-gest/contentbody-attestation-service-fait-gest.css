@@ -10,6 +10,20 @@
     margin-bottom: 20px;
 }
 
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.search-input {
+  width: 420px;
+  padding: 10px 14px;
+  border: 2px solid rgba(0,0,0,0.12);
+  border-radius: 10px;
+  font-size: 14px;
+}
+
 .filter-group {
     display: flex;
     align-items: center;
@@ -68,9 +82,26 @@
 .table-header,
 .table-row {
   display: grid;
-  grid-template-columns: 1.5fr 1.4fr 1.7fr 1fr 0.6fr;
+  grid-template-columns: 2.2fr 1.6fr 2.2fr 1fr 0.8fr; /* ref | fournisseur | titre | date | actions */
   align-items: center;
   padding: 12px 24px;
+  column-gap: 16px;
+}
+
+.col-ref { grid-column: 1 / 2; }
+.col-fournisseur { grid-column: 2 / 3; }
+.col-titre { grid-column: 3 / 4; }
+.col-date { grid-column: 4 / 5; }
+.col-actions { grid-column: 5 / 6; }
+
+/* Ensure long text doesn't break layout */
+.col-ref, .col-fournisseur, .col-titre {
+  min-width: 140px;
+  max-width: 540px;
+}
+
+.table-cell[data-label] {
+  display: block;
 }
 
 .table-header {
@@ -96,6 +127,9 @@
     font-size: 15px;
     font-weight: 600;
     color: rgba(0, 0, 0, 0.67);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .table-row .table-cell:nth-child(3),
@@ -109,6 +143,11 @@
   display: flex;
   gap: 10px;
   justify-content: flex-start;
+}
+
+/* Align actions to the right for better separation */
+.col-actions .action-buttons {
+  justify-content: center;
 }
 
 .action-btn {
@@ -393,7 +432,7 @@
         gap: 1rem;
     }
     .table-row {
-        grid-template-columns: 100px 1fr;
+      grid-template-columns: 100px 1fr;
         gap: 8px 16px;
         padding: 16px;
         border: 1px solid rgba(0, 0, 0, 0.15);

@@ -14,6 +14,9 @@
         </li>
       </ul>
     </div>
+    <div class="search-wrapper">
+      <input type="text" class="search-input" placeholder="Rechercher..." [(ngModel)]="searchQuery" (input)="onSearchQueryChange()" />
+    </div>
 
     <div class="action-buttons">
       <button class="export-btn">

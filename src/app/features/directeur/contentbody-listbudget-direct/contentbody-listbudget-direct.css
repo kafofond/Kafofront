@@ -58,6 +58,20 @@ button {
     transition: background-color 0.2s, box-shadow 0.2s;
 }
 
+.search-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-input {
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 2px solid rgba(0,0,0,0.12);
+    max-width: 360px;
+    width: 100%;
+}
+
 .filter-btn:hover {
     background-color: #f0f0f0;
 }

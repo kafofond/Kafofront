@@ -7,9 +7,10 @@ import { Role } from '../../../enums/role';
 
 @Component({
   selector: 'app-role-et-utilisateur',
+  standalone: true,
   imports: [FormsModule, CommonModule],
   templateUrl: './role-et-utilisateur.html',
-  styleUrl: './role-et-utilisateur.css'
+  styleUrls: ['./role-et-utilisateur.css']
 })
 export class RoleEtUtilisateur implements OnInit {
   filtreStatut: string = 'tous';
@@ -57,6 +58,30 @@ export class RoleEtUtilisateur implements OnInit {
     private userService: UserService
   ) {}
 
+  // Recherche
+  searchQuery: string = '';
+
+  private normalizeString(s: any): string {
+    return (s || '').toString().normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+  }
+
+  private getFilteredUtilisateursList(): Utilisateur[] {
+    let filtered = [...this.utilisateurs];
+
+    if (this.filtreStatut === 'actifs') {
+      filtered = filtered.filter(u => u.actif === true);
+    } else if (this.filtreStatut === 'bloques') {
+      filtered = filtered.filter(u => u.actif === false);
+    }
+
+    const q = this.normalizeString(this.searchQuery.trim());
+    if (q) {
+      filtered = filtered.filter(u => [u.nom, u.prenom, u.email, u.departement, u.role].some(f => this.normalizeString(f).includes(q)));
+    }
+
+    return filtered;
+  }
+
   ngOnInit() {
     this.loadUtilisateurs();
   }
@@ -78,32 +103,21 @@ export class RoleEtUtilisateur implements OnInit {
   }
 
   get utilisateursFiltres() {
-    let filtered = this.utilisateurs;
-    
-    if (this.filtreStatut === 'actifs') {
-      filtered = filtered.filter(u => u.actif === true);
-    } else if (this.filtreStatut === 'bloques') {
-      filtered = filtered.filter(u => u.actif === false);
-    }
-
+    const filtered = this.getFilteredUtilisateursList();
     const startIndex = (this.currentPage - 1) * this.pageSize;
     return filtered.slice(startIndex, startIndex + this.pageSize);
   }
 
   get totalPages(): number {
-    let filtered = this.utilisateurs;
-    if (this.filtreStatut === 'actifs') {
-      filtered = filtered.filter(u => u.actif === true);
-    } else if (this.filtreStatut === 'bloques') {
-      filtered = filtered.filter(u => u.actif === false);
-    }
+    const filtered = this.getFilteredUtilisateursList();
     return Math.ceil(filtered.length / this.pageSize);
   }
 
   get paginationInfo(): string {
-    const start = (this.currentPage - 1) * this.pageSize + 1;
-    const end = Math.min(this.currentPage * this.pageSize, this.utilisateurs.length);
-    return `${start}-${end} sur ${this.utilisateurs.length}`;
+    const filteredLength = this.getFilteredUtilisateursList().length;
+    const start = filteredLength === 0 ? 0 : (this.currentPage - 1) * this.pageSize + 1;
+    const end = Math.min(this.currentPage * this.pageSize, filteredLength);
+    return `${start}-${end} sur ${filteredLength}`;
   }
 
   nextPage(): void {
@@ -250,6 +264,10 @@ export class RoleEtUtilisateur implements OnInit {
         }
       });
     }
+  }
+
+  onSearchQueryChange(): void {
+    this.currentPage = 1;
   }
 
   openConfirmModal(utilisateur: Utilisateur): void {

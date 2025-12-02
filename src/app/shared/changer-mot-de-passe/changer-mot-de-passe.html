@@ -1,4 +1,118 @@
-<section id="password-reset">
+<section id="password-reset" class="login-page">
+  <div class="split-container">
+
+    <!-- PARTIE GAUCHE : LOGO + TEXTE -->
+    <div class="left-panel">
+      <div class="left-content">
+        <img 
+          src="assets/fae3c052cb9ef742681bdee0fd53c88f855d60bf.png" 
+          alt="KafoFond Logo"
+          class="left-logo">
+
+        <h1 class="left-title">
+          <span class="logo-text-green">Kafo</span>
+          <span class="logo-text-orange">Fond</span>
+        </h1>
+      </div>
+    </div>
+
+    <!-- PARTIE DROITE : FORMULAIRE -->
+    <div class="right-panel">
+      <main class="login-form-panel">
+
+        <h1 class="form-title">Réinitialiser</h1>
+        <p class="form-subtitle">Entrez le code reçu et votre nouveau mot de passe</p>
+
+        <!-- Message email -->
+        <div *ngIf="email" class="email-info">
+          Code envoyé à <strong>{{ email }}</strong>
+        </div>
+
+        <!-- erreurs -->
+        <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+        <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+
+        <form (ngSubmit)="resetPassword(resetForm)" #resetForm="ngForm" class="login-form">
+
+          <!-- Code reçu -->
+          <div class="input-group">
+            <input 
+              type="text"
+              name="code"
+              placeholder="Code reçu"
+              [(ngModel)]="code"
+              required
+              [disabled]="isLoading">
+            <img src="assets/398_112.svg" class="right-icon" />
+          </div>
+
+          <!-- Nouveau mot de passe -->
+          <div class="input-group password-group">
+            <input 
+              [type]="showNewPassword ? 'text' : 'password'"
+              name="nouveauMotDePasse"
+              placeholder="Nouveau mot de passe"
+              [(ngModel)]="nouveauMotDePasse"
+              required
+              [disabled]="isLoading">
+
+            <button 
+              type="button"
+              class="password-toggle"
+              (click)="toggleNewPasswordVisibility()">
+              <img [src]="showNewPassword ? 'assets/398_117.svg' : 'assets/398_118.svg'" />
+            </button>
+          </div>
+
+          <!-- Confirmer mot de passe -->
+          <div class="input-group password-group">
+            <input 
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              name="confirmationMotDePasse"
+              placeholder="Confirmer le mot de passe"
+              [(ngModel)]="confirmationMotDePasse"
+              required
+              [disabled]="isLoading">
+
+            <button 
+              type="button"
+              class="password-toggle"
+              (click)="toggleConfirmPasswordVisibility()">
+              <img [src]="showConfirmPassword ? 'assets/398_117.svg' : 'assets/398_118.svg'" />
+            </button>
+          </div>
+
+          <!-- mismatch -->
+          <div *ngIf="passwordsMismatch() && confirmationMotDePasse" class="error-message">
+            Les mots de passe ne correspondent pas
+          </div>
+
+          <!-- retour connexion -->
+          <div class="form-options">
+            <a href="javascript:void(0)" class="forgot-password" (click)="goToLogin()">
+              ← Retour à la connexion
+            </a>
+          </div>
+
+          <!-- submit -->
+          <button 
+            type="submit"
+            class="submit-btn"
+            [disabled]="isLoading || resetForm.invalid || passwordsMismatch()">
+            <span *ngIf="!isLoading">Réinitialiser le mot de passe</span>
+            <span *ngIf="isLoading">Traitement...</span>
+          </button>
+
+        </form>
+
+      </main>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- <section id="password-reset">
   <div class="password-reset-container">
     <aside class="info-panel">
       <div class="logo-wrapper">
@@ -97,4 +211,4 @@
       </form>
     </main>
   </div>
-</section>
+</section> -->

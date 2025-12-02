@@ -23,6 +23,9 @@
       </button>
     </div>
   </div>
+
+  <input type="text" class="search-input" placeholder="Rechercher un budget (intitulé, état, statut...)" [(ngModel)]="searchQuery"
+            (input)="applySearchFilter()" />
 </div>
 
 <div class="budget-table-container">
@@ -31,11 +34,15 @@
       <div>Intitulé</div>
       <div>État</div>
       <div>Statut</div>
-      <div>Montant Alloué</div>
-      <div>Actions</div>
+      <div class="col-montant">Montant Alloué</div>
+      <div class="col-actions">Actions</div>
     </div>
     <div class="table-body">
-      <div class="table-row" *ngFor="let budget of budgets">
+      <div class="search-info">
+        <span *ngIf="filteredBudgets.length > 0">{{ filteredBudgets.length }} résultat(s)</span>
+        <span *ngIf="filteredBudgets.length === 0">Aucun budget trouvé</span>
+      </div>
+      <div class="table-row" *ngFor="let budget of filteredBudgets">
         <div>{{ budget.intituleBudget }}</div>
         <div>
           <span [class]="getEtatBadgeClass(budget.etat)">{{ budget.etat }}</span>
@@ -43,7 +50,7 @@
         <div>
           <span [class]="getStatusBadgeClass(budget.statut)">{{ budget.statut }}</span>
         </div>
-        <div>{{ budget.montantBudget | number }} FCFA</div>
+        <div class="col-montant col-montant-alloue">{{ budget.montantBudget | number }} FCFA</div>
         <div class="actions-cell"> 
           <button class="action-link" (click)="loadLignesBudget(budget)">Voir lignes</button>
           <button class="action-icon-btn" (click)="openDetailBudgetModal(budget)">

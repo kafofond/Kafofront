@@ -27,7 +27,51 @@
         <li (click)="exportAllDataPdf()">Exporter tout</li>
       </ul>
     </div>
+    <!-- Rechercher -->
+    <div class="search-wrapper">
+      <input type="text" class="search-input" placeholder="Rechercher (code, description, fournisseur...)" [(ngModel)]="searchQuery" (input)="onSearchQueryChange()" />
+    </div>
   </div>
+
+    <!-- MODALE REJET DEMANDE D'ACHAT -->
+    <div class="modal-overlay" *ngIf="showRejectDemandeModal" (click)="closeRejectDemandeModal()">
+      <div class="modal-content detail-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2 class="modal-title">Rejeter la demande d'achat</h2>
+          <button class="close-btn" (click)="closeRejectDemandeModal()">
+            <img src="assets/mdi_cancel-bold.svg" alt="Fermer" class="close-icon">
+          </button>
+        </div>
+        <div class="modal-body">
+          <label for="rejetCommentDemande">Motif du rejet *</label>
+          <textarea id="rejetCommentDemande" [(ngModel)]="rejectCommentDemande" rows="4" cols="50" placeholder="Entrez le motif de rejet"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-danger" (click)="submitRejectDemande()" [disabled]="!rejectCommentDemande || !rejectCommentDemande.trim()">Rejeter</button>
+          <button class="btn btn-outline" (click)="closeRejectDemandeModal()">Annuler</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODALE REJET FICHE -->
+    <div class="modal-overlay" *ngIf="showRejectFicheModal" (click)="closeRejectFicheModal()">
+      <div class="modal-content detail-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2 class="modal-title">Rejeter la fiche de besoin</h2>
+          <button class="close-btn" (click)="closeRejectFicheModal()">
+            <img src="assets/mdi_cancel-bold.svg" alt="Fermer" class="close-icon">
+          </button>
+        </div>
+        <div class="modal-body">
+          <label for="rejetCommentFiche">Motif du rejet *</label>
+          <textarea id="rejetCommentFiche" [(ngModel)]="rejectCommentFiche" rows="4" cols="50" placeholder="Entrez le motif de rejet"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-danger" (click)="submitRejectFiche()" [disabled]="!rejectCommentFiche || !rejectCommentFiche.trim()">Rejeter</button>
+          <button class="btn btn-outline" (click)="closeRejectFicheModal()">Annuler</button>
+        </div>
+      </div>
+    </div>
 
   <!-- ÉTATS DE CHARGEMENT ET ERREUR -->
   <div *ngIf="isLoading" class="loading-state">
@@ -52,14 +96,16 @@
           <div class="col col-5">Statut</div>
           <div class="col col-6">Actions</div>
         </div>
+        <!-- removed top pagination controls; the pagination is now shown under the list -->
         
         <div *ngIf="filteredDemandes.length === 0" class="empty-state">
           <div>Aucune demande d'achat trouvée</div>
         </div>
+        <!-- Removed misplaced fiched pagination in demandes table (moved to Fiches block below) -->
 
         <div
           class="table-row"
-          *ngFor="let demande of filteredDemandes"
+          *ngFor="let demande of paginatedDemandes"
         >
           <div class="col col-1" data-label="Code">{{ demande.code }}</div>
           <div class="col col-2" data-label="Description">{{ demande.description }}</div>
@@ -77,7 +123,19 @@
             <button class="action-btn" title="Voir détails" (click)="openDetailDemandeModal(demande)">
               <img src="assets/417_144.svg" alt="Voir détails" />
             </button>
+            <button class="action-btn" title="Approuver" (click)="approuverDemande(demande)" [disabled]="demande.statut === 'VALIDE' || demande.statut === 'APPROUVE'">
+              <img src="assets/Frame icon approuver.svg" alt="Approuver" />
+            </button>
+            <button class="action-btn" title="Rejeter" (click)="openRejectDemandeModal(demande)">
+              <img src="assets/Frame icon refuser.svg" alt="Rejeter" />
+            </button>
           </div>
+        </div>
+        <!-- Pagination Controls (moved to bottom of the list) : Demandes -->
+        <div class="pagination-controls" *ngIf="filteredDemandes.length >= itemsPerPageDemandes">
+          <button class="pagination-btn" (click)="previousPageDemandes()" [disabled]="currentPageDemandes === 1">Précédent</button>
+          <span class="pagination-info">Page {{ currentPageDemandes }} sur {{ totalPagesDemandes }}</span>
+          <button class="pagination-btn" (click)="nextPageDemandes()" [disabled]="currentPageDemandes === totalPagesDemandes">Suivant</button>
         </div>
       </div>
     </div>
@@ -95,13 +153,15 @@
           <div class="col col-6">Actions</div>
         </div>
 
+        <!-- Top pagination removed; placed at bottom of the list -->
+
         <div *ngIf="filteredFiches.length === 0" class="empty-state">
           <div>Aucune fiche de besoin trouvée</div>
         </div>
 
         <div
           class="table-row"
-          *ngFor="let fiche of filteredFiches"
+          *ngFor="let fiche of paginatedFiches"
         >
           <div class="col col-1" data-label="Code">{{ fiche.code }}</div>
           <div class="col col-2" data-label="Objet">{{ fiche.objet || 'Non spécifié' }}</div>
@@ -127,7 +187,19 @@
             <button class="action-btn" title="Voir détails" (click)="openDetailFicheModal(fiche)">
               <img src="assets/417_144.svg" alt="Voir détails" />
             </button>
+            <button class="action-btn" title="Approuver" (click)="approuverFiche(fiche)" [disabled]="fiche.statut === 'VALIDE' || fiche.statut === 'APPROUVE'">
+              <img src="assets/Frame icon approuver.svg" alt="Approuver" />
+            </button>
+            <button class="action-btn" title="Rejeter" (click)="openRejectFicheModal(fiche)">
+              <img src="assets/Frame icon refuser.svg" alt="Rejeter" />
+            </button>
           </div>
+        </div>
+        <!-- Pagination Controls (moved to bottom of the list) : Fiches -->
+        <div class="pagination-controls" *ngIf="filteredFiches.length >= itemsPerPageFiches">
+          <button class="pagination-btn" (click)="previousPageFiches()" [disabled]="currentPageFiches === 1">Précédent</button>
+          <span class="pagination-info">Page {{ currentPageFiches }} sur {{ totalPagesFiches }}</span>
+          <button class="pagination-btn" (click)="nextPageFiches()" [disabled]="currentPageFiches === totalPagesFiches">Suivant</button>
         </div>
       </div>
     </div>

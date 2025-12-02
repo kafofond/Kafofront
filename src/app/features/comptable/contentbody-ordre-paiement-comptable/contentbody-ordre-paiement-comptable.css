@@ -668,3 +668,17 @@ img {
     padding: 20px;
   }
 }
+
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search-input {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 2px solid rgba(0,0,0,0.12);
+  max-width: 360px;
+  width: 100%;
+}

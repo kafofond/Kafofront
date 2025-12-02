@@ -35,6 +35,17 @@ button {
   padding: 0 35px;
 }
 
+/* Barre de recherche */
+.search-input {
+    width: 260px;
+    padding: 10px 14px;
+    border: 2px solid rgba(0,0,0,0.12);
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+
 .filter-btn {
   display: flex;
   align-items: center;
@@ -73,9 +84,11 @@ button {
 .table-header,
 .table-row {
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr 1.3fr 1fr; 
+  /* Intitulé | État | Statut | Montant Alloué | Actions */
+  grid-template-columns: 3fr 1fr 1.2fr 1.8fr 1fr;
   align-items: center;
   padding: 20px 24px;
+  column-gap: 16px;
 }
 
 .table-header {
@@ -131,6 +144,35 @@ button {
   align-items: center;
   justify-content: flex-start;
   gap: 10px;
+}
+
+.table-row .actions-cell {
+  justify-content: flex-end;
+}
+
+/* Align monetary columns to right */
+.col-montant {
+  text-align: right;
+  padding-right: 14px;
+  font-variant-numeric: tabular-nums;
+  min-width: 110px;
+}
+
+.table-header .col-montant {
+  text-align: right;
+}
+
+/* Actions header align with body icons */
+.table-header .col-actions,
+.table-row .col-actions {
+  text-align: center;
+}
+
+@media (min-width: 992px) {
+  .col-montant-alloue {
+    border-left: 1px solid #e2e8f0;
+    padding-left: 12px;
+  }
 }
 
 .action-link {

@@ -1,6 +1,9 @@
 <section class="content-area">
   <!-- Barre de filtre -->
   <div class="filter-bar">
+    <div class="search-wrapper">
+      <input type="text" class="search-input" placeholder="Rechercher (code, référence, fournisseur, titre...)" [(ngModel)]="searchQuery" (input)="onSearchQueryChange()" />
+    </div>
     <!-- <div class="filter-group">
         <label>Statut :</label>
         <div class="filter-select" (click)="toggleStatusDropdown()">

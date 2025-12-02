@@ -6,7 +6,7 @@
     </button>
   </div>
 
-  <h3 class="content-title">Lignes de crédit - Budget {{ budgetCode || budgetId }}</h3>
+  <!-- <h3 class="content-title">Lignes de crédit - Budget {{ budgetCode || budgetId }}</h3> -->
 
   <div class="header-right">
     <div class="filter-dropdown-container">
@@ -36,7 +36,15 @@
         </button>
       </div>
     </div>
-    
+    <div class="search-wrapper">
+      <input
+        class="search-input"
+        type="text"
+        placeholder="Recherche par code, intitulé, description, statut..."
+        [(ngModel)]="searchQuery"
+        (input)="onSearchQueryChange()"
+      />
+    </div>
     <button class="action-btn credit-button" (click)="openCreateLigneModal()">
       <img src="assets/foundation_plus.svg" alt="Ajouter" />
       <span>Nouvelle ligne</span>

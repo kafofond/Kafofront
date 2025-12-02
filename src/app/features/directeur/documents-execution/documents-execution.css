@@ -35,6 +35,28 @@ img {
   gap: 15px;
 }
 
+/* Search wrapper */
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 12px;
+}
+
+.search-input {
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  min-width: 260px;
+  font-size: 14px;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #0b4f63;
+  box-shadow: 0 0 0 3px rgba(11, 79, 99, 0.08);
+}
+
 .filter-select {
   display: flex;
   align-items: center;

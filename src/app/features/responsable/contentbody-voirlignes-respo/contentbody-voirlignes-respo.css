@@ -18,6 +18,19 @@
   gap: 15px;
 }
 
+.search-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.12);
+  max-width: 320px;
+  width: 100%;
+}
+
 .content-title {
   flex-grow: 1;
   text-align: center;

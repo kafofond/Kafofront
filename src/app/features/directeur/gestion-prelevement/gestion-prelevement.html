@@ -37,6 +37,9 @@
     <!-- Tableau 1 : Decision De Prelevement -->
     <div class="table-section">
       <h2 class="table-title">Décisions de Prélèvement</h2>
+      <div class="search-wrapper" style="margin: 10px 0 12px;">
+        <input type="text" class="search-input" placeholder="Rechercher une décision (code, motif, compte...)" [(ngModel)]="searchDecisionsQuery" />
+      </div>
       <div class="data-table">
         <div class="table-header">
           <div class="col col-1">Code</div>
@@ -76,6 +79,9 @@
     <!-- Tableau 2 : Ordre De Paiement -->
     <div class="table-section">
       <h2 class="table-title">Ordres de Paiement</h2>
+      <div class="search-wrapper" style="margin: 10px 0 12px;">
+        <input type="text" class="search-input" placeholder="Rechercher un ordre (code, décision, compte...)" [(ngModel)]="searchOrdresQuery" />
+      </div>
       <div class="data-table">
         <div class="table-header">
           <div class="col col-1">Code</div>

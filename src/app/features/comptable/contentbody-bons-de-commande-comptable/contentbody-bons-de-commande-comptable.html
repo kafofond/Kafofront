@@ -14,7 +14,9 @@
         </li>
       </ul>
     </div>
-
+    <div class="search-wrapper">
+          <input type="text" class="search-input" placeholder="Rechercher (code, fournisseur, ref demande, service...)" [(ngModel)]="searchQuery" (input)="onSearchQueryChange()" />
+        </div>
     <button class="export-btn">
       <img src="assets/87_477.svg" alt="Export Icon" />
       <span>Exporter</span>
@@ -55,7 +57,8 @@
             [ngClass]="{
               'status-success': bon.statut === 'Validé',
               'status-danger': bon.statut === 'Rejeté',
-              'status-pending': bon.statut === 'En attente'
+              'status-pending': bon.statut === 'En attente',
+              'status-approuve': bon.statut === 'Approuvé',
             }"
           >
             {{ bon.statut }}
@@ -138,7 +141,8 @@
             [ngClass]="{
               'status-success': selectedBon.statut === 'Validé',
               'status-danger': selectedBon.statut === 'Rejeté',
-              'status-pending': selectedBon.statut === 'En attente'
+              'status-pending': selectedBon.statut === 'En attente',
+              '.status-approuve': selectedBon.statut === 'Approuvé'
             }"
           >
             {{ selectedBon.statut }}

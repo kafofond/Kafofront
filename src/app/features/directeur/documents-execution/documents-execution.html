@@ -15,7 +15,9 @@
         </li>
       </ul>
     </div>
-
+    <div class="search-wrapper">
+      <input class="search-input" type="text" placeholder="Rechercher bons/attestations..." [(ngModel)]="searchQuery" (input)="onSearchQueryChange()" />
+    </div>
     <button class="export-btn">
       <img src="assets/87_477.svg" alt="Export Icon">
       <span>Exporter</span>

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { AttestationServiceService, AttestationApiResponse, AttestationDetail } from '../../../services/attestation-service.service';
 import { AuthService } from '../../../services/auth.service';
 
@@ -13,7 +14,8 @@ interface Attestation {
 
 @Component({
   selector: 'app-contentbody-attestation-service-fait-gest',
-  imports: [CommonModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './contentbody-attestation-service-fait-gest.html',
   styleUrl: './contentbody-attestation-service-fait-gest.css'
 })
@@ -24,6 +26,7 @@ export class ContentbodyAttestationServiceFaitGest implements OnInit {
   errorMessage = '';
   entrepriseId: number | null = null;
   showFilterDropdown = false;
+  searchQuery: string = '';
   
   // Propriétés pour la pagination
   currentPage: number = 1;
@@ -66,8 +69,8 @@ export class ContentbodyAttestationServiceFaitGest implements OnInit {
           titre: att.titre,
           dateCreation: att.dateCreation
         }));
-        this.filteredAttestations = [...this.attestations];
-        this.calculatePagination();
+        // applyFilters will set filteredAttestations and recalculate pagination
+        this.applyFilters();
         this.isLoading = false;
       },
       error: (error: any) => {
@@ -128,5 +131,27 @@ export class ContentbodyAttestationServiceFaitGest implements OnInit {
 
   viewDetails(attestation: Attestation): void {
     this.openDetailsModal(attestation);
+  }
+
+  applySearchFilter(): void {
+    this.applyFilters();
+  }
+
+  applyFilters(): void {
+    const normalize = (s: string) => (s || '').toString().normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+    const query = normalize(this.searchQuery.trim());
+
+    let temp = [...this.attestations];
+    if (query.length > 0) {
+      temp = temp.filter(a =>
+        normalize(a.referenceBonCommande).includes(query) ||
+        normalize(a.fournisseur).includes(query) ||
+        normalize(a.titre).includes(query)
+      );
+    }
+
+    this.filteredAttestations = temp;
+    this.currentPage = 1; // reset to first page
+    this.calculatePagination();
   }
 }

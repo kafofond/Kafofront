@@ -8,9 +8,10 @@ import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-contentbody-bons-de-commande-respo',
+  standalone: true,
   imports: [FormsModule, CommonModule],
   templateUrl: './contentbody-bons-de-commande-respo.html',
-  styleUrl: './contentbody-bons-de-commande-respo.css'
+  styleUrls: ['./contentbody-bons-de-commande-respo.css']
 })
 export class ContentbodyBonsDeCommandeRespo implements OnInit {
 
@@ -28,6 +29,8 @@ export class ContentbodyBonsDeCommandeRespo implements OnInit {
   rejetCommentaire: string = '';
 
   bonsDeCommande: BonDeCommande[] = [];
+  // Recherche
+  searchQuery: string = '';
 
   constructor(
     private bonCommandeService: BonCommandeService,
@@ -93,12 +96,26 @@ export class ContentbodyBonsDeCommandeRespo implements OnInit {
 
   // Filtrage dynamique des bons de commande
   get filteredBons(): BonDeCommande[] {
-    const filtered =
+    const normalize = (s: string) => (s || '').toString().normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+    const q = normalize(this.searchQuery.trim());
+    let filtered =
       this.selectedStatus === 'Tous'
         ? this.bonsDeCommande
         : this.bonsDeCommande.filter(
             (b) => b.statut.toLowerCase() === this.selectedStatus.toLowerCase()
           );
+    if (q) {
+      filtered = filtered.filter(b => {
+        return [
+          b.code,
+          b.referenceDemande,
+          b.fournisseur,
+          b.serviceBeneficiaire,
+          b.description,
+          b.statut
+        ].some(f => normalize(f || '').includes(q));
+      });
+    }
     return filtered;
   }
 

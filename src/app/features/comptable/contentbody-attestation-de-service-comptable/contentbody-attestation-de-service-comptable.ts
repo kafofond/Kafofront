@@ -8,9 +8,10 @@ import { AttestationServiceFait } from '../../../models/attestation-service-fait
 
 @Component({
   selector: 'app-contentbody-attestation-de-service-comptable',
+  standalone: true,
   imports: [FormsModule,CommonModule],
   templateUrl: './contentbody-attestation-de-service-comptable.html',
-  styleUrl: './contentbody-attestation-de-service-comptable.css'
+  styleUrls: ['./contentbody-attestation-de-service-comptable.css']
 })
 export class ContentbodyAttestationDeServiceComptable implements OnInit {
 
@@ -23,18 +24,38 @@ export class ContentbodyAttestationDeServiceComptable implements OnInit {
   attestations: AttestationServiceFait[] = [];
   selectedAttestation: AttestationServiceFait | null = null;
   showDetailModal: boolean = false;
+  // Recherche
+  searchQuery: string = '';
 
   // Filtrage dynamique des attestations de service fait
   get filteredAttestations(): AttestationServiceFait[] {
-    const filtered =
+    const normalize = (s: string) => (s || '').toString().normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+    const query = normalize(this.searchQuery.trim());
+
+    let filtered =
       this.selectedStatus === 'Tous'
-        ? this.attestations
+        ? [...this.attestations]
         : this.attestations.filter(
             (a) =>
               a.statut &&
-              a.statut.toLowerCase() === this.selectedStatus.toLowerCase()
+              normalize(a.statut) === normalize(this.selectedStatus)
           );
+
+    if (query.length > 0) {
+      filtered = filtered.filter(a =>
+        normalize(a.code).includes(query) ||
+        normalize(a.referenceBonCommande || '').includes(query) ||
+        normalize(a.fournisseur || '').includes(query) ||
+        normalize(a.titre || '').includes(query) ||
+        normalize(a.statut || '').includes(query)
+      );
+    }
+
     return filtered;
+  }
+
+  onSearchQueryChange(): void {
+    // Real-time search; currently no other logic required
   }
 
   constructor(

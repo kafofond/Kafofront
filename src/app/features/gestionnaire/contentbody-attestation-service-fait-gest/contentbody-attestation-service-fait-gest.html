@@ -1,5 +1,12 @@
 <section id="attestations" class="content-body">
     <div class="controls-bar">
+        <div class="search-wrapper">
+            <input type="text" class="search-input" placeholder="Rechercher (réf. bon, fournisseur, titre...)" [(ngModel)]="searchQuery" (input)="applySearchFilter()" />
+            <div class="search-info">
+                <span *ngIf="filteredAttestations.length > 0">{{ filteredAttestations.length }} résultat(s)</span>
+                <span *ngIf="filteredAttestations.length === 0 && !isLoading">Aucun résultat</span>
+            </div>
+        </div>
         <!-- <div class="filter-group">
             <label for="status-filter">Statut :</label>
             <div class="filter-dropdown" (click)="showFilterDropdown = !showFilterDropdown">
@@ -46,19 +53,19 @@
         <!-- Data Table -->
         <div class="data-table" *ngIf="!isLoading && !errorMessage">
             <div class="table-header">
-                <div class="table-cell">Référence bon de commande</div>
-                <div class="table-cell">Fournisseur</div>
-                <div class="table-cell">Titre</div>
-                <div class="table-cell">Date d'envoi</div>
-                <div class="table-cell">Actions</div>
+                <div class="table-cell col-ref">Référence bon de commande</div>
+                <div class="table-cell col-fournisseur">Fournisseur</div>
+                <div class="table-cell col-titre">Titre</div>
+                <div class="table-cell col-date">Date d'envoi</div>
+                <div class="table-cell col-actions">Actions</div>
             </div>
             
             <div class="table-body">
                 <div class="table-row" *ngFor="let attestation of paginatedAttestations">
-                    <div class="table-cell" data-label="Référence bon de commande">{{ attestation.referenceBonCommande }}</div>
-                    <div class="table-cell" data-label="Fournisseur">{{ attestation.fournisseur }}</div>
-                    <div class="table-cell" data-label="Titre">{{ attestation.titre }}</div>
-                    <div class="table-cell" data-label="Date d'envoi">{{ attestation.dateCreation | date:'dd/MM/yyyy' }}</div>
+                    <div class="table-cell col-ref" data-label="Référence bon de commande">{{ attestation.referenceBonCommande }}</div>
+                    <div class="table-cell col-fournisseur" data-label="Fournisseur">{{ attestation.fournisseur }}</div>
+                    <div class="table-cell col-titre" data-label="Titre">{{ attestation.titre }}</div>
+                    <div class="table-cell col-date" data-label="Date d'envoi">{{ attestation.dateCreation | date:'dd/MM/yyyy' }}</div>
                     <div class="table-cell" data-label="Actions">
                         <div class="action-buttons">
                             <button class="action-btn" (click)="viewDetails(attestation)" title="Voir détails">

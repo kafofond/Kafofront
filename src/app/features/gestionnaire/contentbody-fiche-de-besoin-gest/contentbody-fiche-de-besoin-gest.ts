@@ -8,7 +8,7 @@ import { AuthService } from '../../../services/auth.service';
   selector: 'app-contentbody-fiche-de-besoin-gest',
   imports: [CommonModule, FormsModule],
   templateUrl: './contentbody-fiche-de-besoin-gest.html',
-  styleUrl: './contentbody-fiche-de-besoin-gest.css'
+  styleUrl: './contentbody-fiche-de-besoin-gest.css',
 })
 export class ContentbodyFicheDeBesoinGest implements OnInit {
   fiches: FicheBesoin[] = [];
@@ -21,39 +21,38 @@ export class ContentbodyFicheDeBesoinGest implements OnInit {
   showConfirmationModal = false;
   rejetMotif = '';
   entrepriseId: number | null = null;
-  
+  searchQuery: string = '';
+
   // Propriétés pour le filtre de statut
   showFilterDropdown = false;
   statutFilter = 'Tous';
-  
+
   // Propriétés pour la pagination
   currentPage = 1;
   itemsPerPage = 10;
   totalPages = 0;
 
-  constructor(
-    private ficheService: FicheBesoinService,
-    private authService: AuthService
-  ) {}
+  constructor(private ficheService: FicheBesoinService, private authService: AuthService) {}
 
   ngOnInit(): void {
     // Récupérer l'ID de l'entreprise à partir du token
     this.entrepriseId = this.authService.getEntrepriseIdFromToken();
-    
+
     if (this.entrepriseId) {
       this.loadFiches();
     } else {
-      this.errorMessage = "Impossible de récupérer les informations de l'entreprise. Veuillez vous reconnecter.";
+      this.errorMessage =
+        "Impossible de récupérer les informations de l'entreprise. Veuillez vous reconnecter.";
       console.error('ID entreprise non trouvé dans le token');
     }
   }
 
   loadFiches(): void {
     if (!this.entrepriseId) return;
-    
+
     this.isLoading = true;
     this.errorMessage = '';
-    
+
     this.ficheService.getFichesByEntreprise(this.entrepriseId).subscribe({
       next: (response) => {
         this.fiches = response.fiches;
@@ -64,7 +63,7 @@ export class ContentbodyFicheDeBesoinGest implements OnInit {
         this.errorMessage = error.message || 'Erreur lors du chargement des fiches de besoin';
         this.isLoading = false;
         console.error('Erreur chargement fiches:', error);
-      }
+      },
     });
   }
 
@@ -113,7 +112,7 @@ export class ContentbodyFicheDeBesoinGest implements OnInit {
     this.ficheService.validerFiche(id).subscribe({
       next: () => {
         // Mettre à jour le statut localement
-        const fiche = this.fiches.find(f => f.id === id);
+        const fiche = this.fiches.find((f) => f.id === id);
         if (fiche) {
           fiche.statut = 'VALIDE';
         }
@@ -122,7 +121,7 @@ export class ContentbodyFicheDeBesoinGest implements OnInit {
       error: (error) => {
         console.error('Erreur validation fiche:', error);
         this.errorMessage = error.message || 'Erreur lors de la validation de la fiche';
-      }
+      },
     });
   }
 
@@ -134,11 +133,11 @@ export class ContentbodyFicheDeBesoinGest implements OnInit {
         this.errorMessage = 'Le commentaire de rejet est obligatoire';
         return;
       }
-      
+
       this.ficheService.rejeterFiche(this.selectedFiche.id, commentaire).subscribe({
         next: () => {
           // Mettre à jour le statut localement
-          const fiche = this.fiches.find(f => f.id === this.selectedFiche!.id);
+          const fiche = this.fiches.find((f) => f.id === this.selectedFiche!.id);
           if (fiche) {
             fiche.statut = 'REJETE';
           }
@@ -148,11 +147,95 @@ export class ContentbodyFicheDeBesoinGest implements OnInit {
         error: (error) => {
           console.error('Erreur rejet fiche:', error);
           this.errorMessage = error.message || 'Erreur lors du rejet de la fiche';
-        }
+        },
       });
     } else {
       this.errorMessage = 'Le commentaire de rejet est obligatoire';
     }
+  }
+
+
+  getStatusLabel(statut: string): string {
+    return this.ficheService.mapStatutToDisplay(statut);
+  }
+
+  // Méthode pour vérifier si la fiche peut être validée
+  canValidateFiche(fiche: FicheBesoin): boolean {
+    return fiche.statut !== 'APPROUVE' && fiche.statut !== 'VALIDE';
+  }
+
+  // Méthode pour calculer le montant total des désignations
+  getTotalMontantDesignations(): number {
+    if (!this.selectedFiche || !this.selectedFiche.designations) {
+      return 0;
+    }
+    return this.selectedFiche.designations.reduce(
+      (total, designation) => total + designation.montantTotal,
+      0
+    );
+  }
+
+  // Méthodes pour le filtre de statut
+  applyFilters(): void {
+    if (this.statutFilter === 'Tous') {
+      this.filteredFiches = [...this.fiches];
+    } else {
+      this.filteredFiches = this.fiches.filter((fiche) => fiche.statut === this.statutFilter);
+    }
+
+    // Réinitialiser à la première page après le filtrage
+    this.currentPage = 1;
+    this.updateTotalPages();
+  }
+
+  // Méthodes pour la pagination
+  get paginatedFiches(): FicheBesoin[] {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    return this.filteredFiches.slice(startIndex, endIndex);
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+    }
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
+  }
+
+  updateTotalPages(): void {
+    this.totalPages = Math.ceil(this.filteredFiches.length / this.itemsPerPage);
+  }
+
+  onStatutFilterChange(statut: string): void {
+    this.statutFilter = statut;
+    this.showFilterDropdown = false;
+    this.applyFilters();
+  }
+
+  applySearchFilter() {
+    const query = this.searchQuery.trim().toLowerCase();
+
+    this.filteredFiches = this.fiches.filter(
+      (f) =>
+        f.code?.toLowerCase().includes(query) ||
+        f.createurNom?.toLowerCase().includes(query) ||
+        f.objet?.toLowerCase().includes(query) ||
+        f.serviceBeneficiaire?.toLowerCase().includes(query) ||
+        f.statut?.toLowerCase().includes(query)
+    );
+
+    this.updateTotalPages();
   }
 
   getStatusClass(statut: string): string {
@@ -168,72 +251,5 @@ export class ContentbodyFicheDeBesoinGest implements OnInit {
       default:
         return '';
     }
-  }
-
-  getStatusLabel(statut: string): string {
-    return this.ficheService.mapStatutToDisplay(statut);
-  }
-
-  // Méthode pour vérifier si la fiche peut être validée
-  canValidateFiche(fiche: FicheBesoin): boolean {
-    return fiche.statut !== 'APPROUVE' && fiche.statut !== 'VALIDE';
-  }
-  
-  // Méthode pour calculer le montant total des désignations
-  getTotalMontantDesignations(): number {
-    if (!this.selectedFiche || !this.selectedFiche.designations) {
-      return 0;
-    }
-    return this.selectedFiche.designations.reduce((total, designation) => total + designation.montantTotal, 0);
-  }
-  
-  // Méthodes pour le filtre de statut
-  applyFilters(): void {
-    if (this.statutFilter === 'Tous') {
-      this.filteredFiches = [...this.fiches];
-    } else {
-      this.filteredFiches = this.fiches.filter(fiche => 
-        fiche.statut === this.statutFilter
-      );
-    }
-    
-    // Réinitialiser à la première page après le filtrage
-    this.currentPage = 1;
-    this.updateTotalPages();
-  }
-  
-  // Méthodes pour la pagination
-  get paginatedFiches(): FicheBesoin[] {
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    const endIndex = startIndex + this.itemsPerPage;
-    return this.filteredFiches.slice(startIndex, endIndex);
-  }
-  
-  goToPage(page: number): void {
-    if (page >= 1 && page <= this.totalPages) {
-      this.currentPage = page;
-    }
-  }
-  
-  nextPage(): void {
-    if (this.currentPage < this.totalPages) {
-      this.currentPage++;
-    }
-  }
-  
-  previousPage(): void {
-    if (this.currentPage > 1) {
-      this.currentPage--;
-    }
-  }
-  
-  updateTotalPages(): void {
-    this.totalPages = Math.ceil(this.filteredFiches.length / this.itemsPerPage);
-  }
-  
-  onStatutFilterChange(statut: string): void {
-    this.statutFilter = statut;
-    this.showFilterDropdown = false;
-    this.applyFilters();
   }
 }

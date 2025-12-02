@@ -40,6 +40,8 @@ export class ContentbodyVoirlignesRespo implements OnInit, OnDestroy {
   // Propriétés pour le filtre
   showFilterDropdown: boolean = false;
   activeFilter: string = 'Tous';
+  // Barre de recherche
+  searchQuery: string = '';
   
   // Ligne sélectionnée
   selectedLigne: LigneBudget | null = null;
@@ -162,6 +164,22 @@ export class ContentbodyVoirlignesRespo implements OnInit, OnDestroy {
         ligne.statut === filterType
       );
     }
+  }
+
+  get displayLignes(): LigneBudget[] {
+    const normalize = (s: string) => (s || '').toString().normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+    const q = normalize(this.searchQuery.trim());
+    if (!q) return this.lignes;
+    return this.lignes.filter(l => {
+      return [
+        l.code,
+        l.intituleLigne,
+        l.description,
+        l.commentaire,
+        l.statut,
+        l.createurNom
+      ].some(f => normalize(f || '').includes(q));
+    });
   }
 
   onClickOutside(event: MouseEvent): void {

@@ -10,6 +10,17 @@
     margin-bottom: 5px;
 }
 
+/* Barre de recherche */
+.search-input {
+    width: 260px;
+    padding: 10px 14px;
+    border: 2px solid rgba(0,0,0,0.12);
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+
 .filter-group {
     display: flex;
     align-items: center;

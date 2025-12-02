@@ -34,6 +34,9 @@
     <button class="filter-btn" (click)="openCreateBudgetModal()">
         <span>Créer Budget</span>
     </button>
+    <div class="search-wrapper" style="margin-left: auto;">
+        <input type="text" class="search-input" placeholder="Rechercher un budget (intitulé, code, description...)" [(ngModel)]="searchQuery" (input)="updatePagination()" />
+    </div>
 </div>
 
 <div class="budget-table-container">

@@ -9,18 +9,23 @@
     </div>
 
     <div class="header-actions">
-      <button class="btn btn-secondary" (click)="exporter()">
-        Exporter
-      </button>
-      <button class="btn btn-primary" (click)="ajouterUtilisateur()">
-        Ajouter un utilisateur
-      </button>
-    </div>
+        <button class="btn btn-secondary" (click)="exporter()">
+          Exporter
+        </button>
+        <button class="btn btn-primary" (click)="ajouterUtilisateur()">
+          Ajouter un utilisateur
+        </button>
+      </div>
   </div>
 </div>
 
 <section class="utilisateurs-section">
   <div class="table-container">
+    <div class="table-top-controls">
+      <div class="search-wrapper">
+        <input class="search-input" type="text" placeholder="Rechercher par nom, email, rôle..." [(ngModel)]="searchQuery" (input)="onSearchQueryChange()" />
+      </div>
+    </div>
     <div *ngIf="loading" class="loading-spinner">
       <p>Chargement des utilisateurs...</p>
     </div>
@@ -94,6 +99,7 @@
       <p>Aucun utilisateur trouvé</p>
     </div>
   </div>
+  
 
   <!-- Modal de création -->
   <div *ngIf="showCreateModal" class="modal-overlay">

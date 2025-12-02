@@ -8,9 +8,10 @@ import { DocumentService } from '../../../services/document.service'; // Import 
 
 @Component({
   selector: 'app-contentbody-ordre-paiement-comptable',
+  standalone: true,
   imports: [FormsModule, CommonModule],
   templateUrl: './contentbody-ordre-paiement-comptable.html',
-  styleUrl: './contentbody-ordre-paiement-comptable.css'
+  styleUrls: ['./contentbody-ordre-paiement-comptable.css']
 })
 export class ContentbodyOrdrePaiementComptable implements OnInit {
 
@@ -33,15 +34,39 @@ export class ContentbodyOrdrePaiementComptable implements OnInit {
     decisionId: null
   };
 
+  // Barre de recherche
+  searchQuery: string = '';
+
   // Filtrage dynamique des ordres de paiement
   get filteredOrdres(): OrdreDePaiement[] {
-    const filtered =
+    const normalize = (s: string) => (s || '').toString().normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+    const q = normalize(this.searchQuery.trim());
+
+    let filtered =
       this.selectedStatus === 'Tous'
         ? this.ordreDePaiements
         : this.ordreDePaiements.filter(
             (o) => o.statut && this.mapStatut(o.statut) === this.selectedStatus
           );
+
+    if (q) {
+      filtered = filtered.filter(o => {
+        return [
+          o.code,
+          o.referenceDecisionPrelevement,
+          o.description,
+          o.compteOrigine,
+          o.compteDestinataire,
+          o.createurNom,
+          o.entrepriseNom
+        ].some(field => normalize(field || '').includes(q));
+      });
+    }
     return filtered;
+  }
+
+  onSearchQueryChange() {
+    // Left intentionally blank - ngModel updates view reactively
   }
 
   constructor(

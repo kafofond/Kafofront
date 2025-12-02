@@ -34,6 +34,9 @@
     </div>
     
     <div *ngIf="!isLoading && !errorMessage" class="data-table">
+      <div class="search-wrapper" style="margin-bottom: 12px;">
+        <input type="text" class="search-input" placeholder="Rechercher (code, fournisseur, ref demande, service...)" [(ngModel)]="searchQuery" />
+      </div>
       <div class="table-header">
         <div class="col col-1">Code</div>
         <div class="col col-2">Réf. Demande</div>

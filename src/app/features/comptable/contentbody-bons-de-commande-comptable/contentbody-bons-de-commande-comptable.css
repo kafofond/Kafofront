@@ -24,6 +24,21 @@ img {
   margin-bottom: 38px;
 }
 
+.search-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.search-input {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,0.12);
+  width: 420px;
+  font-size: 14px;
+}
+
 .filter-group {
   position: relative;
   display: flex;
@@ -188,6 +203,10 @@ img {
 .status-pending {
   background-color: #fff4cc;
   color: #b48b00;
+}
+.status-approuve {
+  background-color: #dcffbe;
+  color: #1d4ed8;
 }
 
 /* Boutons d'action */

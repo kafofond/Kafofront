@@ -10,9 +10,10 @@ import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-contentbody-rapport-financier-comptable',
+  standalone: true,
   imports: [FormsModule, CommonModule],
   templateUrl: './contentbody-rapport-financier-comptable.html',
-  styleUrl: './contentbody-rapport-financier-comptable.css'
+  styleUrls: ['./contentbody-rapport-financier-comptable.css']
 })
 export class ContentbodyRapportFinancierComptable implements OnInit {
 
@@ -20,6 +21,9 @@ export class ContentbodyRapportFinancierComptable implements OnInit {
   lignesCredit: LigneCredit[] = [];
   rapportDachats: RapportDachat[] = [];
   showCreateForm: boolean = false;
+  // Champs de recherche pour chaque tableau
+  searchLignesQuery: string = '';
+  searchRapportsQuery: string = '';
 
   constructor(
     private rapportService: RapportDachatService,
@@ -58,6 +62,26 @@ export class ContentbodyRapportFinancierComptable implements OnInit {
         console.error('Erreur lors du chargement des rapports:', error);
       }
     );
+  }
+
+  // Getters filtrés pour supporter la recherche temps réel
+  get filteredLignes(): LigneCredit[] {
+    const normalize = (s: string) => (s || '').toString().normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+    const q = normalize(this.searchLignesQuery.trim());
+    if (!q) return this.lignesCredit;
+    return this.lignesCredit.filter(l => {
+      return [l.intituleLigne, String(l.montantAllouer), String(l.montantEngager), String(l.montantRestant)].some(f => normalize(f || '').includes(q));
+    });
+  }
+
+  get filteredRapports(): RapportDachat[] {
+    const normalize = (s: string) => (s || '').toString().normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+    const q = normalize(this.searchRapportsQuery.trim());
+    if (!q) return this.rapportDachats;
+    return this.rapportDachats.filter(r => {
+      return [r.nom, r.ficheBesoin, r.demandeAchat, r.bonCommande, r.attestationServiceFait, r.decisionPrelevement, r.ordrePaiement]
+        .some(f => normalize(f || '').includes(q));
+    });
   }
 
   toggleCreateForm(): void {

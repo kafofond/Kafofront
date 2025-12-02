@@ -7,9 +7,10 @@ import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-gestion-prelevement',
-  imports: [FormsModule, CommonModule, DatePipe],
+  standalone: true,
+  imports: [FormsModule, CommonModule],
   templateUrl: './gestion-prelevement.html',
-  styleUrl: './gestion-prelevement.css'
+  styleUrls: ['./gestion-prelevement.css']
 })
 export class GestionPrelevement implements OnInit, OnDestroy {
   selectedStatus: string = 'Tous';
@@ -20,6 +21,9 @@ export class GestionPrelevement implements OnInit, OnDestroy {
   // Données
   decisionDePrelevements: DecisionPrelevement[] = [];
   ordreDePaiements: OrdrePaiement[] = [];
+  // Recherche
+  searchDecisionsQuery: string = '';
+  searchOrdresQuery: string = '';
 
   // États des modales
   showDecisionModal: boolean = false;
@@ -93,22 +97,32 @@ export class GestionPrelevement implements OnInit, OnDestroy {
 
   // FILTRAGE DYNAMIQUE
   get filteredDecisions(): DecisionPrelevement[] {
-    const filtered =
+    const normalize = (s: string) => (s || '').toString().normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+    const q = normalize(this.searchDecisionsQuery.trim());
+    let filtered =
       this.selectedStatus === 'Tous'
         ? this.decisionDePrelevements
         : this.decisionDePrelevements.filter(
             d => this.mapStatutToDisplay(d.statut).toLowerCase() === this.selectedStatus.toLowerCase()
           );
+    if (q) {
+      filtered = filtered.filter(d => [d.code, d.referenceAttestation, d.compteDestinataire, String(d.montant), d.motifPrelevement].some(f => normalize(f || '').includes(q)));
+    }
     return filtered.slice(0, 5);
   }
 
   get filteredOrdres(): OrdrePaiement[] {
-    const filtered =
+    const normalize = (s: string) => (s || '').toString().normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+    const q = normalize(this.searchOrdresQuery.trim());
+    let filtered =
       this.selectedStatus === 'Tous'
         ? this.ordreDePaiements
         : this.ordreDePaiements.filter(
             o => this.mapStatutToDisplay(o.statut).toLowerCase() === this.selectedStatus.toLowerCase()
           );
+    if (q) {
+      filtered = filtered.filter(o => [o.code, o.referenceDecisionPrelevement, o.compteDestinataire, o.description, String(o.montant)].some(f => normalize(f || '').includes(q)));
+    }
     return filtered.slice(0, 5);
   }
 

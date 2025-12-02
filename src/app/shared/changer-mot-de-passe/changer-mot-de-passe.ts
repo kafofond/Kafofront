@@ -54,7 +54,7 @@ export class ChangerMotDePasse implements OnInit, OnDestroy {
   }
 
   goToLogin() {
-    this.router.navigate(['/seconnecter']);
+    this.router.navigate(['']);
   }
 
   passwordsMismatch(): boolean {

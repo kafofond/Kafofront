@@ -44,6 +44,21 @@ export class ContentbodyVoirlignesDirect implements OnInit, OnDestroy {
   
   // Filtrage
   activeFilter: string = 'Aucun';
+  // Recherche
+  searchQuery: string = '';
+
+  private normalizeString(s: any): string {
+    return (s || '').toString().normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+  }
+
+  private getFilteredAllLignes(): LigneBudget[] {
+    let filtered = this.activeFilter === 'Aucun' ? [...this.allLignes] : this.allLignes.filter(l => l.statut === this.activeFilter);
+    const q = this.normalizeString(this.searchQuery.trim());
+    if (q) {
+      filtered = filtered.filter(l => [l.code, l.intituleLigne, l.description, l.commentaire, l.statut, l.createurNom].some(f => this.normalizeString(f).includes(q)));
+    }
+    return filtered;
+  }
   
   // Formulaires
   newLigneCredit: any = {
@@ -134,7 +149,7 @@ export class ContentbodyVoirlignesDirect implements OnInit, OnDestroy {
         this.allLignes = response.lignes.map(apiLigne => 
           mapApiLigneToLigneBudget(apiLigne)
         );
-        this.lignes = [...this.allLignes];
+        this.lignes = this.getFilteredAllLignes();
         this.isLoading = false;
       },
       error: (error) => {
@@ -154,12 +169,11 @@ export class ContentbodyVoirlignesDirect implements OnInit, OnDestroy {
   applyFilter(filterType: string): void {
     this.activeFilter = filterType;
     this.showFilterDropdown = false;
-    
-    if (filterType === 'Aucun') {
-      this.lignes = [...this.allLignes];
-    } else {
-      this.lignes = this.allLignes.filter(ligne => ligne.statut === filterType);
-    }
+    this.lignes = this.getFilteredAllLignes();
+  }
+
+  onSearchQueryChange(): void {
+    this.lignes = this.getFilteredAllLignes();
   }
 
   onClickOutside(event: MouseEvent): void {

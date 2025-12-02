@@ -9,7 +9,7 @@ import { HttpClientModule } from '@angular/common/http';
   standalone: true,
   imports: [FormsModule, CommonModule, HttpClientModule],
   templateUrl: './contentbody-historique-action-dsi.html',
-  styleUrl: './contentbody-historique-action-dsi.css'
+  styleUrls: ['./contentbody-historique-action-dsi.css']
 })
 export class ContentbodyHistoriqueActionDsi implements OnInit {
 
@@ -22,6 +22,12 @@ export class ContentbodyHistoriqueActionDsi implements OnInit {
   // Pagination
   pageActuelle: number = 1;
   lignesParPage: number = 10;
+  // Recherche
+  searchQuery: string = '';
+
+  private normalizeString(s: any): string {
+    return (s || '').toString().normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+  }
 
   constructor(private historiqueService: HistoriqueService) {}
 
@@ -86,8 +92,6 @@ export class ContentbodyHistoriqueActionDsi implements OnInit {
 
   get historiquesFiltres() {
     const historiquesTransformes = this.historiques.map(h => this.transformHistoriqueData(h));
-    if (this.filtreAction === 'toutes') return historiquesTransformes;
-
     const filtreMap: { [key: string]: string } = {
       'cree': 'Créé',
       'modifie': 'Modifié',
@@ -96,8 +100,18 @@ export class ContentbodyHistoriqueActionDsi implements OnInit {
       'approuve': 'Approuvé',
       'active': 'Activé'
     };
+    let filtered = this.filtreAction === 'toutes' ? historiquesTransformes : historiquesTransformes.filter(h => h.action === filtreMap[this.filtreAction]);
 
-    return historiquesTransformes.filter(h => h.action === filtreMap[this.filtreAction]);
+    const q = this.normalizeString(this.searchQuery.trim());
+    if (q) {
+      filtered = filtered.filter(h => [h.fichier, h.auteur, h.typeDocumentFormate, h.action].some(f => this.normalizeString(f).includes(q)));
+    }
+
+    return filtered;
+  }
+
+  onSearchQueryChange() {
+    this.pageActuelle = 1;
   }
 
   // Pagination calculée
